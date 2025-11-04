@@ -266,3 +266,5 @@ grafana_data/
 docs/_build/
 docs/_static/
 docs/_templates/
+src/config/__pycache__/__init__.cpython-314.pyc
+
