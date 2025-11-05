@@ -77,11 +77,20 @@ python src/manage.py runserver
 
 ## Documentation
 
-- [System Architecture](docs/architecture/system-overview.md)
-- [API Documentation](docs/api/rest-api-v1.md)
-- [Deployment Guide](docs/deployment/kubernetes-setup.md)
-- [Compliance](docs/compliance/data-protection-act-2019.md)
+### Architecture & Design
+- [System Architecture Overview](docs/architecture/system-overview.md) - Complete system architecture with mermaid diagrams
+- [Use Cases & User Flows](docs/architecture/use-cases-diagram.md) - All use cases with visual workflows
+- [Data Flow Diagrams](docs/architecture/data-flow-diagrams.md) - Detailed data flow and integration patterns
+
+### API & Integration
+- [REST API Documentation](docs/api/rest-api-v1.md) - Complete API reference (360+ endpoints)
+
+### Deployment & Operations
+- [Kubernetes Deployment Guide](docs/deployment/kubernetes-setup.md) - Production deployment instructions
+
+### Compliance & Security
+- [Data Protection Act 2019 Compliance](docs/compliance/data-protection-act-2019.md) - Full compliance documentation
 
 ## License
 
-Proprietary - Bematore Technologies © 2025
+Proprietary - Bematore Technologies 2025
