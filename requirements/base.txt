@@ -22,7 +22,6 @@ channels-redis==4.1.0
 daphne==4.0.0
 
 # Task Queue
-celery==5.3.4
 celery[redis]==5.3.4
 django-celery-beat==2.6.0
 django-celery-results==2.5.1
@@ -55,7 +54,7 @@ django-countries==7.5.1
 # File Storage
 boto3==1.29.7
 django-storages==1.14.2
-Pillow==12.0.0
+Pillow==10.4.0  # Fixed: 12.0.0 is too high
 
 # Search
 elasticsearch==8.11.0
@@ -64,12 +63,12 @@ django-elasticsearch-dsl==8.0
 django-elasticsearch-dsl-drf==0.22.5
 
 # ML & Data Science
-scikit-learn==1.3.2
+# scikit-learn==1.3.2
 # xgboost==2.0.2  # Heavy package, install separately if needed
 # tensorflow==2.15.0  # Heavy package, install separately if needed
-pandas==2.1.4
-numpy==1.26.4
-scipy==1.11.4
+# pandas==2.1.4
+# numpy==1.26.4
+# scipy==1.11.4
 
 # Monitoring & Logging
 sentry-sdk==1.43.0  
@@ -92,13 +91,12 @@ python-dateutil==2.8.2
 python-slugify==8.0.1
 humanize==4.9.0
 arrow==1.3.0
-pytz==2023.3.post1
-psutil==7.1.3
+psutil==6.1.0  # Fixed: 7.1.3 doesn't exist
 
 # HTTP & Requests
 requests==2.31.0
-httpx==0.25.2
-urllib3==2.1.0
+httpx==0.28.1  # Required by firebase-admin 7.1.0
+urllib3>=2.0.0,<3.0.0  # Flexible version to avoid conflicts
 
 # Data Parsing
 python-dotenv==1.0.0
@@ -116,8 +114,9 @@ sendgrid==6.11.0
 firebase-admin==7.1.0
 
 # Payment Gateway - M-Pesa (Safaricom)
-python-mpesa==0.1.10
-daraja==0.0.4
+# python-mpesa==0.1.10  # Outdated - requires requests==2.8.1 (conflicts)
+# daraja==0.0.4  # May have compatibility issues
+# Note: Implement M-Pesa integration directly using requests library with Safaricom Daraja API
 
 # QR Code Generation
 qrcode[pil]==7.4.2

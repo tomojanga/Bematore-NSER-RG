@@ -268,13 +268,23 @@ SMS_API_KEY = env('SMS_API_KEY', default='')
 SMS_USERNAME = env('SMS_USERNAME', default='')
 SMS_SENDER_ID = env('SMS_SENDER_ID', default='GRAK')
 
-# M-Pesa Configuration
-MPESA_ENVIRONMENT = env('MPESA_ENVIRONMENT', default='sandbox')
+# M-Pesa Configuration (Safaricom Daraja API)
+MPESA_ENVIRONMENT = env('MPESA_ENVIRONMENT', default='sandbox')  # sandbox or production
 MPESA_CONSUMER_KEY = env('MPESA_CONSUMER_KEY', default='')
 MPESA_CONSUMER_SECRET = env('MPESA_CONSUMER_SECRET', default='')
 MPESA_SHORTCODE = env('MPESA_SHORTCODE', default='')
 MPESA_PASSKEY = env('MPESA_PASSKEY', default='')
-MPESA_CALLBACK_URL = env('MPESA_CALLBACK_URL', default='')
+MPESA_INITIATOR_NAME = env('MPESA_INITIATOR_NAME', default='testapi')
+MPESA_SECURITY_CREDENTIAL = env('MPESA_SECURITY_CREDENTIAL', default='')
+
+# M-Pesa Callback URLs
+MPESA_CALLBACK_URL = env('MPESA_CALLBACK_URL', default=f'{env("SITE_URL", default="http://localhost:8000")}/api/v1/settlements/mpesa/callback/')
+MPESA_B2C_RESULT_URL = env('MPESA_B2C_RESULT_URL', default=f'{env("SITE_URL", default="http://localhost:8000")}/api/v1/settlements/mpesa/b2c/result/')
+MPESA_B2C_TIMEOUT_URL = env('MPESA_B2C_TIMEOUT_URL', default=f'{env("SITE_URL", default="http://localhost:8000")}/api/v1/settlements/mpesa/b2c/timeout/')
+MPESA_STATUS_RESULT_URL = env('MPESA_STATUS_RESULT_URL', default=f'{env("SITE_URL", default="http://localhost:8000")}/api/v1/settlements/mpesa/status/result/')
+MPESA_STATUS_TIMEOUT_URL = env('MPESA_STATUS_TIMEOUT_URL', default=f'{env("SITE_URL", default="http://localhost:8000")}/api/v1/settlements/mpesa/status/timeout/')
+MPESA_BALANCE_RESULT_URL = env('MPESA_BALANCE_RESULT_URL', default=f'{env("SITE_URL", default="http://localhost:8000")}/api/v1/settlements/mpesa/balance/result/')
+MPESA_BALANCE_TIMEOUT_URL = env('MPESA_BALANCE_TIMEOUT_URL', default=f'{env("SITE_URL", default="http://localhost:8000")}/api/v1/settlements/mpesa/balance/timeout/')
 
 # Elasticsearch
 ELASTICSEARCH_DSL = {
