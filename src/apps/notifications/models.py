@@ -469,8 +469,7 @@ class NotificationPreference(BaseModel):
     user = models.OneToOneField(
         'users.User',
         on_delete=models.CASCADE,
-        related_name='notification_preferences',
-        primary_key=True
+        related_name='notification_preference'
     )
     
     # Channel Preferences

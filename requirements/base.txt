@@ -1,19 +1,21 @@
 # Core Django
-Django==4.2.7
+Django==5.2.1
 django-environ==0.11.2
-pytz==2024.1
+pytz==2025.2
 
 # Database
-psycopg2-binary==2.9.9
+psycopg[binary]==3.2.12  # Modern PostgreSQL adapter with better Windows support
+# psycopg2-binary==2.9.10  # Old version - requires Visual C++ Redistributable on Windows
 django-postgres-extra==2.0.9
 django-pgviews==0.6.0
 
 # API & GraphQL
 djangorestframework==3.14.0
 djangorestframework-simplejwt==5.3.1
-django-filter==23.5
-drf-spectacular==0.27.0
-graphene-django==3.2.0
+django-filter==24.3  # Updated for Python 3.14 compatibility
+drf-spectacular==0.27.2  # Modern OpenAPI documentation
+drf-yasg==1.21.8  # Legacy Swagger documentation (consider migrating to drf-spectacular)
+graphene-django==3.2.2
 django-cors-headers==4.3.1
 
 # Async & Channels
@@ -23,38 +25,38 @@ daphne==4.0.0
 
 # Task Queue
 celery[redis]==5.3.4
-django-celery-beat==2.6.0
-django-celery-results==2.5.1
+django-celery-beat==2.8.1
+django-celery-results==2.6.0
 flower==2.0.1
 
 # Caching & Redis
-redis==5.0.1
+redis==4.6.0  # celery 5.3.4 requires <5.0.0
 django-redis==5.4.0
 hiredis==2.2.3
 
 # Security & Authentication
-django-oauth-toolkit==2.3.0
+django-oauth-toolkit==2.4.0
 PyJWT==2.10.1
 python-jose[cryptography]==3.3.0
-cryptography==41.0.7
+cryptography==45.0.3
 pyotp==2.9.0
 argon2-cffi==23.1.0
 
 # Encryption & Hashing
 django-cryptography==1.1
 pycryptodome==3.19.0
-bcrypt==4.1.1
+bcrypt==4.2.0
 
 # Validation & Forms
-django-phonenumber-field[phonenumbers]==7.2.0
-phonenumbers==8.13.26
+django-phonenumber-field[phonenumbers]==7.1.0
+phonenumbers==8.13.23
 python-magic==0.4.27
 django-countries==7.5.1
 
 # File Storage
 boto3==1.29.7
 django-storages==1.14.2
-Pillow==10.4.0  # Fixed: 12.0.0 is too high
+Pillow==12.0.0
 
 # Search
 elasticsearch==8.11.0
@@ -71,41 +73,41 @@ django-elasticsearch-dsl-drf==0.22.5
 # scipy==1.11.4
 
 # Monitoring & Logging
-sentry-sdk==1.43.0  
+sentry-sdk==1.38.0
 django-prometheus==2.3.1
 prometheus-client==0.19.0
-structlog==23.2.0
+structlog==24.4.0
 python-json-logger==2.0.7
 
 # Testing
-pytest==7.4.3
-pytest-django==4.7.0
-pytest-cov==4.1.0
-pytest-asyncio==0.21.1
-factory-boy==3.3.0
-faker==20.1.0
-coverage==7.3.2
+pytest==8.3.4
+pytest-django==4.9.0
+pytest-cov==6.0.0
+pytest-asyncio==0.24.0
+factory-boy==3.3.1
+faker==33.1.0
+coverage==7.6.9
 
 # Utilities
 python-dateutil==2.8.2
-python-slugify==8.0.1
+python-slugify==8.0.4
 humanize==4.9.0
 arrow==1.3.0
-psutil==6.1.0  # Fixed: 7.1.3 doesn't exist
+psutil==7.1.0
 
 # HTTP & Requests
 requests==2.31.0
 httpx==0.28.1  # Required by firebase-admin 7.1.0
-urllib3>=2.0.0,<3.0.0  # Flexible version to avoid conflicts
+urllib3==2.0.7
 
 # Data Parsing
 python-dotenv==1.0.0
-PyYAML==6.0.1
+PyYAML==6.0.2
 toml==0.10.2
 
 # External API Integrations
 # SMS Gateway - Africa's Talking
-africastalking==1.2.5
+africastalking==1.2.9
 
 # Email Gateway - SendGrid
 sendgrid==6.11.0
@@ -119,4 +121,8 @@ firebase-admin==7.1.0
 # Note: Implement M-Pesa integration directly using requests library with Safaricom Daraja API
 
 # QR Code Generation
-qrcode[pil]==7.4.2
+qrcode==8.2
+
+# Production Server
+gunicorn==23.0.0
+whitenoise==6.9.0

@@ -9,7 +9,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']
 
 # Database - use local PostgreSQL
-DATABASES['default']['NAME'] = 'nser_rg_dev'
+# DATABASES['default']['NAME'] = 'nser_rg_dev'  # Commented out to use nser_rg from .env
 
 # Email - console backend for development
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

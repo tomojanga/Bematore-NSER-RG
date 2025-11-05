@@ -91,7 +91,7 @@ class RiskScore(BaseModel):
 
 class BehavioralProfile(BaseModel):
     """ML-powered behavioral analysis"""
-    user = models.OneToOneField('users.User', on_delete=models.CASCADE, primary_key=True)
+    user = models.OneToOneField('users.User', on_delete=models.CASCADE)
     total_bets_count = models.PositiveIntegerField(default=0)
     total_amount_wagered = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     betting_frequency_daily = models.DecimalField(max_digits=6, decimal_places=2, default=0)

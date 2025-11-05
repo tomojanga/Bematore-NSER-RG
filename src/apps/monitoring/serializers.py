@@ -224,7 +224,7 @@ class APILogSearchSerializer(serializers.Serializer):
     max_response_time = serializers.FloatField(required=False)
     user_id = serializers.UUIDField(required=False)
     operator_id = serializers.UUIDField(required=False)
-    ip_address = serializers.IPAddressField(required=False)
+    ip_address = serializers.CharField(required=False)  # Changed from IPAddressField for DRF 3.14 compatibility
     start_date = serializers.DateTimeField(required=False)
     end_date = serializers.DateTimeField(required=False)
     has_error = serializers.BooleanField(required=False)

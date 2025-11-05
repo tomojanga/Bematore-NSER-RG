@@ -2,7 +2,7 @@
 Analytics & Reporting Views
 Dashboard overviews, statistics, trends, reports
 """
-from rest_framework import status, viewsets
+from rest_framework import status, viewsets, generics
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from django.utils import timezone
@@ -10,7 +10,7 @@ from datetime import timedelta
 
 from .models import DailyStatistics, OperatorStatistics, Report
 from .serializers import DailyStatisticsSerializer, OperatorStatisticsSerializer, ReportSerializer
-from apps.api.permissions import IsGRAKStaff
+from apps.api.permissions import IsGRAKStaff, IsOperator
 from apps.api.mixins import TimingMixin, SuccessResponseMixin, CacheMixin
 
 

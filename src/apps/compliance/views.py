@@ -6,6 +6,8 @@ from rest_framework import status, viewsets
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from django.utils import timezone
+from django.db import models
+from datetime import timedelta
 
 from .models import AuditLog, ComplianceCheck, DataRetentionPolicy, IncidentReport, RegulatoryReport
 from .serializers import (
@@ -374,3 +376,158 @@ class PendingReportsView(TimingMixin, SuccessResponseMixin, APIView):
     def get(self, request):
         reports = RegulatoryReport.objects.filter(status__in=['draft', 'pending']).order_by('-report_date')
         return self.success_response(data=RegulatoryReportSerializer(reports, many=True).data)
+
+
+# Data Subject Rights (GDPR/DPA 2019 Compliance)
+class DataSubjectAccessView(TimingMixin, SuccessResponseMixin, APIView):
+    """Data subject access request (GDPR Article 15)"""
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        # Initiate data access request
+        from .tasks import process_data_access_request
+        task = process_data_access_request.delay(str(request.user.id))
+        
+        return self.success_response(
+            data={'task_id': task.id},
+            message='Data access request initiated'
+        )
+
+
+class RectifyDataView(TimingMixin, SuccessResponseMixin, APIView):
+    """Rectify user data (GDPR Article 16)"""
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        # Process data rectification request
+        user = request.user
+        data = request.data
+        
+        # Update user fields based on provided data
+        updated_fields = []
+        if 'first_name' in data:
+            user.first_name = data['first_name']
+            updated_fields.append('first_name')
+        if 'last_name' in data:
+            user.last_name = data['last_name']
+            updated_fields.append('last_name')
+        if 'email' in data:
+            user.email = data['email']
+            updated_fields.append('email')
+        
+        user.save()
+        
+        return self.success_response(
+            data={'updated_fields': updated_fields},
+            message='Data rectified successfully'
+        )
+
+
+class EraseDataView(TimingMixin, SuccessResponseMixin, APIView):
+    """Erase user data (GDPR Article 17 - Right to be Forgotten)"""
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        # Initiate data erasure request
+        from .tasks import process_data_erasure_request
+        task = process_data_erasure_request.delay(str(request.user.id))
+        
+        return self.success_response(
+            data={'task_id': task.id},
+            message='Data erasure request initiated. Your account will be anonymized.'
+        )
+
+
+class ExportUserDataView(TimingMixin, SuccessResponseMixin, APIView):
+    """Export user data (GDPR Article 20 - Data Portability)"""
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        # Initiate data export request
+        from .tasks import export_user_data
+        task = export_user_data.delay(str(request.user.id))
+        
+        return self.success_response(
+            data={'task_id': task.id},
+            message='Data export initiated. You will receive a download link via email.'
+        )
+
+
+# Compliance Dashboard & Statistics
+class OverallComplianceScoreView(TimingMixin, SuccessResponseMixin, APIView):
+    """Overall compliance score"""
+    permission_classes = [IsAuthenticated, IsGRAKStaff]
+    
+    def get(self, request):
+        # Calculate overall compliance score
+        total_checks = ComplianceCheck.objects.count()
+        passed_checks = ComplianceCheck.objects.filter(status='passed').count()
+        
+        score = (passed_checks / total_checks * 100) if total_checks > 0 else 0
+        
+        return self.success_response(data={
+            'score': round(score, 2),
+            'total_checks': total_checks,
+            'passed_checks': passed_checks,
+            'failed_checks': total_checks - passed_checks
+        })
+
+
+class ViolationsSummaryView(TimingMixin, SuccessResponseMixin, APIView):
+    """Violations summary"""
+    permission_classes = [IsAuthenticated, IsGRAKStaff]
+    
+    def get(self, request):
+        # Get violations summary
+        violations = ComplianceCheck.objects.filter(status='failed').values('check_type').annotate(
+            count=models.Count('id')
+        ).order_by('-count')
+        
+        return self.success_response(data=list(violations))
+
+
+class ComplianceStatisticsView(TimingMixin, SuccessResponseMixin, APIView):
+    """Compliance statistics"""
+    permission_classes = [IsAuthenticated, IsGRAKStaff]
+    
+    def get(self, request):
+        from django.db.models import Count, Q
+        
+        stats = {
+            'total_checks': ComplianceCheck.objects.count(),
+            'passed_checks': ComplianceCheck.objects.filter(status='passed').count(),
+            'failed_checks': ComplianceCheck.objects.filter(status='failed').count(),
+            'pending_checks': ComplianceCheck.objects.filter(status='pending').count(),
+            'total_incidents': IncidentReport.objects.count(),
+            'open_incidents': IncidentReport.objects.filter(status='open').count(),
+            'resolved_incidents': IncidentReport.objects.filter(status='resolved').count(),
+            'critical_incidents': IncidentReport.objects.filter(severity='critical').count(),
+            'total_audit_logs': AuditLog.objects.count(),
+            'suspicious_activities': AuditLog.objects.filter(is_suspicious=True).count()
+        }
+        
+        return self.success_response(data=stats)
+
+
+class ComplianceTrendsView(TimingMixin, SuccessResponseMixin, APIView):
+    """Compliance trends over time"""
+    permission_classes = [IsAuthenticated, IsGRAKStaff]
+    
+    def get(self, request):
+        from django.db.models import Count
+        from django.db.models.functions import TruncDate
+        
+        # Get compliance trends for last 30 days
+        thirty_days_ago = timezone.now() - timedelta(days=30)
+        
+        trends = ComplianceCheck.objects.filter(
+            check_date__gte=thirty_days_ago
+        ).annotate(
+            date=TruncDate('check_date')
+        ).values('date').annotate(
+            total=Count('id'),
+            passed=Count('id', filter=models.Q(status='passed')),
+            failed=Count('id', filter=models.Q(status='failed'))
+        ).order_by('date')
+        
+        return self.success_response(data=list(trends))

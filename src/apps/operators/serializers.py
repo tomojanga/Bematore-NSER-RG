@@ -86,6 +86,38 @@ class APIKeySerializer(serializers.ModelSerializer):
         return 0  # Placeholder
 
 
+class APIKeyDetailSerializer(serializers.ModelSerializer):
+    """Detailed API key serializer with full secret for creation"""
+    operator_name = serializers.CharField(source='operator.name', read_only=True)
+    days_until_expiry = serializers.SerializerMethodField()
+    usage_today = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = APIKey
+        fields = [
+            'id', 'operator', 'operator_name', 'key_name', 
+            'api_key', 'api_secret', 'scopes',
+            'can_lookup', 'can_register', 'can_screen',
+            'is_active', 'last_used_at', 'usage_count', 'expires_at',
+            'rate_limit_per_second', 'rate_limit_per_day',
+            'ip_whitelist', 'days_until_expiry', 'usage_today',
+            'created_at', 'updated_at'
+        ]
+        read_only_fields = [
+            'id', 'api_key', 'api_secret', 'last_used_at', 'usage_count',
+            'created_at', 'updated_at'
+        ]
+    
+    def get_days_until_expiry(self, obj):
+        if obj.expires_at:
+            delta = obj.expires_at - timezone.now()
+            return delta.days
+        return None
+    
+    def get_usage_today(self, obj):
+        return 0  # Placeholder
+
+
 class IntegrationConfigSerializer(serializers.ModelSerializer):
     """Integration configuration serializer"""
     webhook_secret_masked = serializers.SerializerMethodField()
@@ -337,6 +369,25 @@ class SetupIntegrationSerializer(serializers.ModelSerializer):
             )
         
         return attrs
+
+
+class UpdateIntegrationSerializer(serializers.ModelSerializer):
+    """Update integration configuration serializer"""
+    
+    class Meta:
+        model = IntegrationConfig
+        fields = [
+            'webhook_url_exclusion', 'webhook_url_screening',
+            'webhook_url_compliance', 'webhook_secret',
+            'callback_success_url', 'callback_failure_url',
+            'auto_propagate_exclusions', 'require_screening_on_register',
+            'screening_frequency_days', 'timeout_seconds',
+            'retry_attempts', 'notification_email', 'notification_phone',
+            'is_active'
+        ]
+        extra_kwargs = {
+            'webhook_secret': {'write_only': True, 'required': False}
+        }
 
 
 class TestWebhookSerializer(serializers.Serializer):

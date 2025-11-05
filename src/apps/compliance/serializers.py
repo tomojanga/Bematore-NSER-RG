@@ -54,7 +54,7 @@ class AuditLogSearchSerializer(serializers.Serializer):
     resource_id = serializers.CharField(required=False)
     start_date = serializers.DateTimeField(required=False)
     end_date = serializers.DateTimeField(required=False)
-    ip_address = serializers.IPAddressField(required=False)
+    ip_address = serializers.CharField(required=False)  # Changed from IPAddressField for DRF 3.14 compatibility
     is_suspicious = serializers.BooleanField(required=False)
     success = serializers.BooleanField(required=False)
 

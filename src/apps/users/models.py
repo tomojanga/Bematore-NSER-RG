@@ -374,3 +374,25 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, GeoLocationModel):
         if self.failed_login_attempts >= 5:
             self.lock_account(duration_minutes=30)
         self.save(update_fields=['failed_login_attempts'])
+
+
+# Import extended models to make them available from this module
+from .models_extended import (
+    UserProfile,
+    UserDevice,
+    LoginHistory,
+    IdentityVerification,
+    UserSession,
+    UserActivityLog
+)
+
+__all__ = [
+    'User',
+    'UserManager',
+    'UserProfile',
+    'UserDevice',
+    'LoginHistory',
+    'IdentityVerification',
+    'UserSession',
+    'UserActivityLog'
+]

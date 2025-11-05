@@ -54,6 +54,21 @@ class MPesaIntegrationSerializer(serializers.ModelSerializer):
         return None
 
 
+class TransactionSerializer(serializers.ModelSerializer):
+    """Basic transaction serializer"""
+    operator_name = serializers.CharField(source='operator.name', read_only=True)
+    
+    class Meta:
+        model = Transaction
+        fields = [
+            'id', 'operator', 'operator_name', 'transaction_reference',
+            'transaction_type', 'amount', 'currency', 'status',
+            'payment_method', 'phone_number', 'mpesa_receipt_number',
+            'description', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['id', 'transaction_reference', 'created_at', 'updated_at']
+
+
 class TransactionListSerializer(serializers.ModelSerializer):
     """Lightweight transaction serializer for lists"""
     operator_name = serializers.CharField(source='operator.name', read_only=True)
@@ -135,6 +150,21 @@ class InitiateTransactionSerializer(serializers.Serializer):
         if value > 1000000:
             raise serializers.ValidationError("Amount exceeds maximum limit.")
         return value
+
+
+class InvoiceSerializer(serializers.ModelSerializer):
+    """Basic invoice serializer"""
+    operator_name = serializers.CharField(source='operator.name', read_only=True)
+    
+    class Meta:
+        model = Invoice
+        fields = [
+            'id', 'invoice_number', 'operator', 'operator_name',
+            'billing_period_start', 'billing_period_end',
+            'issue_date', 'due_date', 'total_amount', 'paid_amount',
+            'currency', 'status', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['id', 'invoice_number', 'issue_date', 'created_at', 'updated_at']
 
 
 class InvoiceListSerializer(serializers.ModelSerializer):
@@ -270,6 +300,38 @@ class GenerateInvoiceSerializer(serializers.Serializer):
                 })
         
         return attrs
+
+
+class InitiateMPesaPaymentSerializer(serializers.Serializer):
+    """Initiate M-Pesa payment serializer"""
+    phone_number = serializers.CharField(required=True, max_length=15)
+    amount = serializers.DecimalField(max_digits=15, decimal_places=2, required=True)
+    account_reference = serializers.CharField(max_length=50, required=True)
+    transaction_desc = serializers.CharField(max_length=100, required=False, default="Payment")
+    
+    def validate_phone_number(self, value):
+        # Remove any spaces or special characters
+        cleaned = value.replace(' ', '').replace('+', '').replace('-', '')
+        
+        # Validate Kenyan phone number format
+        if not cleaned.startswith('254') and not cleaned.startswith('0'):
+            raise serializers.ValidationError("Phone number must be a valid Kenyan number.")
+        
+        # Convert to 254 format
+        if cleaned.startswith('0'):
+            cleaned = '254' + cleaned[1:]
+        
+        if len(cleaned) != 12:
+            raise serializers.ValidationError("Invalid phone number length.")
+        
+        return cleaned
+    
+    def validate_amount(self, value):
+        if value < 10:
+            raise serializers.ValidationError("Amount must be at least KES 10.")
+        if value > 150000:
+            raise serializers.ValidationError("Amount exceeds maximum limit of KES 150,000.")
+        return value
 
 
 class MPesaSTKPushSerializer(serializers.Serializer):
