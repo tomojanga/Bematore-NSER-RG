@@ -14,6 +14,7 @@ class AuditLogSerializer(serializers.ModelSerializer):
     """Audit log serializer"""
     user_name = serializers.CharField(source='user.get_full_name', read_only=True, allow_null=True)
     operator_name = serializers.CharField(source='operator.name', read_only=True, allow_null=True)
+    ip_address = serializers.CharField(required=False, allow_null=True)  # Override for DRF 3.14 compatibility
     time_ago = serializers.SerializerMethodField()
     
     class Meta:
@@ -99,15 +100,23 @@ class RunComplianceCheckSerializer(serializers.Serializer):
     """Run compliance check serializer"""
     check_type = serializers.ChoiceField(
         choices=[
-            'exclusion_enforcement', 'screening_compliance',
-            'api_integration', 'data_protection',
-            'response_time', 'webhook_delivery', 'manual_audit'
+            ('exclusion_enforcement', 'Exclusion Enforcement'),
+            ('screening_compliance', 'Screening Compliance'),
+            ('api_integration', 'API Integration'),
+            ('data_protection', 'Data Protection'),
+            ('response_time', 'Response Time'),
+            ('webhook_delivery', 'Webhook Delivery'),
+            ('manual_audit', 'Manual Audit')
         ],
         required=True
     )
     operator_id = serializers.UUIDField(required=False)
     scope = serializers.ChoiceField(
-        choices=['single_operator', 'all_operators', 'system'],
+        choices=[
+            ('single_operator', 'Single Operator'),
+            ('all_operators', 'All Operators'),
+            ('system', 'System')
+        ],
         default='system'
     )
     include_recommendations = serializers.BooleanField(default=True)
@@ -201,13 +210,22 @@ class ReportIncidentSerializer(serializers.Serializer):
     """Report incident serializer"""
     incident_type = serializers.ChoiceField(
         choices=[
-            'data_breach', 'unauthorized_access', 'system_failure',
-            'compliance_violation', 'fraud_attempt', 'other'
+            ('data_breach', 'Data Breach'),
+            ('unauthorized_access', 'Unauthorized Access'),
+            ('system_failure', 'System Failure'),
+            ('compliance_violation', 'Compliance Violation'),
+            ('fraud_attempt', 'Fraud Attempt'),
+            ('other', 'Other')
         ],
         required=True
     )
     severity = serializers.ChoiceField(
-        choices=['low', 'medium', 'high', 'critical'],
+        choices=[
+            ('low', 'Low'),
+            ('medium', 'Medium'),
+            ('high', 'High'),
+            ('critical', 'Critical')
+        ],
         required=True
     )
     title = serializers.CharField(max_length=255, required=True)
@@ -254,7 +272,14 @@ class RegulatoryReportSerializer(serializers.ModelSerializer):
 class GenerateRegulatoryReportSerializer(serializers.Serializer):
     """Generate regulatory report serializer"""
     report_type = serializers.ChoiceField(
-        choices=['grak_monthly', 'grak_quarterly', 'grak_annual', 'nacada', 'dci', 'custom'],
+        choices=[
+            ('grak_monthly', 'GRAK Monthly'),
+            ('grak_quarterly', 'GRAK Quarterly'),
+            ('grak_annual', 'GRAK Annual'),
+            ('nacada', 'NACADA'),
+            ('dci', 'DCI'),
+            ('custom', 'Custom')
+        ],
         required=True
     )
     reporting_period_start = serializers.DateField(required=True)
@@ -280,7 +305,12 @@ class DataSubjectAccessSerializer(serializers.Serializer):
     national_id = serializers.CharField(required=False)
     email = serializers.EmailField(required=False)
     request_type = serializers.ChoiceField(
-        choices=['access', 'rectify', 'erase', 'export'],
+        choices=[
+            ('access', 'Access'),
+            ('rectify', 'Rectify'),
+            ('erase', 'Erase'),
+            ('export', 'Export')
+        ],
         required=True
     )
     reason = serializers.CharField(required=False, allow_blank=True)

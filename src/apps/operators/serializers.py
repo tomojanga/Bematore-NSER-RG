@@ -51,6 +51,8 @@ class APIKeySerializer(serializers.ModelSerializer):
     api_secret_masked = serializers.SerializerMethodField()
     days_until_expiry = serializers.SerializerMethodField()
     usage_today = serializers.SerializerMethodField()
+    scopes = serializers.ListField(child=serializers.CharField(), required=False)
+    ip_whitelist = serializers.ListField(child=serializers.CharField(), required=False)
     
     class Meta:
         model = APIKey
@@ -91,6 +93,8 @@ class APIKeyDetailSerializer(serializers.ModelSerializer):
     operator_name = serializers.CharField(source='operator.name', read_only=True)
     days_until_expiry = serializers.SerializerMethodField()
     usage_today = serializers.SerializerMethodField()
+    scopes = serializers.ListField(child=serializers.CharField(), required=False)
+    ip_whitelist = serializers.ListField(child=serializers.CharField(), required=False)
     
     class Meta:
         model = APIKey
@@ -187,6 +191,7 @@ class OperatorAuditLogSerializer(serializers.ModelSerializer):
     """Operator audit log serializer"""
     operator_name = serializers.CharField(source='operator.name', read_only=True)
     user_name = serializers.CharField(source='performed_by_user.get_full_name', read_only=True, allow_null=True)
+    ip_address = serializers.CharField(required=False, allow_null=True)  # Override for DRF 3.14 compatibility
     
     class Meta:
         model = OperatorAuditLog
@@ -250,8 +255,8 @@ class OperatorDetailSerializer(serializers.ModelSerializer):
             'total_users', 'total_screenings', 'total_exclusions',
             'licenses', 'api_keys', 'integration_config', 'recent_audit_logs',
             'active_api_keys_count', 'metadata',
-            'address_line1', 'address_line2', 'city', 'county',
-            'country', 'latitude', 'longitude',
+            'city', 'county', 'country_code', 'postal_code',
+            'latitude', 'longitude', 'location_accuracy', 'altitude',
             'created_at', 'updated_at'
         ]
         read_only_fields = [
@@ -285,8 +290,9 @@ class RegisterOperatorSerializer(serializers.ModelSerializer):
             'email', 'phone', 'website',
             'license_number', 'license_type',
             'license_issued_date', 'license_expiry_date',
-            'address_line1', 'address_line2', 'city', 'county',
-            'country', 'terms_accepted'
+            'city', 'county', 'country_code', 'postal_code',
+            'latitude', 'longitude',
+            'terms_accepted'
         ]
     
     def validate(self, attrs):
@@ -393,7 +399,11 @@ class UpdateIntegrationSerializer(serializers.ModelSerializer):
 class TestWebhookSerializer(serializers.Serializer):
     """Test webhook serializer"""
     webhook_type = serializers.ChoiceField(
-        choices=['exclusion', 'screening', 'compliance'],
+        choices=[
+            ('exclusion', 'Exclusion'),
+            ('screening', 'Screening'),
+            ('compliance', 'Compliance')
+        ],
         required=True
     )
     test_data = serializers.JSONField(required=False)

@@ -33,6 +33,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class UserDeviceSerializer(serializers.ModelSerializer):
     """User device tracking serializer"""
     is_current_device = serializers.SerializerMethodField()
+    last_ip_address = serializers.CharField(required=False, allow_null=True)  # Override for DRF 3.14 compatibility
     
     class Meta:
         model = UserDevice
@@ -59,6 +60,7 @@ class UserDeviceSerializer(serializers.ModelSerializer):
 class LoginHistorySerializer(serializers.ModelSerializer):
     """Login history serializer"""
     session_duration_display = serializers.SerializerMethodField()
+    ip_address = serializers.CharField(required=False, allow_null=True)  # Override for DRF 3.14 compatibility
     
     class Meta:
         model = LoginHistory
@@ -109,6 +111,7 @@ class IdentityVerificationSerializer(serializers.ModelSerializer):
 class UserSessionSerializer(serializers.ModelSerializer):
     """User session serializer"""
     is_valid = serializers.SerializerMethodField()
+    ip_address = serializers.CharField(required=False, allow_null=True)  # Override for DRF 3.14 compatibility
     
     class Meta:
         model = UserSession
@@ -125,6 +128,7 @@ class UserSessionSerializer(serializers.ModelSerializer):
 
 class UserActivityLogSerializer(serializers.ModelSerializer):
     """User activity log serializer"""
+    ip_address = serializers.CharField(required=False, allow_null=True)  # Override for DRF 3.14 compatibility
     
     class Meta:
         model = UserActivityLog
@@ -176,7 +180,8 @@ class UserDetailSerializer(serializers.ModelSerializer):
             'is_active', 'is_locked', 'locked_until',
             'is_2fa_enabled', 'terms_accepted', 'privacy_policy_accepted',
             'profile', 'device_count', 'active_exclusions_count',
-            'country', 'county', 'city',
+            'country_code', 'county', 'city', 'postal_code',
+            'latitude', 'longitude',
             'created_at', 'updated_at', 'last_login_at'
         ]
         read_only_fields = [

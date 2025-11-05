@@ -44,9 +44,11 @@ class CreateWidgetSerializer(serializers.Serializer):
     """Create widget serializer"""
     widget_type = serializers.ChoiceField(
         choices=[
-            'exclusion_stats', 'risk_distribution',
-            'operator_compliance', 'api_performance',
-            'recent_activities'
+            ('exclusion_stats', 'Exclusion Stats'),
+            ('risk_distribution', 'Risk Distribution'),
+            ('operator_compliance', 'Operator Compliance'),
+            ('api_performance', 'API Performance'),
+            ('recent_activities', 'Recent Activities')
         ],
         required=True
     )

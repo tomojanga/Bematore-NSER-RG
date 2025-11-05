@@ -11,26 +11,18 @@ from .models import (
 
 class NotificationSerializer(serializers.ModelSerializer):
     """Notification serializer"""
-    recipient_name = serializers.SerializerMethodField()
-    channel_display = serializers.SerializerMethodField()
+    user_name = serializers.CharField(source='user.get_full_name', read_only=True)
+    notification_type_display = serializers.CharField(source='get_notification_type_display', read_only=True)
     
     class Meta:
         model = Notification
         fields = [
-            'id', 'recipient', 'recipient_name', 'channel', 'channel_display',
-            'notification_type', 'subject', 'message', 'status',
+            'id', 'user', 'user_name', 'notification_type', 'notification_type_display',
+            'category', 'title', 'message', 'status',
             'sent_at', 'delivered_at', 'read_at', 'retry_count',
             'priority', 'metadata', 'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'status', 'sent_at', 'delivered_at', 'read_at', 'retry_count', 'created_at', 'updated_at']
-    
-    def get_recipient_name(self, obj):
-        if obj.recipient:
-            return obj.recipient.get_full_name() or str(obj.recipient.phone_number)
-        return None
-    
-    def get_channel_display(self, obj):
-        return obj.get_channel_display()
 
 
 class NotificationTemplateSerializer(serializers.ModelSerializer):
@@ -39,44 +31,36 @@ class NotificationTemplateSerializer(serializers.ModelSerializer):
     class Meta:
         model = NotificationTemplate
         fields = [
-            'id', 'name', 'code', 'channel', 'language',
-            'subject_template', 'body_template', 'variables',
-            'is_active', 'description', 'created_at', 'updated_at'
+            'id', 'template_name', 'template_code', 'template_type', 'category',
+            'subject_en', 'subject_sw', 'subject_fr', 'subject_ar',
+            'body_en', 'body_sw', 'body_fr', 'body_ar',
+            'html_body_en', 'html_body_sw',
+            'variables', 'default_values', 'is_active', 'priority',
+            'requires_approval', 'usage_count', 'last_used_at',
+            'created_at', 'updated_at'
         ]
-        read_only_fields = ['id', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'usage_count', 'last_used_at', 'created_at', 'updated_at']
 
 
 class NotificationBatchSerializer(serializers.ModelSerializer):
     """Notification batch serializer"""
-    created_by_name = serializers.CharField(source='created_by.get_full_name', read_only=True)
-    total_notifications = serializers.SerializerMethodField()
-    sent_count = serializers.SerializerMethodField()
-    delivered_count = serializers.SerializerMethodField()
-    failed_count = serializers.SerializerMethodField()
+    created_by_name = serializers.CharField(source='created_by_user.get_full_name', read_only=True, allow_null=True)
     
     class Meta:
         model = NotificationBatch
         fields = [
-            'id', 'name', 'channel', 'notification_type', 'status',
-            'target_audience', 'total_recipients', 'total_notifications',
-            'sent_count', 'delivered_count', 'failed_count',
-            'scheduled_at', 'started_at', 'completed_at',
-            'created_by', 'created_by_name', 'metadata',
+            'id', 'batch_name', 'batch_type', 'status',
+            'target_user_ids', 'target_criteria', 'total_recipients',
+            'template', 'scheduled_at', 'started_at', 'completed_at',
+            'sent_count', 'delivered_count', 'failed_count', 'opened_count',
+            'created_by_user', 'created_by_name',
             'created_at', 'updated_at'
         ]
-        read_only_fields = ['id', 'status', 'started_at', 'completed_at', 'created_at', 'updated_at']
-    
-    def get_total_notifications(self, obj):
-        return obj.notifications.count()
-    
-    def get_sent_count(self, obj):
-        return obj.notifications.filter(status='sent').count()
-    
-    def get_delivered_count(self, obj):
-        return obj.notifications.filter(status='delivered').count()
-    
-    def get_failed_count(self, obj):
-        return obj.notifications.filter(status='failed').count()
+        read_only_fields = [
+            'id', 'status', 'started_at', 'completed_at',
+            'sent_count', 'delivered_count', 'failed_count', 'opened_count',
+            'created_at', 'updated_at'
+        ]
 
 
 class NotificationPreferenceSerializer(serializers.ModelSerializer):
@@ -88,14 +72,11 @@ class NotificationPreferenceSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'user', 'user_name',
             'email_enabled', 'sms_enabled', 'push_enabled',
-            'email_exclusion_alerts', 'email_screening_alerts',
-            'email_compliance_alerts', 'email_marketing',
-            'sms_exclusion_alerts', 'sms_screening_alerts',
-            'sms_compliance_alerts', 'sms_marketing',
-            'push_exclusion_alerts', 'push_screening_alerts',
-            'push_compliance_alerts', 'push_marketing',
-            'quiet_hours_start', 'quiet_hours_end',
-            'timezone', 'created_at', 'updated_at'
+            'assessment_reminders', 'exclusion_alerts', 'risk_warnings',
+            'compliance_notices', 'marketing',
+            'quiet_hours_enabled', 'quiet_hours_start', 'quiet_hours_end',
+            'max_sms_per_day', 'max_emails_per_day',
+            'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
 
@@ -106,7 +87,12 @@ class SendSMSSerializer(serializers.Serializer):
     message = serializers.CharField(required=True, max_length=500)
     notification_type = serializers.CharField(required=False, default='transactional')
     priority = serializers.ChoiceField(
-        choices=['low', 'normal', 'high', 'critical'],
+        choices=[
+            ('low', 'Low'),
+            ('normal', 'Normal'),
+            ('high', 'High'),
+            ('critical', 'Critical')
+        ],
         default='normal'
     )
     
@@ -128,7 +114,12 @@ class SendEmailSerializer(serializers.Serializer):
     html_message = serializers.CharField(required=False, allow_blank=True)
     notification_type = serializers.CharField(required=False, default='transactional')
     priority = serializers.ChoiceField(
-        choices=['low', 'normal', 'high', 'critical'],
+        choices=[
+            ('low', 'Low'),
+            ('normal', 'Normal'),
+            ('high', 'High'),
+            ('critical', 'Critical')
+        ],
         default='normal'
     )
 
@@ -141,50 +132,59 @@ class SendPushSerializer(serializers.Serializer):
     data = serializers.JSONField(required=False)
     notification_type = serializers.CharField(required=False, default='transactional')
     priority = serializers.ChoiceField(
-        choices=['low', 'normal', 'high', 'critical'],
+        choices=[
+            ('low', 'Low'),
+            ('normal', 'Normal'),
+            ('high', 'High'),
+            ('critical', 'Critical')
+        ],
         default='normal'
     )
 
 
 class EmailLogSerializer(serializers.ModelSerializer):
     """Email log serializer"""
-    notification_id = serializers.UUIDField(source='notification.id', read_only=True)
+    notification_id = serializers.UUIDField(source='notification.id', read_only=True, allow_null=True)
     
     class Meta:
         model = EmailLog
         fields = [
-            'id', 'notification', 'notification_id', 'to_email', 'from_email',
-            'subject', 'body', 'status', 'sent_at', 'delivered_at',
-            'opened_at', 'clicked_at', 'bounced_at', 'error_message',
-            'provider_message_id', 'created_at'
+            'id', 'notification', 'notification_id', 'from_email', 'to_email',
+            'cc_emails', 'bcc_emails', 'subject', 'body_text', 'body_html',
+            'attachments', 'provider', 'message_id', 'sent_at',
+            'opened_at', 'opened_count', 'clicked_at', 'clicked_count',
+            'bounced', 'bounce_reason', 'marked_as_spam',
+            'status', 'error_message', 'created_at'
         ]
         read_only_fields = ['id', 'created_at']
 
 
 class SMSLogSerializer(serializers.ModelSerializer):
     """SMS log serializer"""
-    notification_id = serializers.UUIDField(source='notification.id', read_only=True)
+    notification_id = serializers.UUIDField(source='notification.id', read_only=True, allow_null=True)
     
     class Meta:
         model = SMSLog
         fields = [
-            'id', 'notification', 'notification_id', 'to_phone', 'message',
-            'status', 'sent_at', 'delivered_at', 'error_message',
-            'provider_message_id', 'cost_amount', 'cost_currency',
-            'created_at'
+            'id', 'notification', 'notification_id', 'phone_number', 'message',
+            'sender_id', 'provider', 'message_id', 'sms_count',
+            'cost_per_sms', 'total_cost', 'currency',
+            'status', 'sent_at', 'delivered_at',
+            'delivery_status', 'delivery_error', 'created_at'
         ]
         read_only_fields = ['id', 'created_at']
 
 
 class PushNotificationLogSerializer(serializers.ModelSerializer):
     """Push notification log serializer"""
-    notification_id = serializers.UUIDField(source='notification.id', read_only=True)
+    notification_id = serializers.UUIDField(source='notification.id', read_only=True, allow_null=True)
     
     class Meta:
         model = PushNotificationLog
         fields = [
-            'id', 'notification', 'notification_id', 'device_token',
-            'title', 'body', 'data', 'status', 'sent_at', 'delivered_at',
-            'error_message', 'provider_message_id', 'created_at'
+            'id', 'notification', 'notification_id', 'device_token', 'device_type',
+            'title', 'body', 'image_url', 'action_url', 'custom_data',
+            'provider', 'message_id', 'status', 'sent_at', 'delivered_at',
+            'opened_at', 'dismissed_at', 'error_message', 'created_at'
         ]
         read_only_fields = ['id', 'created_at']

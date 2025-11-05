@@ -88,6 +88,7 @@ class APIRequestLogSerializer(serializers.ModelSerializer):
     """API request log serializer"""
     status_category = serializers.SerializerMethodField()
     is_slow = serializers.SerializerMethodField()
+    ip_address = serializers.CharField(required=False, allow_null=True)  # Override for DRF 3.14 compatibility
     
     class Meta:
         model = APIRequestLog
@@ -208,7 +209,12 @@ class TriggerAlertSerializer(serializers.Serializer):
     alert_name = serializers.CharField(required=True, max_length=255)
     alert_type = serializers.CharField(required=True, max_length=50)
     severity = serializers.ChoiceField(
-        choices=['low', 'medium', 'high', 'critical'],
+        choices=[
+            ('low', 'Low'),
+            ('medium', 'Medium'),
+            ('high', 'High'),
+            ('critical', 'Critical')
+        ],
         required=True
     )
     message = serializers.CharField(required=True)

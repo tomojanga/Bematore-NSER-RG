@@ -103,7 +103,11 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
 class Enable2FASerializer(serializers.Serializer):
     """Enable 2FA serializer"""
     method = serializers.ChoiceField(
-        choices=['totp', 'sms', 'email'],
+        choices=[
+            ('totp', 'TOTP'),
+            ('sms', 'SMS'),
+            ('email', 'Email')
+        ],
         required=True
     )
     phone_number = serializers.CharField(required=False)
@@ -189,7 +193,10 @@ class OAuthAuthorizeSerializer(serializers.Serializer):
     client_id = serializers.CharField(required=True)
     redirect_uri = serializers.URLField(required=True)
     response_type = serializers.ChoiceField(
-        choices=['code', 'token'],
+        choices=[
+            ('code', 'Code'),
+            ('token', 'Token')
+        ],
         default='code'
     )
     scope = serializers.CharField(required=False)

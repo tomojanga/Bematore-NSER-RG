@@ -107,9 +107,15 @@ class GenerateReportSerializer(serializers.Serializer):
     """Generate report serializer"""
     report_type = serializers.ChoiceField(
         choices=[
-            'monthly_summary', 'quarterly_summary', 'annual_summary',
-            'operator_performance', 'user_activity', 'compliance',
-            'financial', 'risk_assessment', 'custom'
+            ('monthly_summary', 'Monthly Summary'),
+            ('quarterly_summary', 'Quarterly Summary'),
+            ('annual_summary', 'Annual Summary'),
+            ('operator_performance', 'Operator Performance'),
+            ('user_activity', 'User Activity'),
+            ('compliance', 'Compliance'),
+            ('financial', 'Financial'),
+            ('risk_assessment', 'Risk Assessment'),
+            ('custom', 'Custom')
         ],
         required=True
     )
@@ -120,7 +126,12 @@ class GenerateReportSerializer(serializers.Serializer):
         required=False
     )
     format = serializers.ChoiceField(
-        choices=['pdf', 'excel', 'csv', 'json'],
+        choices=[
+            ('pdf', 'PDF'),
+            ('excel', 'Excel'),
+            ('csv', 'CSV'),
+            ('json', 'JSON')
+        ],
         default='pdf'
     )
     operator_ids = serializers.ListField(
@@ -139,11 +150,21 @@ class GenerateReportSerializer(serializers.Serializer):
 class DataExportSerializer(serializers.Serializer):
     """Data export serializer"""
     data_type = serializers.ChoiceField(
-        choices=['users', 'exclusions', 'assessments', 'transactions', 'operators'],
+        choices=[
+            ('users', 'Users'),
+            ('exclusions', 'Exclusions'),
+            ('assessments', 'Assessments'),
+            ('transactions', 'Transactions'),
+            ('operators', 'Operators')
+        ],
         required=True
     )
     format = serializers.ChoiceField(
-        choices=['csv', 'excel', 'json'],
+        choices=[
+            ('csv', 'CSV'),
+            ('excel', 'Excel'),
+            ('json', 'JSON')
+        ],
         required=True
     )
     period_start = serializers.DateField(required=False)

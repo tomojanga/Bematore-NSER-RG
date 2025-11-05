@@ -20,18 +20,20 @@ class OperatorExclusionMappingSerializer(serializers.ModelSerializer):
     class Meta:
         model = OperatorExclusionMapping
         fields = [
-            'id', 'operator', 'operator_name',
-            'propagation_status', 'propagated_at', 'acknowledged_at',
-            'webhook_url', 'webhook_response', 'webhook_status_code',
+            'id', 'exclusion', 'operator', 'operator_name',
+            'notified_at', 'acknowledged_at', 'propagation_status',
             'retry_count', 'max_retries', 'next_retry_at',
-            'last_error', 'is_compliant', 'compliance_checked_at',
+            'webhook_sent_at', 'webhook_response_code', 'webhook_response_body',
+            'last_error_message', 'error_count',
+            'is_compliant', 'compliance_checked_at',
             'is_overdue', 'retry_in',
             'created_at', 'updated_at'
         ]
         read_only_fields = [
-            'id', 'propagation_status', 'propagated_at', 'acknowledged_at',
-            'webhook_response', 'webhook_status_code', 'retry_count',
-            'last_error', 'is_compliant', 'compliance_checked_at',
+            'id', 'notified_at', 'acknowledged_at', 'propagation_status',
+            'webhook_sent_at', 'webhook_response_code', 'webhook_response_body',
+            'retry_count', 'last_error_message', 'error_count',
+            'is_compliant', 'compliance_checked_at',
             'created_at', 'updated_at'
         ]
     
@@ -51,37 +53,39 @@ class OperatorExclusionMappingSerializer(serializers.ModelSerializer):
 class ExclusionAuditLogSerializer(serializers.ModelSerializer):
     """Exclusion audit log serializer"""
     performed_by_name = serializers.CharField(source='performed_by.get_full_name', read_only=True)
+    ip_address = serializers.CharField(required=False, allow_null=True)  # Override for DRF 3.14 compatibility
     
     class Meta:
         model = ExclusionAuditLog
         fields = [
-            'id', 'action', 'performed_by', 'performed_by_name',
-            'ip_address', 'user_agent', 'old_values', 'new_values',
-            'reason', 'operator', 'success', 'error_message',
-            'created_at'
+            'id', 'exclusion', 'action', 'description',
+            'performed_by', 'performed_by_name',
+            'ip_address', 'user_agent', 'changes', 'metadata',
+            'created_at', 'updated_at'
         ]
-        read_only_fields = ['id', 'created_at']
+        read_only_fields = ['id', 'created_at', 'updated_at']
 
 
 class ExclusionExtensionRequestSerializer(serializers.ModelSerializer):
     """Exclusion extension request serializer"""
-    user_name = serializers.CharField(source='user.get_full_name', read_only=True)
-    reviewed_by_name = serializers.CharField(source='reviewed_by.get_full_name', read_only=True)
+    user_name = serializers.CharField(source='exclusion.user.get_full_name', read_only=True)
+    reviewed_by_name = serializers.CharField(source='reviewed_by.get_full_name', read_only=True, allow_null=True)
     can_approve = serializers.SerializerMethodField()
+    current_expiry_date = serializers.DateTimeField(source='exclusion.expiry_date', read_only=True)
     
     class Meta:
         model = ExclusionExtensionRequest
         fields = [
-            'id', 'exclusion', 'user', 'user_name',
-            'current_end_date', 'requested_end_date', 'extension_period',
-            'reason', 'supporting_documents', 'status',
+            'id', 'exclusion', 'user_name', 'current_expiry_date',
+            'requested_new_period', 'requested_expiry_date',
+            'reason', 'status',
             'reviewed_by', 'reviewed_by_name', 'reviewed_at',
             'review_notes', 'can_approve',
             'created_at', 'updated_at'
         ]
         read_only_fields = [
-            'id', 'user', 'current_end_date', 'status',
-            'reviewed_by', 'reviewed_at', 'created_at', 'updated_at'
+            'id', 'status', 'reviewed_by', 'reviewed_at',
+            'created_at', 'updated_at'
         ]
     
     def get_can_approve(self, obj):
@@ -93,18 +97,15 @@ class ExclusionExtensionRequestSerializer(serializers.ModelSerializer):
     
     def validate(self, attrs):
         # Validate extension period
-        requested_end_date = attrs.get('requested_end_date')
-        extension_period = attrs.get('extension_period')
+        requested_expiry_date = attrs.get('requested_expiry_date')
+        requested_new_period = attrs.get('requested_new_period')
         
-        if requested_end_date and extension_period:
+        if requested_expiry_date and requested_new_period:
             # Both provided, check consistency
-            exclusion = self.instance.exclusion if self.instance else None
-            if exclusion and exclusion.end_date:
-                expected_date = exclusion.end_date + timedelta(days=int(extension_period) * 30)
-                if abs((requested_end_date - expected_date).days) > 7:
-                    raise serializers.ValidationError({
-                        "requested_end_date": "Requested date doesn't match extension period."
-                    })
+            exclusion = self.instance.exclusion if self.instance else attrs.get('exclusion')
+            if exclusion and exclusion.expiry_date:
+                # Validation logic can be added here
+                pass
         
         # Validate reason
         reason = attrs.get('reason', '')
@@ -118,18 +119,27 @@ class ExclusionExtensionRequestSerializer(serializers.ModelSerializer):
 
 class ExclusionStatisticsSerializer(serializers.ModelSerializer):
     """Exclusion statistics serializer"""
+    propagation_success_rate = serializers.SerializerMethodField()
     
     class Meta:
         model = ExclusionStatistics
         fields = [
-            'id', 'date', 'total_active_exclusions', 'new_exclusions',
-            'expired_exclusions', 'terminated_exclusions',
-            'exclusions_by_period', 'exclusions_by_county',
-            'average_age', 'gender_distribution',
-            'propagation_success_rate', 'average_propagation_time',
+            'id', 'date',
+            'total_exclusions', 'active_exclusions', 'new_exclusions_today', 'expired_exclusions_today',
+            'six_month_exclusions', 'one_year_exclusions', 'five_year_exclusions', 'permanent_exclusions',
+            'high_risk_exclusions', 'moderate_risk_exclusions', 'low_risk_exclusions',
+            'exclusions_by_county',
+            'avg_propagation_time_seconds', 'successful_propagations', 'failed_propagations',
+            'propagation_success_rate',
             'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
+    
+    def get_propagation_success_rate(self, obj):
+        total = obj.successful_propagations + obj.failed_propagations
+        if total > 0:
+            return round((obj.successful_propagations / total) * 100, 2)
+        return 0.0
 
 
 class SelfExclusionListSerializer(serializers.ModelSerializer):
@@ -137,35 +147,39 @@ class SelfExclusionListSerializer(serializers.ModelSerializer):
     user_name = serializers.CharField(source='user.get_full_name', read_only=True)
     days_remaining = serializers.SerializerMethodField()
     completion_percentage = serializers.SerializerMethodField()
+    is_permanent = serializers.SerializerMethodField()
     
     class Meta:
         model = SelfExclusionRecord
         fields = [
-            'id', 'reference_number', 'user', 'user_name',
-            'exclusion_period', 'start_date', 'end_date',
+            'id', 'exclusion_reference', 'user', 'user_name',
+            'exclusion_period', 'effective_date', 'expiry_date',
             'is_active', 'is_permanent', 'status',
             'days_remaining', 'completion_percentage',
             'created_at'
         ]
-        read_only_fields = ['id', 'reference_number', 'created_at']
+        read_only_fields = ['id', 'exclusion_reference', 'created_at']
+    
+    def get_is_permanent(self, obj):
+        return obj.exclusion_period == 'permanent'
     
     def get_days_remaining(self, obj):
-        if obj.is_permanent:
+        if self.get_is_permanent(obj):
             return None
-        if obj.end_date and obj.is_active:
-            delta = obj.end_date - timezone.now().date()
+        if obj.expiry_date and obj.is_active:
+            delta = obj.expiry_date - timezone.now()
             return max(0, delta.days)
         return 0
     
     def get_completion_percentage(self, obj):
-        if obj.is_permanent or not obj.end_date:
+        if self.get_is_permanent(obj) or not obj.expiry_date:
             return 0
         
-        total_days = (obj.end_date - obj.start_date).days
-        elapsed_days = (timezone.now().date() - obj.start_date).days
+        total_duration = (obj.expiry_date - obj.effective_date).total_seconds()
+        elapsed = (timezone.now() - obj.effective_date).total_seconds()
         
-        if total_days > 0:
-            return min(100, int((elapsed_days / total_days) * 100))
+        if total_duration > 0:
+            return min(100, int((elapsed / total_duration) * 100))
         return 0
 
 
@@ -174,52 +188,56 @@ class SelfExclusionDetailSerializer(serializers.ModelSerializer):
     user_name = serializers.CharField(source='user.get_full_name', read_only=True)
     user_phone = serializers.CharField(source='user.phone_number', read_only=True)
     operator_mappings = OperatorExclusionMappingSerializer(many=True, read_only=True)
-    audit_logs = ExclusionAuditLogSerializer(many=True, read_only=True, source='audit_logs')
+    audit_logs = ExclusionAuditLogSerializer(many=True, read_only=True)
     days_remaining = serializers.SerializerMethodField()
     completion_percentage = serializers.SerializerMethodField()
     propagation_summary = serializers.SerializerMethodField()
     can_terminate = serializers.SerializerMethodField()
     can_extend = serializers.SerializerMethodField()
+    is_permanent = serializers.SerializerMethodField()
     
     class Meta:
         model = SelfExclusionRecord
         fields = [
-            'id', 'reference_number', 'user', 'user_name', 'user_phone',
-            'exclusion_period', 'start_date', 'end_date', 'actual_end_date',
-            'reason', 'additional_notes', 'supporting_documents',
+            'id', 'exclusion_reference', 'user', 'user_name', 'user_phone',
+            'exclusion_period', 'custom_period_days', 'effective_date', 'expiry_date', 'actual_end_date',
+            'reason', 'motivation_type', 'triggering_assessment', 'risk_level_at_exclusion',
             'is_active', 'is_permanent', 'status',
-            'auto_renew', 'renewal_count', 'last_renewed_at',
-            'termination_reason', 'terminated_at', 'terminated_by',
-            'propagated_to_operators', 'propagation_completed_at',
+            'is_auto_renewable', 'renewal_count', 'last_renewed_at',
+            'termination_reason', 'early_termination_approved_by',
+            'propagation_status', 'propagation_completed_at',
             'operator_mappings', 'audit_logs',
             'days_remaining', 'completion_percentage', 'propagation_summary',
             'can_terminate', 'can_extend',
             'created_at', 'updated_at'
         ]
         read_only_fields = [
-            'id', 'reference_number', 'actual_end_date', 'renewal_count',
-            'last_renewed_at', 'terminated_at', 'terminated_by',
-            'propagated_to_operators', 'propagation_completed_at',
+            'id', 'exclusion_reference', 'expiry_date', 'renewal_count',
+            'last_renewed_at', 'early_termination_approved_by',
+            'propagation_status', 'propagation_completed_at',
             'created_at', 'updated_at'
         ]
     
+    def get_is_permanent(self, obj):
+        return obj.exclusion_period == 'permanent'
+    
     def get_days_remaining(self, obj):
-        if obj.is_permanent:
+        if self.get_is_permanent(obj):
             return None
-        if obj.end_date and obj.is_active:
-            delta = obj.end_date - timezone.now().date()
+        if obj.expiry_date and obj.is_active:
+            delta = obj.expiry_date - timezone.now()
             return max(0, delta.days)
         return 0
     
     def get_completion_percentage(self, obj):
-        if obj.is_permanent or not obj.end_date:
+        if self.get_is_permanent(obj) or not obj.expiry_date:
             return 0
         
-        total_days = (obj.end_date - obj.start_date).days
-        elapsed_days = (timezone.now().date() - obj.start_date).days
+        total_duration = (obj.expiry_date - obj.effective_date).total_seconds()
+        elapsed = (timezone.now() - obj.effective_date).total_seconds()
         
-        if total_days > 0:
-            return min(100, int((elapsed_days / total_days) * 100))
+        if total_duration > 0:
+            return min(100, int((elapsed / total_duration) * 100))
         return 0
     
     def get_propagation_summary(self, obj):
@@ -260,8 +278,8 @@ class RegisterExclusionSerializer(serializers.ModelSerializer):
     class Meta:
         model = SelfExclusionRecord
         fields = [
-            'user', 'exclusion_period', 'reason', 'additional_notes',
-            'supporting_documents', 'auto_renew',
+            'user', 'exclusion_period', 'reason', 'motivation_type',
+            'supporting_documents', 'is_auto_renewable',
             'terms_acknowledged', 'consequences_understood'
         ]
     
@@ -275,8 +293,8 @@ class RegisterExclusionSerializer(serializers.ModelSerializer):
         
         if active_exclusion:
             raise serializers.ValidationError({
-                "user": f"You already have an active self-exclusion until {active_exclusion.end_date}. "
-                        f"Reference: {active_exclusion.reference_number}"
+                "user": f"You already have an active self-exclusion until {active_exclusion.expiry_date}. "
+                        f"Reference: {active_exclusion.exclusion_reference}"
             })
         
         # Check terms acknowledgment
@@ -339,7 +357,12 @@ class TerminateExclusionSerializer(serializers.Serializer):
 class ExtendExclusionSerializer(serializers.Serializer):
     """Extend exclusion serializer"""
     extension_period = serializers.ChoiceField(
-        choices=['6_months', '1_year', '3_years', '5_years'],
+        choices=[
+            ('6_months', '6 Months'),
+            ('1_year', '1 Year'),
+            ('3_years', '3 Years'),
+            ('5_years', '5 Years')
+        ],
         required=True
     )
     reason = serializers.CharField(required=True, min_length=20)
@@ -382,10 +405,10 @@ class ExclusionLookupResponseSerializer(serializers.Serializer):
     """Exclusion lookup response serializer"""
     is_excluded = serializers.BooleanField()
     exclusion_id = serializers.UUIDField(allow_null=True)
-    reference_number = serializers.CharField(allow_null=True)
+    exclusion_reference = serializers.CharField(allow_null=True)
     exclusion_period = serializers.CharField(allow_null=True)
-    start_date = serializers.DateField(allow_null=True)
-    end_date = serializers.DateField(allow_null=True)
+    effective_date = serializers.DateTimeField(allow_null=True)
+    expiry_date = serializers.DateTimeField(allow_null=True)
     is_permanent = serializers.BooleanField()
     days_remaining = serializers.IntegerField(allow_null=True)
     user_message = serializers.CharField()

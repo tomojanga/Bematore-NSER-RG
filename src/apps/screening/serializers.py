@@ -294,11 +294,18 @@ class AssessmentSessionDetailSerializer(serializers.ModelSerializer):
 class StartAssessmentSerializer(serializers.Serializer):
     """Start assessment serializer"""
     assessment_type = serializers.ChoiceField(
-        choices=['lie_bet', 'pgsi', 'dsm5'],
+        choices=[
+            ('lie_bet', 'Lie/Bet'),
+            ('pgsi', 'PGSI'),
+            ('dsm5', 'DSM-5')
+        ],
         required=True
     )
     language = serializers.ChoiceField(
-        choices=['en', 'sw'],
+        choices=[
+            ('en', 'English'),
+            ('sw', 'Swahili')
+        ],
         default='en'
     )
     operator_id = serializers.UUIDField(required=False, allow_null=True)

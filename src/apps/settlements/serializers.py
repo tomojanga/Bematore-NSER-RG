@@ -63,10 +63,12 @@ class TransactionSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'operator', 'operator_name', 'transaction_reference',
             'transaction_type', 'amount', 'currency', 'status',
-            'payment_method', 'phone_number', 'mpesa_receipt_number',
-            'description', 'created_at', 'updated_at'
+            'payment_method', 'payment_reference',
+            'initiated_at', 'completed_at',
+            'description', 'metadata',
+            'created_at', 'updated_at'
         ]
-        read_only_fields = ['id', 'transaction_reference', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'transaction_reference', 'initiated_at', 'completed_at', 'created_at', 'updated_at']
 
 
 class TransactionListSerializer(serializers.ModelSerializer):
@@ -132,13 +134,26 @@ class InitiateTransactionSerializer(serializers.Serializer):
     """Initiate transaction serializer"""
     operator_id = serializers.UUIDField(required=True)
     transaction_type = serializers.ChoiceField(
-        choices=['screening_fee', 'license_fee', 'monthly_subscription', 'penalty'],
+        choices=[
+            ('screening_fee', 'Screening Fee'),
+            ('license_fee', 'License Fee'),
+            ('monthly_subscription', 'Monthly Subscription'),
+            ('penalty', 'Penalty')
+        ],
         required=True
     )
     amount = serializers.DecimalField(max_digits=15, decimal_places=2, required=True)
-    currency = serializers.ChoiceField(choices=['KES', 'USD'], default='KES')
+    currency = serializers.ChoiceField(
+        choices=[('KES', 'Kenyan Shilling'), ('USD', 'US Dollar')],
+        default='KES'
+    )
     payment_method = serializers.ChoiceField(
-        choices=['mpesa', 'bank_transfer', 'card', 'wallet'],
+        choices=[
+            ('mpesa', 'M-Pesa'),
+            ('bank_transfer', 'Bank Transfer'),
+            ('card', 'Card'),
+            ('wallet', 'Wallet')
+        ],
         required=True
     )
     description = serializers.CharField(required=False, allow_blank=True)
@@ -365,7 +380,11 @@ class MPesaB2BSerializer(serializers.Serializer):
     initiator_name = serializers.CharField(required=True)
     security_credential = serializers.CharField(required=True)
     command_id = serializers.ChoiceField(
-        choices=['BusinessPayment', 'BusinessBuyGoods', 'DisburseFundsToBusiness'],
+        choices=[
+            ('BusinessPayment', 'Business Payment'),
+            ('BusinessBuyGoods', 'Business Buy Goods'),
+            ('DisburseFundsToBusiness', 'Disburse Funds to Business')
+        ],
         default='BusinessPayment'
     )
     amount = serializers.DecimalField(max_digits=15, decimal_places=2, required=True)

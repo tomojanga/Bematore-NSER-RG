@@ -18,46 +18,46 @@ class BSTMappingSerializer(serializers.ModelSerializer):
     class Meta:
         model = BSTMapping
         fields = [
-            'id', 'operator', 'operator_name',
-            'operator_user_id', 'first_activity_date', 'last_activity_date',
-            'total_bets', 'total_amount_wagered', 'win_loss_ratio',
-            'last_bet_date', 'is_active', 'is_blocked',
-            'blocked_reason', 'blocked_at',
+            'id', 'bst_token', 'operator', 'operator_name',
+            'operator_user_id', 'operator_username', 'first_seen_at', 'last_seen_at',
+            'interaction_count', 'last_activity_type', 'is_active', 
+            'is_primary_operator', 'metadata',
             'is_recent', 'created_at', 'updated_at'
         ]
         read_only_fields = [
-            'id', 'first_activity_date', 'last_activity_date',
-            'total_bets', 'total_amount_wagered', 'win_loss_ratio',
-            'last_bet_date', 'blocked_at', 'created_at', 'updated_at'
+            'id', 'first_seen_at', 'last_seen_at',
+            'interaction_count', 'created_at', 'updated_at'
         ]
     
     def get_is_recent(self, obj):
-        if obj.last_activity_date:
-            days_ago = (timezone.now().date() - obj.last_activity_date).days
+        if obj.last_seen_at:
+            days_ago = (timezone.now() - obj.last_seen_at).days
             return days_ago <= 30
         return False
 
 
 class BSTCrossReferenceSerializer(serializers.ModelSerializer):
     """BST cross-reference serializer for fraud detection"""
-    match_confidence_display = serializers.SerializerMethodField()
+    confidence_display = serializers.SerializerMethodField()
     
     class Meta:
         model = BSTCrossReference
         fields = [
-            'id', 'identifier_type', 'identifier_hash',
-            'match_confidence', 'match_confidence_display',
-            'match_data', 'is_verified', 'verified_at',
-            'is_flagged_as_fraud', 'fraud_reason', 'flagged_at',
+            'id', 'bst_token', 'identifier_type', 'identifier_hash',
+            'first_detected_at', 'detection_source', 'confidence_score',
+            'confidence_display', 'is_verified', 'is_active',
             'created_at', 'updated_at'
         ]
         read_only_fields = [
-            'id', 'identifier_hash', 'match_confidence', 'match_data',
-            'verified_at', 'flagged_at', 'created_at', 'updated_at'
+            'id', 'identifier_hash', 'first_detected_at', 
+            'created_at', 'updated_at'
         ]
+        extra_kwargs = {
+            'identifier_type': {'required': True},
+        }
     
-    def get_match_confidence_display(self, obj):
-        confidence = obj.match_confidence
+    def get_confidence_display(self, obj):
+        confidence = float(obj.confidence_score) / 100.0  # Convert to 0-1 range
         if confidence >= 0.95:
             return 'Very High'
         elif confidence >= 0.85:
@@ -74,15 +74,14 @@ class BSTAuditLogSerializer(serializers.ModelSerializer):
     """BST audit log serializer"""
     performed_by_name = serializers.CharField(source='performed_by.get_full_name', read_only=True, allow_null=True)
     operator_name = serializers.CharField(source='operator.name', read_only=True, allow_null=True)
+    ip_address = serializers.CharField(required=False, allow_null=True)  # Override for DRF 3.14 compatibility
     
     class Meta:
         model = BSTAuditLog
         fields = [
-            'id', 'action', 'performed_by', 'performed_by_name',
+            'id', 'bst_token', 'action', 'performed_by', 'performed_by_name',
             'operator', 'operator_name', 'ip_address', 'user_agent',
-            'request_data', 'response_data', 'success',
-            'error_message', 'response_time_ms',
-            'created_at'
+            'details', 'success', 'error_message', 'created_at'
         ]
         read_only_fields = ['id', 'created_at']
 
@@ -112,18 +111,18 @@ class BSTTokenListSerializer(serializers.ModelSerializer):
     class Meta:
         model = BSTToken
         fields = [
-            'id', 'token_string', 'token_version', 'user', 'user_name',
-            'is_active', 'is_compromised', 'generated_at', 'expires_at',
+            'id', 'token', 'token_version', 'user', 'user_name',
+            'is_active', 'is_compromised', 'issued_at', 'expires_at',
             'age_days', 'mapping_count', 'created_at'
         ]
         read_only_fields = [
-            'id', 'token_string', 'token_version',
-            'generated_at', 'created_at'
+            'id', 'token', 'token_version',
+            'issued_at', 'created_at'
         ]
     
     def get_age_days(self, obj):
-        if obj.generated_at:
-            delta = timezone.now() - obj.generated_at
+        if obj.issued_at:
+            delta = timezone.now() - obj.issued_at
             return delta.days
         return 0
     
@@ -137,36 +136,35 @@ class BSTTokenDetailSerializer(serializers.ModelSerializer):
     user_phone = serializers.CharField(source='user.phone_number', read_only=True)
     mappings = BSTMappingSerializer(many=True, read_only=True)
     cross_references = BSTCrossReferenceSerializer(many=True, read_only=True)
-    audit_logs = BSTAuditLogSerializer(many=True, read_only=True, source='audit_logs')
+    audit_logs = BSTAuditLogSerializer(many=True, read_only=True)
     age_days = serializers.SerializerMethodField()
     days_until_expiry = serializers.SerializerMethodField()
-    validation_count = serializers.SerializerMethodField()
     is_valid = serializers.SerializerMethodField()
     
     class Meta:
         model = BSTToken
         fields = [
-            'id', 'token_string', 'token_version', 'checksum',
+            'id', 'token', 'token_version', 'token_checksum',
             'user', 'user_name', 'user_phone',
-            'hashed_phone', 'hashed_national_id', 'hashed_email',
+            'phone_number_hash', 'national_id_hash', 'biometric_hash',
             'is_active', 'is_compromised', 'compromised_reason',
-            'compromised_at', 'rotation_count', 'last_rotated_at',
-            'generated_at', 'expires_at', 'last_validated_at',
-            'validation_count', 'age_days', 'days_until_expiry',
+            'compromised_at', 'rotation_count', 'rotated_at',
+            'issued_at', 'expires_at', 'last_used_at',
+            'lookup_count', 'age_days', 'days_until_expiry',
             'is_valid', 'mappings', 'cross_references', 'audit_logs',
-            'metadata', 'created_at', 'updated_at'
+            'generation_metadata', 'created_at', 'updated_at'
         ]
         read_only_fields = [
-            'id', 'token_string', 'token_version', 'checksum',
-            'hashed_phone', 'hashed_national_id', 'hashed_email',
-            'compromised_at', 'rotation_count', 'last_rotated_at',
-            'generated_at', 'expires_at', 'last_validated_at',
-            'validation_count', 'created_at', 'updated_at'
+            'id', 'token', 'token_version', 'token_checksum',
+            'phone_number_hash', 'national_id_hash', 'biometric_hash',
+            'compromised_at', 'rotation_count', 'rotated_at',
+            'issued_at', 'last_used_at', 'lookup_count',
+            'created_at', 'updated_at'
         ]
     
     def get_age_days(self, obj):
-        if obj.generated_at:
-            delta = timezone.now() - obj.generated_at
+        if obj.issued_at:
+            delta = timezone.now() - obj.issued_at
             return delta.days
         return 0
     
@@ -176,11 +174,9 @@ class BSTTokenDetailSerializer(serializers.ModelSerializer):
             return max(0, delta.days)
         return None
     
-    def get_validation_count(self, obj):
-        return obj.validation_count
-    
     def get_is_valid(self, obj):
-        return obj.is_valid()
+        # Check if token is active and not compromised
+        return obj.is_active and not obj.is_compromised
 
 
 class GenerateBSTTokenSerializer(serializers.Serializer):
@@ -343,7 +339,13 @@ class RecordActivitySerializer(serializers.Serializer):
     token_id = serializers.UUIDField(required=True)
     operator_id = serializers.UUIDField(required=True)
     activity_type = serializers.ChoiceField(
-        choices=['bet', 'deposit', 'withdrawal', 'login', 'registration']
+        choices=[
+            ('bet', 'Bet'),
+            ('deposit', 'Deposit'),
+            ('withdrawal', 'Withdrawal'),
+            ('login', 'Login'),
+            ('registration', 'Registration')
+        ]
     )
     amount = serializers.DecimalField(
         max_digits=15,
@@ -358,7 +360,13 @@ class LinkIdentifierSerializer(serializers.Serializer):
     """Link identifier to BST for cross-reference"""
     token_id = serializers.UUIDField(required=True)
     identifier_type = serializers.ChoiceField(
-        choices=['phone', 'email', 'national_id', 'device_id', 'ip_address']
+        choices=[
+            ('phone', 'Phone Number'),
+            ('email', 'Email Address'),
+            ('national_id', 'National ID'),
+            ('device_id', 'Device ID'),
+            ('ip_address', 'IP Address')
+        ]
     )
     identifier_value = serializers.CharField(required=True)
 
@@ -405,7 +413,12 @@ class FraudCheckSerializer(serializers.Serializer):
     token_id = serializers.UUIDField(required=False)
     user_id = serializers.UUIDField(required=False)
     check_type = serializers.ChoiceField(
-        choices=['duplicate_accounts', 'compromised_token', 'suspicious_activity', 'all'],
+        choices=[
+            ('duplicate_accounts', 'Duplicate Accounts'),
+            ('compromised_token', 'Compromised Token'),
+            ('suspicious_activity', 'Suspicious Activity'),
+            ('all', 'All Checks')
+        ],
         default='all'
     )
     
