@@ -1,12 +1,12 @@
 'use client'
 
-import { useNotifications, useNotificationStats } from '@/hooks/useNotifications'
+import { useNotifications, useNotificationStatistics } from '@/hooks/useNotifications'
 import { Bell, Mail, MessageSquare, CheckCircle, Eye } from 'lucide-react'
-import { formatDateTime } from '@/lib/utils'
 
 export default function NotificationsPage() {
-  const { notifications, unread, markAsRead, markAllAsRead, isLoading } = useNotifications()
-  const { data: stats } = useNotificationStats()
+  const { notifications, markAsRead, markAllAsRead, isLoading } = useNotifications()
+  const { data: stats } = useNotificationStatistics()
+  const unread = notifications.filter(n => !n.read_at).length
 
   const getChannelIcon = (channel: string) => {
     const icons: Record<string, any> = {
@@ -140,7 +140,7 @@ export default function NotificationsPage() {
                               via {notification.channel.toUpperCase()}
                             </span>
                             <span className="text-xs text-gray-500">
-                              {formatDateTime(notification.created_at)}
+                              {new Date(notification.created_at).toLocaleDateString()}
                             </span>
                           </div>
                         </div>
@@ -162,7 +162,7 @@ export default function NotificationsPage() {
 
                       {notification.read_at && (
                         <p className="text-xs text-gray-400 mt-2">
-                          Read at {formatDateTime(notification.read_at)}
+                          Read at {new Date(notification.read_at).toLocaleDateString()}
                         </p>
                       )}
                     </div>

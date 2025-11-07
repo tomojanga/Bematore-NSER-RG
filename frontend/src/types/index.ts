@@ -673,6 +673,7 @@ export interface ComplianceReport {
   warnings_issued: number
   overall_score: number
   is_compliant: boolean
+  status?: 'draft' | 'completed' | 'pending' | 'reviewed'
   reviewed_by?: string
   reviewed_at?: string
   file_url?: string

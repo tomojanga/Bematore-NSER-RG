@@ -1,9 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { useAuditLogs, useComplianceReports, useComplianceStats } from '@/hooks/useCompliance'
+import { useAuditLogs, useComplianceReports, useComplianceStatistics } from '@/hooks/useCompliance'
 import { FileText, Download, Shield, AlertCircle, CheckCircle } from 'lucide-react'
-import { formatDateTime } from '@/lib/utils'
 
 export default function CompliancePage() {
   const [activeTab, setActiveTab] = useState<'audit' | 'reports'>('audit')
@@ -11,7 +10,7 @@ export default function CompliancePage() {
   
   const { data: auditData, isLoading: loadingAudit } = useAuditLogs({ page, page_size: 20 })
   const { reports, isLoading: loadingReports } = useComplianceReports({ page, page_size: 20 })
-  const { data: stats } = useComplianceStats()
+  const { data: stats } = useComplianceStatistics()
 
   const auditLogs = auditData?.results || []
   const totalAudit = auditData?.count || 0
@@ -117,7 +116,7 @@ export default function CompliancePage() {
                             {log.user_name || 'System'}
                           </span>
                           <span className="text-xs text-gray-500">
-                            {formatDateTime(log.created_at)}
+                            {new Date(log.created_at).toLocaleDateString()}
                           </span>
                         </div>
                         <p className="text-sm text-gray-700 mb-2">{log.description}</p>
@@ -183,7 +182,7 @@ export default function CompliancePage() {
                           {report.operator_name}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {report.report_type}
+                          Compliance Report
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {report.report_period_start} to {report.report_period_end}
@@ -197,10 +196,10 @@ export default function CompliancePage() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-center">
                           <span className={`font-medium ${
-                            report.compliance_score >= 80 ? 'text-green-600' :
-                            report.compliance_score >= 60 ? 'text-yellow-600' : 'text-red-600'
+                            (report.overall_score || 0) >= 80 ? 'text-green-600' :
+                            (report.overall_score || 0) >= 60 ? 'text-yellow-600' : 'text-red-600'
                           }`}>
-                            {report.compliance_score}%
+                            {report.overall_score || 0}%
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right">
