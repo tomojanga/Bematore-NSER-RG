@@ -16,7 +16,15 @@ env = environ.Env(
     DEBUG=(bool, False),
     ALLOWED_HOSTS=(list, []),
 )
-environ.Env.read_env(os.path.join(ROOT_DIR, '.env'))
+env_file = ROOT_DIR / '.env'
+
+if not env_file.exists():
+    alternate_env_file = BASE_DIR / '.env'
+    if alternate_env_file.exists():
+        env_file = alternate_env_file
+
+if env_file.exists():
+    environ.Env.read_env(env_file)
 
 # Security
 SECRET_KEY = env('SECRET_KEY', default='CHANGE-ME-IN-PRODUCTION')
