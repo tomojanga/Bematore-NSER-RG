@@ -99,20 +99,16 @@ ASGI_APPLICATION = 'config.asgi.application'
 
 # Database
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('DB_NAME', default='nser_rg'),
-        'USER': env('DB_USER', default='postgres'),
-        'PASSWORD': env('DB_PASSWORD', default=''),
-        'HOST': env('DB_HOST', default='localhost'),
-        'PORT': env('DB_PORT', default='5432'),
-        'ATOMIC_REQUESTS': True,
-        'CONN_MAX_AGE': 600,
-        'OPTIONS': {
-            'connect_timeout': 10,
-        }
-    }
+    'default': env.db('DATABASE_URL'),
 }
+
+DATABASES['default'].update({
+    'ATOMIC_REQUESTS': True,
+    'CONN_MAX_AGE': 600,
+})
+
+DATABASES['default'].setdefault('OPTIONS', {})
+DATABASES['default']['OPTIONS'].setdefault('connect_timeout', 10)
 
 # Custom User Model
 AUTH_USER_MODEL = 'users.User'
