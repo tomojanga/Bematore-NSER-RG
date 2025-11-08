@@ -20,18 +20,14 @@ export default function PortalsLayout({
 
     // Redirect to appropriate portal based on role
     const currentPath = window.location.pathname
-    
+
     if (currentPath === '/portals') {
-      if (user?.role?.includes('grak')) {
+      if (user?.role === 'super_admin' || user?.role === 'grak_admin') {
         router.push('/portals/grak')
-      } else if (user?.role?.includes('operator')) {
+      } else if (user?.role === 'operator_admin') {
         router.push('/portals/operator')
-      } else if (user?.role?.includes('bematore')) {
-        router.push('/portals/bematore')
       } else if (user?.role === 'citizen') {
         router.push('/portals/citizen')
-      } else if (user?.role === 'super_admin') {
-        router.push('/portals/admin')
       } else {
         router.push('/dashboard') // Fallback to existing dashboard
       }

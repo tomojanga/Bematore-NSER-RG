@@ -2,17 +2,59 @@
 
 import { useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
-import { Shield, Phone, Lock, Eye, EyeOff } from 'lucide-react'
+import { Shield, Phone, Lock, Eye, EyeOff, Fingerprint } from 'lucide-react'
+import Link from 'next/link'
+import { TwoFactorVerification } from '@/components/auth/TwoFactorVerification'
+import { useToast } from '@/components/ui/use-toast'
+import { SingleApiResponse, AuthResponse } from '@/types/auth'
+
+interface LoginState {
+  step: 'credentials' | '2fa' | 'biometric'
+  method?: '2fa' | 'sms' | 'email'
+}
 
 export default function LoginPage() {
+  const { toast } = useToast()
   const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [rememberDevice, setRememberDevice] = useState(false)
+  const [loginState, setLoginState] = useState<LoginState>({ step: 'credentials' })
   const { login, isLoggingIn } = useAuth()
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    login({ phone_number: phone, password })
+    try {
+      const response = await login({
+        phone_number: phone,
+        password,
+        remember_device: rememberDevice,
+      }) as SingleApiResponse<AuthResponse>
+      const { data } = response
+      
+      // If 2FA is required, move to the next step
+      if (data.requires2FA) {
+        setLoginState({ 
+          step: '2fa',
+          method: data.preferredMethod || '2fa'
+        })
+        return
+      }
+
+      // If biometric is available and not yet registered
+      if (data.biometricAvailable && !data.biometricRegistered) {
+        setLoginState({ step: 'biometric' })
+        return
+      }
+
+      // Success - handled by useAuth hook for redirect
+    } catch (error: any) {
+      toast({
+        title: "Login Failed",
+        description: error.message || "Failed to sign in",
+        variant: "destructive"
+      })
+    }
   }
 
   return (
@@ -22,8 +64,8 @@ export default function LoginPage() {
           <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-4 rounded-full mb-4">
             <Shield className="h-12 w-12 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">NSER & RG Admin</h1>
-          <p className="text-gray-600 mt-2">National Self-Exclusion Register</p>
+          <h1 className="text-3xl font-bold text-gray-900">NSER & RG Portal</h1>
+          <p className="text-gray-600 mt-2">Access your dedicated portal</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -84,7 +126,22 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <div className="mt-6 text-center text-sm text-gray-600">
+        <div className="mt-6 text-center space-y-2">
+          <Link
+            href="/forgot-password"
+            className="text-blue-600 hover:text-blue-700 font-semibold text-sm"
+          >
+            Forgot your password?
+          </Link>
+          <div className="text-gray-600 text-sm">
+            Don't have an account?{' '}
+            <Link href="/register" className="text-blue-600 hover:text-blue-700 font-semibold">
+              Sign up here
+            </Link>
+          </div>
+        </div>
+
+        <div className="mt-4 text-center text-sm text-gray-600">
           <p>Protected by GRAK © 2025</p>
         </div>
       </div>

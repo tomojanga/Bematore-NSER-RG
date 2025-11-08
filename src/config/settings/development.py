@@ -14,8 +14,30 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']
 # Email - console backend for development
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-# CORS - allow all origins in dev
+# CORS settings for development
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'x-device-id',
+    'http_x_device_id',
+]
 
 # Security - relaxed for development
 SECURE_SSL_REDIRECT = False

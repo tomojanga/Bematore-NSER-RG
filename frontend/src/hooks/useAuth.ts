@@ -1,83 +1,145 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/store/authStore'
 import { api } from '@/lib/api-client'
+import { useToast } from '@/components/ui/use-toast'
+import { detectDeviceType, detectOS, detectBrowser } from '@/lib/device-detection'
+import { getDeviceInfo } from '@/lib/device'
 import {
   AuthResponse,
   LoginCredentials,
   RegisterData,
   User,
+  Device,
+  TwoFactorVerificationData,
   SingleApiResponse
-} from '@/types'
-import { useRouter } from 'next/navigation'
+} from '@/types/auth'
 
-// Simple toast replacement until we add react-hot-toast
-const toast = {
-  success: (message: string) => console.log('✅', message),
-  error: (message: string) => console.error('❌', message),
-}
+import { UseAuthReturn } from '@/types/useAuth'
 
-export function useAuth() {
+export function useAuth(): UseAuthReturn {
   const router = useRouter()
   const queryClient = useQueryClient()
-  const { 
-    user, 
-    setUser, 
-    setTokens, 
-    logout: logoutStore, 
+  const { toast } = useToast()
+  const {
+    user,
+    setUser,
+    setTokens,
+    logout: logoutStore,
     isAuthenticated,
-    updateUser 
+    updateUser
   } = useAuthStore()
+
+  // Helper function for toast errors
+  const showError = (error: any) => {
+    const message = error.response?.data?.message || 'Operation failed'
+    toast({
+      title: "Error",
+      description: message,
+      variant: "destructive",
+    })
+  }
 
   // Login mutation
   const loginMutation = useMutation({
     mutationFn: async (credentials: LoginCredentials) => {
-      const { data } = await api.auth.login(credentials)
+      // Get device info and generate device ID if not exists
+      const deviceInfo = getDeviceInfo()
+      if (!localStorage.getItem('device_id')) {
+        const deviceId = `${deviceInfo.type}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        localStorage.setItem('device_id', deviceId)
+      }
+      
+      const { data } = await api.post('/auth/login/', {
+        ...credentials,
+        device_info: {
+          ...deviceInfo,
+          id: localStorage.getItem('device_id')
+        }
+      })
       return data as SingleApiResponse<AuthResponse>
     },
     onSuccess: (response) => {
       if (response.success && response.data) {
         setUser(response.data.user)
         setTokens(response.data.access, response.data.refresh)
-        
-        // Generate device ID for tracking if not exists
-        if (!localStorage.getItem('device_id')) {
-          localStorage.setItem('device_id', `web_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`)
+        toast({
+          title: "Success",
+          description: response.message || 'Login successful'
+        })
+
+        // Redirect based on user role
+        const userRole = response.data.user.role
+        console.log('Redirecting user with role:', userRole)
+        if (userRole === 'super_admin' || userRole === 'grak_admin') {
+          console.log('Redirecting to GRAK portal')
+          router.push('/portals/grak')
+        } else if (userRole === 'operator_admin') {
+          console.log('Redirecting to Operator portal')
+          router.push('/portals/operator')
+        } else if (userRole === 'citizen') {
+          console.log('Redirecting to Citizen portal')
+          router.push('/portals/citizen')
+        } else {
+          console.log('Redirecting to fallback dashboard')
+          router.push('/dashboard') // Fallback
         }
-        
-        toast.success(response.message || 'Login successful')
-        router.push('/dashboard')
+      } else {
+        console.log('Login response not successful or missing data:', response)
       }
     },
     onError: (error: any) => {
-      const message = error.response?.data?.message || 'Login failed'
-      toast.error(message)
+      showError(error)
     }
   })
 
   // Registration mutation
   const registerMutation = useMutation({
     mutationFn: async (userData: RegisterData) => {
-      const { data } = await api.auth.register(userData)
+      // Get device info and generate device ID if not exists
+      const deviceInfo = getDeviceInfo()
+      if (!localStorage.getItem('device_id')) {
+        const deviceId = `${deviceInfo.type}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        localStorage.setItem('device_id', deviceId)
+      }
+
+      const { data } = await api.post('/auth/register/', {
+        ...userData,
+        device_info: {
+          ...deviceInfo,
+          id: localStorage.getItem('device_id')
+        }
+      })
       return data as SingleApiResponse<AuthResponse>
     },
     onSuccess: (response) => {
       if (response.success && response.data) {
         setUser(response.data.user)
         setTokens(response.data.access, response.data.refresh)
-        
+
         // Generate device ID
         if (!localStorage.getItem('device_id')) {
           localStorage.setItem('device_id', `web_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`)
         }
-        
+
         toast.success(response.message || 'Registration successful')
-        router.push('/verify-phone')
+
+        // Redirect based on user role
+        const userRole = response.data.user.role
+        if (userRole === 'super_admin' || userRole === 'grak_admin') {
+          router.push('/portals/grak')
+        } else if (userRole === 'operator_admin') {
+          router.push('/portals/operator')
+        } else if (userRole === 'citizen') {
+          router.push('/portals/citizen')
+        } else {
+          router.push('/dashboard') // Fallback
+        }
       }
     },
     onError: (error: any) => {
-      const message = error.response?.data?.message || 'Registration failed'
-      toast.error(message)
+      showError(error)
     }
   })
 
@@ -85,7 +147,7 @@ export function useAuth() {
   const logoutMutation = useMutation({
     mutationFn: async (logoutAllDevices: boolean = false) => {
       const refreshToken = localStorage.getItem('refresh_token')
-      await api.auth.logout({ 
+      await api.post('/auth/logout/', { 
         refresh_token: refreshToken,
         all_devices: logoutAllDevices 
       })
@@ -111,8 +173,8 @@ export function useAuth() {
       new_password: string
       new_password_confirm: string 
     }) => {
-      const result = await api.auth.changePassword(data)
-      return result.data
+      const { data: result } = await api.post('/auth/change-password/', data)
+      return result
     },
     onSuccess: (response) => {
       toast.success(response.message || 'Password changed successfully')
@@ -126,8 +188,8 @@ export function useAuth() {
   // Password reset request mutation
   const passwordResetRequestMutation = useMutation({
     mutationFn: async (data: { phone_number?: string; email?: string }) => {
-      const result = await api.auth.requestPasswordReset(data)
-      return result.data
+      const { data: result } = await api.post('/auth/request-password-reset/', data)
+      return result
     },
     onSuccess: (response) => {
       toast.success(response.message || 'Reset code sent')
@@ -145,8 +207,8 @@ export function useAuth() {
       new_password: string
       new_password_confirm: string 
     }) => {
-      const result = await api.auth.confirmPasswordReset(data)
-      return result.data
+      const { data: result } = await api.post('/auth/reset-password/', data)
+      return result
     },
     onSuccess: (response) => {
       toast.success(response.message || 'Password reset successful')
@@ -165,8 +227,8 @@ export function useAuth() {
       phone_number?: string
       email?: string 
     }) => {
-      const result = await api.auth.enable2FA(data)
-      return result.data
+      const { data: result } = await api.post('/auth/2fa/enable/', data)
+      return result
     },
     onSuccess: (response) => {
       toast.success('2FA enabled successfully')
@@ -186,8 +248,8 @@ export function useAuth() {
       password: string
       verification_code: string 
     }) => {
-      const result = await api.auth.disable2FA(data)
-      return result.data
+      const { data: result } = await api.post('/auth/2fa/disable/', data)
+      return result
     },
     onSuccess: () => {
       toast.success('2FA disabled successfully')
@@ -204,8 +266,8 @@ export function useAuth() {
   // Verify 2FA mutation
   const verify2FAMutation = useMutation({
     mutationFn: async (data: { verification_code: string }) => {
-      const result = await api.auth.verify2FA(data)
-      return result.data
+      const { data: result } = await api.post('/auth/2fa/verify/', data)
+      return result
     },
     onSuccess: () => {
       toast.success('2FA verification successful')
@@ -220,7 +282,7 @@ export function useAuth() {
   const { data: profile, isLoading: isLoadingProfile } = useQuery({
     queryKey: ['auth', 'profile'],
     queryFn: async () => {
-      const { data } = await api.users.me()
+      const { data } = await api.get('/users/me/')
       return data as SingleApiResponse<User>
     },
     enabled: isAuthenticated,
@@ -238,7 +300,7 @@ export function useAuth() {
   const { data: devices } = useQuery({
     queryKey: ['auth', 'devices'],
     queryFn: async () => {
-      const { data } = await api.users.devices()
+      const { data } = await api.get('/users/devices/')
       return data
     },
     enabled: isAuthenticated,
@@ -249,7 +311,7 @@ export function useAuth() {
   const { data: sessions } = useQuery({
     queryKey: ['auth', 'sessions'],
     queryFn: async () => {
-      const { data } = await api.users.sessions()
+      const { data } = await api.get('/users/sessions/')
       return data
     },
     enabled: isAuthenticated,
@@ -259,7 +321,7 @@ export function useAuth() {
   // Token verification
   const verifyToken = async (token: string): Promise<boolean> => {
     try {
-      await api.auth.verifyToken(token)
+      await api.post('/auth/verify-token/', { token })
       return true
     } catch {
       return false
@@ -344,11 +406,14 @@ export function usePhoneVerification() {
   
   const sendCodeMutation = useMutation({
     mutationFn: async (data: { phone_number: string, action: string }) => {
-      const result = await api.users.sendVerificationCode(data)
-      return result.data
+      const { data: result } = await api.post('/users/send-verification-code/', data)
+      return result
     },
     onSuccess: (response) => {
-      toast.success(response.message || 'Verification code sent')
+      toast({
+        title: "Success",
+        description: response.message || 'Verification code sent'
+      })
     },
     onError: (error: any) => {
       const message = error.response?.data?.message || 'Failed to send code'
@@ -358,11 +423,14 @@ export function usePhoneVerification() {
 
   const verifyPhoneMutation = useMutation({
     mutationFn: async (data: { phone_number: string, code: string }) => {
-      const result = await api.users.verifyPhone(data)
-      return result.data
+      const { data: result } = await api.post('/users/verify-phone/', data)
+      return result
     },
     onSuccess: (response) => {
-      toast.success('Phone verified successfully')
+      toast({
+        title: "Success",
+        description: 'Phone verified successfully'
+      })
       updateUser({ is_phone_verified: true })
     },
     onError: (error: any) => {
@@ -385,11 +453,14 @@ export function useEmailVerification() {
   
   const verifyEmailMutation = useMutation({
     mutationFn: async (data: { email: string, code: string }) => {
-      const result = await api.users.verifyEmail(data)
-      return result.data
+      const { data: result } = await api.post('/users/verify-email/', data)
+      return result
     },
     onSuccess: () => {
-      toast.success('Email verified successfully')
+      toast({
+        title: "Success",
+        description: 'Email verified successfully'
+      })
       updateUser({ is_email_verified: true })
     },
     onError: (error: any) => {
@@ -421,7 +492,10 @@ export function useIdVerification() {
       return result.data
     },
     onSuccess: () => {
-      toast.success('ID verification submitted successfully')
+      toast({
+        title: "Success",
+        description: 'ID verification submitted successfully'
+      })
       updateUser({ verification_status: 'pending' })
     },
     onError: (error: any) => {
