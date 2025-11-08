@@ -196,21 +196,27 @@ class RegisterView(TimingMixin, SuccessResponseMixin, APIView):
         # Generate tokens
         refresh = RefreshToken.for_user(user)
         
-        # Send verification code (async)
+        # Send verification code
         from apps.users.tasks import send_verification_code
-        send_verification_code.delay(
-            user_id=str(user.id),
-            verification_type='phone'
-        )
+        send_verification_code(str(user.id), 'phone')
         
         return self.success_response(
             data={
-                'user_id': str(user.id),
-                'phone_number': str(user.phone_number),
+                'user': {
+                    'id': str(user.id),
+                    'phone_number': str(user.phone_number),
+                    'email': user.email,
+                    'role': user.role,
+                    'is_active': user.is_active,
+                    'is_verified': user.is_verified,
+                    'created_at': user.created_at.isoformat(),
+                    'updated_at': user.updated_at.isoformat(),
+                    'has_2fa': user.is_2fa_enabled
+                },
                 'access': str(refresh.access_token),
                 'refresh': str(refresh)
             },
-            message='Registration successful. Verification code sent.',
+            message='Registration successful. Verification code sent to your phone.',
             status_code=status.HTTP_201_CREATED
         )
 

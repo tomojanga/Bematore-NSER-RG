@@ -2,11 +2,13 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Shield, Phone, Lock, Eye, EyeOff, User, Mail, MapPin, Calendar } from 'lucide-react'
+import { Shield, Phone, Lock, Eye, EyeOff, User, Mail, Calendar } from 'lucide-react'
 import Link from 'next/link'
+import { useToast } from '@/components/ui/use-toast'
 
 export default function RegisterPage() {
   const router = useRouter()
+  const { toast } = useToast()
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -24,30 +26,240 @@ export default function RegisterPage() {
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
+    
+    // Clear the error for the changed field
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }))
+      setErrors(prev => {
+        const newErrors = { ...prev }
+        delete newErrors[field]
+        return newErrors
+      })
+    }
+
+    // Special validations on change
+    if (field === 'phone_number') {
+      // Keep only numbers and ensure starts with 254
+      const cleaned = value.replace(/\D/g, '')
+      if (cleaned !== value) {
+        setFormData(prev => ({ ...prev, [field]: cleaned }))
+      }
+    } else if (field === 'email') {
+      // Basic email format validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (value && !emailRegex.test(value)) {
+        setErrors(prev => ({ ...prev, email: 'Invalid email format' }))
+      }
+    } else if (field === 'password') {
+      // Password strength indicator
+      if (value.length > 0 && value.length < 8) {
+        setErrors(prev => ({ ...prev, password: 'Password must be at least 8 characters' }))
+      }
+    } else if (field === 'confirm_password') {
+      // Password match validation
+      if (value !== formData.password) {
+        setErrors(prev => ({ ...prev, confirm_password: 'Passwords do not match' }))
+      }
     }
   }
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const phoneRegex = /^254[0-9]{9}$/
+    const today = new Date()
+    const birthDate = new Date(formData.date_of_birth)
+    const age = today.getFullYear() - birthDate.getFullYear()
+    const monthDiff = today.getMonth() - birthDate.getMonth()
+    
+    // Name validations
+    if (!formData.first_name.trim()) {
+      newErrors.first_name = 'First name is required'
+    } else if (formData.first_name.length < 2) {
+      newErrors.first_name = 'First name must be at least 2 characters'
+    }
+    
+    if (!formData.last_name.trim()) {
+      newErrors.last_name = 'Last name is required'
+    } else if (formData.last_name.length < 2) {
+      newErrors.last_name = 'Last name must be at least 2 characters'
+    }
 
-    if (!formData.first_name.trim()) newErrors.first_name = 'First name is required'
-    if (!formData.last_name.trim()) newErrors.last_name = 'Last name is required'
-    if (!formData.email.trim()) newErrors.email = 'Email is required'
-    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Invalid email format'
-    if (!formData.phone_number.trim()) newErrors.phone_number = 'Phone number is required'
-    else if (!/^254[0-9]{9}$/.test(formData.phone_number)) newErrors.phone_number = 'Phone must be in format 254XXXXXXXXX'
-    if (!formData.date_of_birth) newErrors.date_of_birth = 'Date of birth is required'
-    if (!formData.password) newErrors.password = 'Password is required'
-    else if (formData.password.length < 8) newErrors.password = 'Password must be at least 8 characters'
-    if (formData.password !== formData.confirm_password) newErrors.confirm_password = 'Passwords do not match'
+    // Email validation
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required'
+    } else if (!emailRegex.test(formData.email)) {
+      newErrors.email = 'Invalid email format'
+    }
+
+    // Phone validation
+    if (!formData.phone_number.trim()) {
+      newErrors.phone_number = 'Phone number is required'
+    } else if (!phoneRegex.test(formData.phone_number)) {
+      newErrors.phone_number = 'Phone must be in format 254XXXXXXXXX'
+    }
+
+    // Date of birth validation
+    if (!formData.date_of_birth) {
+      newErrors.date_of_birth = 'Date of birth is required'
+    } else if (birthDate > today) {
+      newErrors.date_of_birth = 'Date of birth cannot be in the future'
+    } else if (age < 18 || (age === 18 && monthDiff < 0)) {
+      newErrors.date_of_birth = 'You must be at least 18 years old'
+    }
+
+    // Password validation
+    if (!formData.password) {
+      newErrors.password = 'Password is required'
+    } else if (formData.password.length < 8) {
+      newErrors.password = 'Password must be at least 8 characters'
+    } else if (!/[A-Z]/.test(formData.password)) {
+      newErrors.password = 'Password must contain at least one uppercase letter'
+    } else if (!/[a-z]/.test(formData.password)) {
+      newErrors.password = 'Password must contain at least one lowercase letter'
+    } else if (!/[0-9]/.test(formData.password)) {
+      newErrors.password = 'Password must contain at least one number'
+    }
+
+    // Confirm password validation
+    if (!formData.confirm_password) {
+      newErrors.confirm_password = 'Please confirm your password'
+    } else if (formData.password !== formData.confirm_password) {
+      newErrors.confirm_password = 'Passwords do not match'
+    }
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!validateForm()) {
+      toast({
+        title: "Validation Error",
+        description: "Please fix the errors before submitting",
+        variant: "destructive"
+      })
+      return
+    }
+
+    setIsRegistering(true)
+    setErrors({})
+    
+    try {
+      // Get device info for registration
+      const deviceInfo = {
+        name: window.navigator.userAgent,
+        type: navigator.platform,
+        os: window.navigator.platform,
+        browser: window.navigator.userAgent.split(' ').pop() || 'unknown',
+        trusted: true
+      }
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'}/auth/register/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          device_info: deviceInfo
+        }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: "Account created successfully. Please check your email for verification.",
+          variant: "default"
+        })
+        router.push('/login?registered=true')
+      } else {
+        // Handle different types of errors
+        if (data.errors) {
+          // Field-specific validation errors
+          const fieldErrors: Record<string, string> = {}
+          Object.entries(data.errors).forEach(([field, messages]) => {
+            fieldErrors[field] = Array.isArray(messages) ? messages[0] : messages as string
+          })
+          setErrors(fieldErrors)
+        } else if (data.code === 'phone_exists') {
+          setErrors({ phone_number: 'This phone number is already registered.' })
+        } else if (data.code === 'email_exists') {
+          setErrors({ email: 'This email is already registered.' })
+        } else {
+          // General error message
+          setErrors({ general: data.message || 'Registration failed. Please try again.' })
+        }
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Network error. Please try again.",
+        variant: "destructive"
+      })
+      setErrors({ general: 'Network error. Please try again.' })
+    } finally {
+      setIsRegistering(false)
+    }
+    e.preventDefault()
+    
+    if (!validateForm()) return
+
+    setIsRegistering(true)
+    setErrors({})
+    
+    try {
+      // Get device info for the registration
+      const deviceInfo = {
+        name: window.navigator.userAgent,
+        type: navigator.platform,
+        os: window.navigator.platform,
+        browser: window.navigator.userAgent.split(' ').pop() || 'unknown',
+        trusted: true
+      }
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'}/auth/register/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          device_info: deviceInfo
+        }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        // Registration successful
+        router.push('/login?registered=true')
+      } else {
+        // Handle different types of errors
+        if (data.errors) {
+          // Field-specific validation errors
+          const fieldErrors: Record<string, string> = {}
+          Object.entries(data.errors).forEach(([field, messages]) => {
+            fieldErrors[field] = Array.isArray(messages) ? messages[0] : messages as string
+          })
+          setErrors(fieldErrors)
+        } else if (data.code === 'phone_exists') {
+          setErrors({ phone_number: 'This phone number is already registered.' })
+        } else if (data.code === 'email_exists') {
+          setErrors({ email: 'This email is already registered.' })
+        } else {
+          // General error message
+          setErrors({ general: data.message || 'Registration failed. Please try again.' })
+        }
+      }
+    } catch (error) {
+      setErrors({ general: 'Network error. Please try again.' })
+    } finally {
+      setIsRegistering(false)
+    }
     e.preventDefault()
 
     if (!validateForm()) return

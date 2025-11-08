@@ -53,10 +53,13 @@ DEBUG_TOOLBAR_CONFIG = {
     'SHOW_TOOLBAR_CALLBACK': lambda request: DEBUG,
 }
 
-# Logging - verbose for development
-LOGGING['root']['level'] = 'DEBUG'
-LOGGING['loggers']['django']['level'] = 'DEBUG'
-LOGGING['loggers']['apps']['level'] = 'DEBUG'
+# Logging - minimal for development
+LOGGING['root']['level'] = 'INFO'
+LOGGING['loggers']['django']['level'] = 'INFO'
+LOGGING['loggers']['django.server']['level'] = 'INFO'
+LOGGING['loggers']['django.request']['level'] = 'WARNING'
+LOGGING['loggers']['django.db.backends']['level'] = 'WARNING'
+LOGGING['loggers']['apps']['level'] = 'INFO'
 
 # Celery - eager execution for development
 CELERY_TASK_ALWAYS_EAGER = True
