@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth, usePhoneVerification, useEmailVerification } from '@/hooks/useAuth'
 import { Shield, Phone, Mail, CheckCircle } from 'lucide-react'
@@ -36,17 +36,21 @@ function VerifyAccountPage() {
     verifyEmail({ email: user.email, code: emailCode })
   }
 
-  if (!user) {
-    router.push('/login')
-    return null
-  }
+  // Redirect if not logged in
+  useEffect(() => {
+    if (!user) {
+      router.push('/login')
+    }
+  }, [user, router])
 
-  const isFullyVerified = user.is_phone_verified && user.is_email_verified
+  // Redirect when fully verified
+  useEffect(() => {
+    if (user?.is_phone_verified && (!user.email || user.is_email_verified)) {
+      router.push('/dashboard')
+    }
+  }, [user?.is_phone_verified, user?.is_email_verified, user?.email, router])
 
-  if (isFullyVerified) {
-    router.push('/dashboard')
-    return null
-  }
+  if (!user) return null
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4">

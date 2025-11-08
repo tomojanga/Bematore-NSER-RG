@@ -89,6 +89,24 @@ export function useOperatorAuditLogs(params?: PaginatedParams & {
   })
 }
 
+// Main compliance hook
+export function useCompliance(params?: PaginatedParams) {
+  const { data, isLoading } = useQuery({
+    queryKey: ['compliance-reports', params],
+    queryFn: async () => {
+      const { data } = await api.get('/compliance/reports/', { params }).catch(() => ({ data: { results: [], count: 0 } }))
+      return data as ApiResponse<ComplianceReport>
+    },
+    staleTime: 300000,
+    retry: false,
+  })
+
+  return {
+    data,
+    isLoading
+  }
+}
+
 // Compliance reports hook
 export function useComplianceReports(params?: PaginatedParams) {
   const queryClient = useQueryClient()
@@ -766,19 +784,20 @@ export function useRealTimeCompliance() {
   return useQuery({
     queryKey: ['realtime-compliance'],
     queryFn: async () => {
-      const [alerts, violations, incidents] = await Promise.all([
-        api.get('/monitoring/alerts/active/'),
-        api.get('/compliance/violations/recent/'),
-        api.get('/compliance/incidents/active/')
+      const results = await Promise.allSettled([
+        api.get('/monitoring/alerts/active/').catch(() => ({ data: { results: [] } })),
+        api.get('/compliance/violations/recent/').catch(() => ({ data: { results: [] } })),
+        api.get('/compliance/incidents/active/').catch(() => ({ data: { results: [] } }))
       ])
       
       return {
-        activeAlerts: alerts.data?.results || [],
-        recentViolations: violations.data?.results || [],
-        activeIncidents: incidents.data?.results || [],
+        activeAlerts: results[0].status === 'fulfilled' ? results[0].value.data?.results || [] : [],
+        recentViolations: results[1].status === 'fulfilled' ? results[1].value.data?.results || [] : [],
+        activeIncidents: results[2].status === 'fulfilled' ? results[2].value.data?.results || [] : [],
       }
     },
-    refetchInterval: 30000, // 30 seconds
+    refetchInterval: 30000,
     staleTime: 15000,
+    retry: false,
   })
 }

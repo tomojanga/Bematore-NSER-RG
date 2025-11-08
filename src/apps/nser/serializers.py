@@ -279,7 +279,7 @@ class RegisterExclusionSerializer(serializers.ModelSerializer):
         model = SelfExclusionRecord
         fields = [
             'user', 'exclusion_period', 'reason', 'motivation_type',
-            'supporting_documents', 'is_auto_renewable',
+            'is_auto_renewable',
             'terms_acknowledged', 'consequences_understood'
         ]
     
@@ -366,7 +366,7 @@ class ExtendExclusionSerializer(serializers.Serializer):
         required=True
     )
     reason = serializers.CharField(required=True, min_length=20)
-    supporting_documents = serializers.JSONField(required=False)
+
     
     def validate_reason(self, value):
         if len(value) < 20:

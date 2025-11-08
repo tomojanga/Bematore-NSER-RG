@@ -871,8 +871,8 @@ export function useAuth(): UseAuthReturn {
     let timeoutId: NodeJS.Timeout
     let retryCount = 0
     const MAX_RETRIES = 3
-    const BASE_INTERVAL = 14 * 60 * 1000 // 14 minutes
-    const JITTER_MAX = 30 * 1000 // 30 seconds
+    const BASE_INTERVAL = 23 * 60 * 60 * 1000 // 23 hours
+    const JITTER_MAX = 60 * 1000 // 1 minute
 
     const refreshSession = async () => {
       try {
@@ -883,24 +883,15 @@ export function useAuth(): UseAuthReturn {
           return
         }
 
-        // Add request timestamp for freshness check
-        const { data } = await api.post<SingleApiResponse<{ 
-          access: string
-          expiresIn: number 
-        }>>('/auth/refresh/', {
-          refresh_token: refreshToken,
-          device_info: getSecureDeviceInfo(),
-          timestamp: Date.now()
+        const { data } = await api.post('/auth/token/refresh/', {
+          refresh: refreshToken
         })
 
-        if (data.success && data.data.access) {
-          setTokens(data.data.access, refreshToken)
-          retryCount = 0 // Reset retry count on success
-          
-          // Schedule next refresh based on server's expiry time
-          const nextRefresh = (data.data.expiresIn * 1000) - (60 * 1000) // Refresh 1 minute before expiry
+        if (data.access) {
+          setTokens(data.access, refreshToken)
+          retryCount = 0
           const jitter = Math.random() * JITTER_MAX
-          scheduleNextRefresh(Math.min(nextRefresh, BASE_INTERVAL) + jitter)
+          scheduleNextRefresh(BASE_INTERVAL + jitter)
         } else {
           throw new Error('Invalid refresh response')
         }
@@ -955,6 +946,9 @@ export function useAuth(): UseAuthReturn {
       try {
         // Get profile data with explicit AuthUser type
         const { data } = await api.get<SingleApiResponse<AuthUser>>('/users/me/')
+        if (!data.success) {
+          throw new Error('Failed to fetch profile')
+        }
         return data
       } catch (error: any) {
         const apiError = error as Error | ApiError
@@ -1263,6 +1257,7 @@ export function useAuth(): UseAuthReturn {
 export function usePhoneVerification() {
   const { updateUser } = useAuthStore()
   const { toast } = useToast()
+  const queryClient = useQueryClient()
   
   const showError = useCallback((error: ApiError, defaultMessage: string = 'Operation failed') => {
     let message = defaultMessage
@@ -1309,7 +1304,7 @@ export function usePhoneVerification() {
       })
       return result as SingleApiResponse<{ is_verified: boolean }>
     },
-    onSuccess: (response) => {
+    onSuccess: async (response) => {
       if (!response.success) {
         throw new Error('Verification failed')
       }
@@ -1318,6 +1313,7 @@ export function usePhoneVerification() {
         description: response.message || 'Phone verified successfully'
       })
       updateUser({ is_phone_verified: true })
+      await queryClient.invalidateQueries({ queryKey: ['auth', 'profile'] })
     },
     onError: (error: any) => {
       showError(error)
@@ -1358,7 +1354,7 @@ export function useEmailVerification() {
       })
       return result
     },
-    onSuccess: (response) => {
+    onSuccess: async (response) => {
       if (!response.success) {
         throw new Error(response.message || 'Email verification failed')
       }
@@ -1368,8 +1364,7 @@ export function useEmailVerification() {
         duration: 5000,
       })
       updateUser({ is_email_verified: true })
-      // Invalidate relevant queries
-      queryClient.invalidateQueries({ queryKey: ['auth', 'profile'] })
+      await queryClient.invalidateQueries({ queryKey: ['auth', 'profile'] })
     },
     onError: (error: ApiError) => {
       const defaultMessage = 'Failed to verify email. Please check the code and try again.'

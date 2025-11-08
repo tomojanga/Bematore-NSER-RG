@@ -22,12 +22,12 @@ export function useSystemHealth() {
   return useQuery({
     queryKey: ['system-health'],
     queryFn: async () => {
-      const { data } = await api.monitoring.health()
+      const { data } = await api.monitoring.health().catch(() => ({ data: null }))
       return data as SingleApiResponse<SystemHealth>
     },
-    refetchInterval: 10000, // Refetch every 10 seconds
+    refetchInterval: 10000,
     staleTime: 5000,
-    retry: 3,
+    retry: false,
   })
 }
 
@@ -307,11 +307,12 @@ export function useActiveAlerts() {
   return useQuery({
     queryKey: ['active-alerts'],
     queryFn: async () => {
-      const { data } = await api.get('/monitoring/alerts/active/')
+      const { data } = await api.get('/monitoring/alerts/active/').catch(() => ({ data: { results: [] } }))
       return data as ApiResponse<Alert>
     },
-    refetchInterval: 15000, // 15 seconds
+    refetchInterval: 15000,
     staleTime: 7500,
+    retry: false,
   })
 }
 

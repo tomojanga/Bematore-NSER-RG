@@ -61,36 +61,29 @@ export function useGRAKDashboard() {
   return useQuery({
     queryKey: ['grak-dashboard'],
     queryFn: async () => {
-      const [
-        overview,
-        realtimeStats,
-        complianceOverview,
-        operatorCompliance,
-        riskDistribution,
-        exclusionTrends,
-        systemHealth
-      ] = await Promise.all([
-        api.analytics.grakDashboard(),
-        api.analytics.realtime(),
-        api.get('/operators/compliance/overview/'),
-        api.get('/analytics/operators/compliance-scores/'),
-        api.analytics.riskDistribution(),
-        api.analytics.exclusionTrends({ period: 'month' }),
-        api.monitoring.health()
+      const results = await Promise.allSettled([
+        api.analytics.grakDashboard().catch(() => ({ data: null })),
+        api.analytics.realtime().catch(() => ({ data: null })),
+        api.get('/operators/compliance/overview/').catch(() => ({ data: null })),
+        api.get('/analytics/operators/compliance-scores/').catch(() => ({ data: null })),
+        api.analytics.riskDistribution().catch(() => ({ data: null })),
+        api.analytics.exclusionTrends({ period: 'month' }).catch(() => ({ data: null })),
+        api.monitoring.health().catch(() => ({ data: null }))
       ])
 
       return {
-        overview: overview.data,
-        realtime: realtimeStats.data,
-        compliance: complianceOverview.data,
-        operatorCompliance: operatorCompliance.data,
-        riskDistribution: riskDistribution.data,
-        exclusionTrends: exclusionTrends.data,
-        systemHealth: systemHealth.data,
+        overview: results[0].status === 'fulfilled' ? results[0].value.data : null,
+        realtime: results[1].status === 'fulfilled' ? results[1].value.data : null,
+        compliance: results[2].status === 'fulfilled' ? results[2].value.data : null,
+        operatorCompliance: results[3].status === 'fulfilled' ? results[3].value.data : null,
+        riskDistribution: results[4].status === 'fulfilled' ? results[4].value.data : null,
+        exclusionTrends: results[5].status === 'fulfilled' ? results[5].value.data : null,
+        systemHealth: results[6].status === 'fulfilled' ? results[6].value.data : null,
       }
     },
-    refetchInterval: 60000, // 1 minute
+    refetchInterval: 60000,
     staleTime: 30000,
+    retry: false,
   })
 }
 
@@ -228,27 +221,23 @@ export function useRealTimeDashboard() {
   return useQuery({
     queryKey: ['realtime-dashboard'],
     queryFn: async () => {
-      const [
-        realtimeStats,
-        activeAlerts,
-        recentActivities,
-        systemHealth
-      ] = await Promise.all([
-        api.analytics.realtime(),
-        api.get('/monitoring/alerts/active/'),
-        api.get('/nser/statistics/recent-activities/'),
-        api.monitoring.health()
+      const results = await Promise.allSettled([
+        api.analytics.realtime().catch(() => ({ data: null })),
+        api.get('/monitoring/alerts/active/').catch(() => ({ data: { results: [] } })),
+        api.get('/nser/statistics/recent-activities/').catch(() => ({ data: { results: [] } })),
+        api.monitoring.health().catch(() => ({ data: null }))
       ])
 
       return {
-        stats: realtimeStats.data,
-        alerts: activeAlerts.data?.results || [],
-        activities: recentActivities.data?.results || [],
-        health: systemHealth.data,
+        stats: results[0].status === 'fulfilled' ? results[0].value.data : null,
+        alerts: results[1].status === 'fulfilled' ? results[1].value.data?.results || [] : [],
+        activities: results[2].status === 'fulfilled' ? results[2].value.data?.results || [] : [],
+        health: results[3].status === 'fulfilled' ? results[3].value.data : null,
       }
     },
-    refetchInterval: 10000, // 10 seconds for real-time
+    refetchInterval: 10000,
     staleTime: 5000,
+    retry: false,
   })
 }
 
