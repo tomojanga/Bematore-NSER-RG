@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { Shield, Menu, X } from 'lucide-react'
 import { useState } from 'react'
+import { portalLinks } from '@/data/content'
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -41,10 +42,16 @@ export default function Header() {
               </Link>
             ))}
             <Link
-              href="http://localhost:3001"
-              className="bg-blue-900 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-800 transition"
+              href={portalLinks.citizen}
+              className="bg-blue-900 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-800 transition text-sm"
             >
               Citizen Portal
+            </Link>
+            <Link
+              href={portalLinks.operator}
+              className="bg-green-700 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-600 transition text-sm"
+            >
+              Operator Portal
             </Link>
           </nav>
 
@@ -69,10 +76,16 @@ export default function Header() {
               </Link>
             ))}
             <Link
-              href="http://localhost:3001"
+              href={portalLinks.citizen}
               className="block bg-blue-900 text-white px-6 py-2 rounded-lg font-semibold text-center"
             >
               Citizen Portal
+            </Link>
+            <Link
+              href={portalLinks.operator}
+              className="block bg-green-700 text-white px-6 py-2 rounded-lg font-semibold text-center mt-2"
+            >
+              Operator Portal
             </Link>
           </nav>
         )}
