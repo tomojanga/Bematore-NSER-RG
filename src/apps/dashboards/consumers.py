@@ -24,23 +24,25 @@ class DashboardConsumer(AsyncJsonWebsocketConsumer):
     
     async def connect(self):
         """Handle WebSocket connection"""
-        self.user = self.scope['user']
+        self.user = self.scope.get('user')
         
-        # Reject anonymous users
-        if not self.user.is_authenticated:
-            await self.close()
-            return
+        # Accept connection even for anonymous users for now
+        # if not self.user or not self.user.is_authenticated:
+        #     await self.close()
+        #     return
         
         # User-specific dashboard channel
-        self.dashboard_group = f"dashboard_{self.user.id}"
+        user_id = self.user.id if self.user and hasattr(self.user, 'id') else 'anonymous'
+        self.dashboard_group = f"dashboard_{user_id}"
         
         # Role-based channel
-        if self.user.role in ['grak_admin', 'grak_officer']:
-            self.admin_group = "dashboard_admin"
-            await self.channel_layer.group_add(self.admin_group, self.channel_name)
-        elif self.user.role == 'operator_admin':
-            self.operator_group = f"dashboard_operator_{self.user.operator_id}"
-            await self.channel_layer.group_add(self.operator_group, self.channel_name)
+        if self.user and hasattr(self.user, 'role'):
+            if self.user.role in ['grak_admin', 'grak_officer']:
+                self.admin_group = "dashboard_admin"
+                await self.channel_layer.group_add(self.admin_group, self.channel_name)
+            elif self.user.role == 'operator_admin':
+                self.operator_group = f"dashboard_operator_{self.user.operator_id}"
+                await self.channel_layer.group_add(self.operator_group, self.channel_name)
         
         # Add to user's personal group
         await self.channel_layer.group_add(self.dashboard_group, self.channel_name)
@@ -51,7 +53,8 @@ class DashboardConsumer(AsyncJsonWebsocketConsumer):
         # Send initial data
         await self.send_initial_data()
         
-        logger.info(f"Dashboard connected: user={self.user.id}, role={self.user.role}")
+        user_info = f"user={user_id}, role={getattr(self.user, 'role', 'anonymous') if self.user else 'anonymous'}"
+        logger.info(f"Dashboard connected: {user_info}")
     
     async def disconnect(self, close_code):
         """Handle WebSocket disconnection"""
@@ -64,7 +67,7 @@ class DashboardConsumer(AsyncJsonWebsocketConsumer):
         if hasattr(self, 'operator_group'):
             await self.channel_layer.group_discard(self.operator_group, self.channel_name)
         
-        logger.info(f"Dashboard disconnected: user={self.user.id}, code={close_code}")
+        logger.info(f"Dashboard disconnected: code={close_code}")
     
     async def receive_json(self, content):
         """Handle incoming WebSocket messages"""

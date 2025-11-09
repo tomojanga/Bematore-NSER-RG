@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import api from '@/lib/api'
+import { api } from '@/lib/api-client'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -14,7 +14,7 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      const response = await api.post('/auth/login/', formData)
+      const response = await api.auth.login(formData)
       const user = response.data.data
       
       if (!['grak_admin', 'grak_officer'].includes(user.user?.role)) {

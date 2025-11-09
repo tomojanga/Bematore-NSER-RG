@@ -93,7 +93,7 @@ class HealthCheckViewSet(TimingMixin, viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated, IsGRAKStaff]
     
     def get_queryset(self):
-        return HealthCheck.objects.order_by('-checked_at')[:1000]
+        return HealthCheck.objects.order_by('-created_at')[:1000]
 
 
 # Missing views
@@ -235,7 +235,7 @@ class ActiveAlertsView(TimingMixin, SuccessResponseMixin, APIView):
     permission_classes = [IsAuthenticated, IsGRAKStaff]
     
     def get(self, request):
-        alerts = Alert.objects.filter(status='active').order_by('-created_at')
+        alerts = Alert.objects.filter(is_resolved=False).order_by('-triggered_at')
         return self.success_response(data=AlertSerializer(alerts, many=True).data)
 
 
@@ -245,8 +245,8 @@ class AcknowledgeAlertView(TimingMixin, SuccessResponseMixin, APIView):
     
     def post(self, request, pk):
         alert = Alert.objects.get(pk=pk)
-        alert.status = 'acknowledged'
-        alert.acknowledged_at = timezone.now()
+        alert.metadata = alert.metadata or {}
+        alert.metadata['acknowledged_at'] = timezone.now().isoformat()
         alert.save()
         return self.success_response(message='Alert acknowledged')
 
@@ -257,7 +257,7 @@ class ResolveAlertView(TimingMixin, SuccessResponseMixin, APIView):
     
     def post(self, request, pk):
         alert = Alert.objects.get(pk=pk)
-        alert.status = 'resolved'
+        alert.is_resolved = True
         alert.resolved_at = timezone.now()
         alert.save()
         return self.success_response(message='Alert resolved')
@@ -269,10 +269,11 @@ class TriggerAlertView(TimingMixin, SuccessResponseMixin, APIView):
     
     def post(self, request):
         alert = Alert.objects.create(
+            alert_name=request.data.get('alert_name', 'System Alert'),
             alert_type=request.data['alert_type'],
             severity=request.data['severity'],
             message=request.data['message'],
-            status='active'
+            is_resolved=False
         )
         return self.success_response(data=AlertSerializer(alert).data, status_code=status.HTTP_201_CREATED)
 

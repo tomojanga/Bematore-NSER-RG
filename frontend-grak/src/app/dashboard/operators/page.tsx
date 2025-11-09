@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import api from '@/lib/api'
+import { api } from '@/lib/api-client'
 import { CheckCircle, XCircle, Clock, Eye } from 'lucide-react'
 
 export default function OperatorsPage() {
@@ -15,12 +15,15 @@ export default function OperatorsPage() {
 
   const fetchOperators = async () => {
     try {
-      const response = await api.get('/operators/', {
-        params: filter !== 'all' ? { license_status: filter } : {}
-      })
-      setOperators(response.data.data?.results || response.data.results || [])
+      const params = filter !== 'all' ? { license_status: filter } : {}
+      const response = await api.operators.list(params)
+      console.log('Operators response:', response.data)
+      const data = response.data.data || response.data
+      const results = data?.results || data || []
+      console.log('Operators results:', results)
+      setOperators(Array.isArray(results) ? results : [])
     } catch (error) {
-      console.error(error)
+      console.error('Failed to fetch operators:', error)
     } finally {
       setLoading(false)
     }
@@ -30,7 +33,7 @@ export default function OperatorsPage() {
     if (!confirm('Approve this operator?')) return
     
     try {
-      await api.post(`/operators/${id}/activate/`)
+      await api.operators.activate(id)
       alert('Operator approved successfully')
       fetchOperators()
     } catch (error: any) {
@@ -42,7 +45,7 @@ export default function OperatorsPage() {
     if (!confirm('Suspend this operator?')) return
     
     try {
-      await api.post(`/operators/${id}/suspend/`)
+      await api.operators.suspend(id)
       alert('Operator suspended successfully')
       fetchOperators()
     } catch (error: any) {

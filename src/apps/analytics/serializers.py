@@ -3,7 +3,10 @@ Analytics & Reporting Serializers
 Statistics, reports, dashboards, data analysis
 """
 from rest_framework import serializers
-from .models import DailyStatistics, OperatorStatistics, Report
+from .models import (
+    DailyStatistics, OperatorStatistics, Report, RealTimeMetrics,
+    UserDemographics, RiskAnalytics, ComplianceMetrics, GeographicAnalytics, APIUsageMetrics
+)
 
 
 class DailyStatisticsSerializer(serializers.ModelSerializer):
@@ -223,3 +226,42 @@ class HighRiskUsersSerializer(serializers.Serializer):
     recent_assessments = serializers.IntegerField()
     overdue_assessments = serializers.IntegerField()
     users = serializers.ListField(child=serializers.DictField())
+
+
+class RealTimeMetricsSerializer(serializers.ModelSerializer):
+    """Real-time metrics serializer"""
+    class Meta:
+        model = RealTimeMetrics
+        fields = '__all__'
+
+
+class RiskAnalyticsSerializer(serializers.ModelSerializer):
+    """Risk analytics serializer"""
+    class Meta:
+        model = RiskAnalytics
+        fields = '__all__'
+
+
+class ComplianceMetricsSerializer(serializers.ModelSerializer):
+    """Compliance metrics serializer"""
+    operator_name = serializers.CharField(source='operator.name', read_only=True)
+    
+    class Meta:
+        model = ComplianceMetrics
+        fields = '__all__'
+
+
+class GeographicAnalyticsSerializer(serializers.ModelSerializer):
+    """Geographic analytics serializer"""
+    class Meta:
+        model = GeographicAnalytics
+        fields = '__all__'
+
+
+class APIUsageMetricsSerializer(serializers.ModelSerializer):
+    """API usage metrics serializer"""
+    operator_name = serializers.CharField(source='operator.name', read_only=True)
+    
+    class Meta:
+        model = APIUsageMetrics
+        fields = '__all__'

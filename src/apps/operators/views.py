@@ -34,12 +34,12 @@ class OperatorViewSet(TimingMixin, viewsets.ModelViewSet):
         return OperatorDetailSerializer
     
     def get_queryset(self):
-        queryset = Operator.objects.select_related('license').prefetch_related('api_keys')
+        queryset = Operator.objects.prefetch_related('api_keys', 'licenses')
         
-        # Filter by status
-        is_active = self.request.query_params.get('is_active')
-        if is_active is not None:
-            queryset = queryset.filter(is_active=is_active.lower() == 'true')
+        # Filter by license_status
+        license_status = self.request.query_params.get('license_status')
+        if license_status:
+            queryset = queryset.filter(license_status=license_status)
         
         return queryset.order_by('-created_at')
     
@@ -336,9 +336,9 @@ class OperatorStatisticsView(TimingMixin, SuccessResponseMixin, APIView):
     def get(self, request):
         stats = {
             'total_operators': Operator.objects.count(),
-            'active_operators': Operator.objects.filter(is_active=True, status='active').count(),
-            'pending_approval': Operator.objects.filter(status='pending_approval').count(),
-            'suspended_operators': Operator.objects.filter(status='suspended').count(),
+            'active_operators': Operator.objects.filter(license_status='active').count(),
+            'pending_approval': Operator.objects.filter(license_status='pending').count(),
+            'suspended_operators': Operator.objects.filter(license_status='suspended').count(),
             'total_api_keys': APIKey.objects.count(),
             'active_api_keys': APIKey.objects.filter(is_active=True).count(),
             'expired_licenses': OperatorLicense.objects.filter(
@@ -437,8 +437,8 @@ class ActivateOperatorView(TimingMixin, SuccessResponseMixin, APIView):
     
     def post(self, request, pk):
         operator = Operator.objects.get(pk=pk)
-        operator.status = 'active'
-        operator.is_active = True
+        operator.license_status = 'active'
+        operator.is_api_active = True
         operator.save()
         
         return self.success_response(message='Operator activated')
@@ -450,8 +450,8 @@ class SuspendOperatorView(TimingMixin, SuccessResponseMixin, APIView):
     
     def post(self, request, pk):
         operator = Operator.objects.get(pk=pk)
-        operator.status = 'suspended'
-        operator.is_active = False
+        operator.license_status = 'suspended'
+        operator.is_api_active = False
         operator.save()
         
         # Deactivate API keys

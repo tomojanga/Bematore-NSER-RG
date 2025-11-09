@@ -3,15 +3,19 @@
 import { useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { Home, Users, Shield, BarChart3, LogOut, Settings, FileText } from 'lucide-react'
+import { Home, Users, Shield, BarChart3, LogOut, Settings, FileText, Activity, Bell, AlertTriangle, Search } from 'lucide-react'
 
+// GRAK Dashboard Navigation - Regulatory Focus Only
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: Home },
   { name: 'Operators', href: '/dashboard/operators', icon: Users },
   { name: 'Exclusions', href: '/dashboard/exclusions', icon: Shield },
+  { name: 'Users', href: '/dashboard/users', icon: Users },
+  { name: 'Screening', href: '/dashboard/screening', icon: Search },
   { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
   { name: 'Reports', href: '/dashboard/reports', icon: FileText },
-  { name: 'Settings', href: '/dashboard/settings', icon: Settings },
+  { name: 'Alerts', href: '/dashboard/alerts', icon: AlertTriangle },
+  { name: 'Notifications', href: '/dashboard/notifications', icon: Bell },
 ]
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {

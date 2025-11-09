@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import api from '@/lib/api'
+import { api } from '@/lib/api-client'
 import { Shield, Eye, XCircle } from 'lucide-react'
 
 export default function ExclusionsPage() {
@@ -14,10 +14,14 @@ export default function ExclusionsPage() {
 
   const fetchExclusions = async () => {
     try {
-      const response = await api.get('/nser/exclusions/')
-      setExclusions(response.data.data?.results || response.data.results || [])
+      const response = await api.nser.exclusions()
+      console.log('Exclusions response:', response.data)
+      const data = response.data.data || response.data
+      const results = data?.results || data || []
+      console.log('Exclusions results:', results)
+      setExclusions(Array.isArray(results) ? results : [])
     } catch (error) {
-      console.error(error)
+      console.error('Failed to fetch exclusions:', error)
     } finally {
       setLoading(false)
     }
@@ -28,7 +32,7 @@ export default function ExclusionsPage() {
     if (!reason) return
 
     try {
-      await api.post(`/nser/exclusions/${id}/terminate/`, { termination_reason: reason })
+      await api.nser.terminate(id, { termination_reason: reason })
       alert('Exclusion terminated successfully')
       fetchExclusions()
     } catch (error: any) {
@@ -69,10 +73,10 @@ export default function ExclusionsPage() {
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {exclusion.is_permanent ? 'Permanent' : exclusion.exclusion_period?.replace('_', ' ')}
+                  {exclusion.is_permanent ? 'Permanent' : (exclusion.exclusion_period || 'N/A').replace('_', ' ')}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {new Date(exclusion.start_date).toLocaleDateString()}
+                  {exclusion.start_date ? new Date(exclusion.start_date).toLocaleDateString() : 'N/A'}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {exclusion.end_date ? new Date(exclusion.end_date).toLocaleDateString() : 'N/A'}
