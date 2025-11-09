@@ -2,61 +2,86 @@
 
 import { useMyExclusions } from '@/hooks/useExclusions'
 import { Card, CardContent, CardHeader, CardTitle, StatusBadge } from '@/components/ui/Card'
-import { History } from 'lucide-react'
+import { Shield, Calendar, Clock, Loader2, AlertCircle } from 'lucide-react'
 
-export default function CitizenHistoryPage() {
-  const { data, isLoading } = useMyExclusions()
-
-  const exclusions = data?.results || []
+export default function HistoryPage() {
+  const { data: exclusions, isLoading } = useMyExclusions()
+  
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">My History</h1>
-        <p className="text-gray-600 mt-1">View your self-exclusion history</p>
+        <h1 className="text-3xl font-bold text-gray-900">Exclusion History</h1>
+        <p className="text-gray-600 mt-1">View your past and current self-exclusions</p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Exclusion History</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <div className="text-center py-12">Loading...</div>
-          ) : exclusions.length === 0 ? (
-            <div className="text-center py-12">
-              <History className="h-16 w-16 mx-auto text-gray-300 mb-4" />
-              <p className="text-gray-600">No exclusion history</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {exclusions.map((exclusion: any) => (
-                <div key={exclusion.id} className="border border-gray-200 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <StatusBadge status={exclusion.status} />
-                    <span className="text-sm text-gray-500">
-                      {exclusion.period_months} months
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <p className="text-gray-600">Start Date</p>
-                      <p className="font-medium">{new Date(exclusion.start_date).toLocaleDateString()}</p>
+      {exclusions?.results && exclusions.results.length > 0 ? (
+        <div className="space-y-4">
+          {exclusions.results.map((exclusion: any) => (
+            <Card key={exclusion.id}>
+              <CardContent className="pt-6">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start gap-4">
+                    <div className="h-12 w-12 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Shield className="h-6 w-6 text-red-600" />
                     </div>
                     <div>
-                      <p className="text-gray-600">End Date</p>
-                      <p className="font-medium">{new Date(exclusion.end_date).toLocaleDateString()}</p>
+                      <div className="flex items-center gap-2 mb-2">
+                        <h3 className="font-semibold text-gray-900">
+                          Self-Exclusion
+                        </h3>
+                        <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
+                          {exclusion.exclusion_period?.replace('_', ' ').toUpperCase()}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-600 mt-1 line-clamp-2">{exclusion.reason}</p>
+                      <div className="grid grid-cols-2 gap-3 mt-3 text-sm">
+                        <div className="flex items-center gap-1 text-gray-500">
+                          <Calendar className="h-4 w-4" />
+                          <div>
+                            <p className="text-xs text-gray-400">Started</p>
+                            <p className="font-medium">{new Date(exclusion.start_date || exclusion.created_at).toLocaleDateString('en-GB')}</p>
+                          </div>
+                        </div>
+                        {exclusion.end_date && (
+                          <div className="flex items-center gap-1 text-gray-500">
+                            <Clock className="h-4 w-4" />
+                            <div>
+                              <p className="text-xs text-gray-400">Ends</p>
+                              <p className="font-medium">{new Date(exclusion.end_date).toLocaleDateString('en-GB')}</p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      {exclusion.status === 'active' && (
+                        <div className="mt-3 flex items-center gap-2 text-xs text-amber-600 bg-amber-50 px-3 py-2 rounded">
+                          <AlertCircle className="h-3 w-3" />
+                          <span>Currently active - {Math.ceil((new Date(exclusion.end_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24))} days remaining</span>
+                        </div>
+                      )}
                     </div>
                   </div>
-                  {exclusion.reason && (
-                    <p className="text-sm text-gray-600 mt-2">Reason: {exclusion.reason}</p>
-                  )}
+                  <StatusBadge status={exclusion.status} />
                 </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <Card>
+          <CardContent className="pt-6 text-center py-12">
+            <Shield className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-600">No exclusion history found</p>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

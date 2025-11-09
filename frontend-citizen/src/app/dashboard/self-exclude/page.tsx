@@ -13,13 +13,25 @@ export default function SelfExcludePage() {
   const [reason, setReason] = useState('')
   const { createExclusion, isCreating } = useExclusions()
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    const periodMap: Record<string, string> = {
+      '6': '6_months',
+      '12': '1_year',
+      '36': '3_years',
+      '60': '5_years',
+      '999': 'permanent'
+    }
+    
     createExclusion({
-      exclusion_period: parseInt(period),
-      reason: reason || 'Personal decision',
-      motivation_type: 'self_initiated',
+      exclusion_period: periodMap[period],
+      reason: reason || 'Personal decision for self-exclusion',
+      motivation_type: 'precaution',
       terms_acknowledged: true,
       consequences_understood: true
+    }, {
+      onSuccess: () => {
+        setTimeout(() => router.push('/dashboard'), 1000)
+      }
     })
   }
 
@@ -54,6 +66,7 @@ export default function SelfExcludePage() {
               {[
                 { value: '6', label: '6 Months' },
                 { value: '12', label: '1 Year' },
+                { value: '36', label: '3 Years' },
                 { value: '60', label: '5 Years' },
                 { value: '999', label: 'Permanent' }
               ].map((option) => (

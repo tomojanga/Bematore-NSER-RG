@@ -968,8 +968,10 @@ export function useAuth(): UseAuthReturn {
     let isMounted = true
     
     if (isMounted && profile?.success && profile.data && (!user || user.id !== profile.data.id)) {
+      console.log('📝 Raw profile data from API:', profile.data)
       // Convert AuthUser to SystemUser before setting in store
       const systemUser = convertAuthUserToCoreUser(profile.data)
+      console.log('📝 Converted system user:', systemUser)
       setUser(systemUser)
     }
 
@@ -1242,6 +1244,11 @@ export function useAuth(): UseAuthReturn {
     // Permissions
     hasRole,
     hasPermission,
+    
+    // Refresh user data
+    refreshUser: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['auth', 'profile'] })
+    },
     
     // Loading states
     isLoggingIn: loginMutation.isPending,

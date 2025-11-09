@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth, usePhoneVerification, useEmailVerification } from '@/hooks/useAuth'
-import { Shield, Phone, Mail, CheckCircle } from 'lucide-react'
+import { Shield, Phone, Mail, CheckCircle, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { useToast } from '@/components/ui/use-toast'
@@ -11,44 +11,87 @@ import { useToast } from '@/components/ui/use-toast'
 function VerifyAccountPage() {
   const router = useRouter()
   const { toast } = useToast()
-  const { user } = useAuth()
+  const { user, refreshUser } = useAuth()
   const { sendCode: sendPhoneCode, verifyPhone, isSendingCode: isSendingPhone, isVerifying: isVerifyingPhone } = usePhoneVerification()
   const { verifyEmail, isVerifying: isVerifyingEmail } = useEmailVerification()
   
   const [phoneCode, setPhoneCode] = useState('')
   const [emailCode, setEmailCode] = useState('')
-  const [phoneSent, setPhoneSent] = useState(false)
-  const [emailSent, setEmailSent] = useState(false)
+  const [step, setStep] = useState<'phone' | 'email' | 'complete'>('phone')
+  const [emailCodeSent, setEmailCodeSent] = useState(false)
 
   const handleSendPhoneCode = () => {
     if (!user?.phone_number) return
     sendPhoneCode({ phone_number: user.phone_number, action: 'verify' })
-    setPhoneSent(true)
   }
 
-  const handleVerifyPhone = () => {
+  const handleVerifyPhone = async () => {
     if (!user?.phone_number || !phoneCode) return
-    verifyPhone({ phone_number: user.phone_number, code: phoneCode })
+    try {
+      await verifyPhone({ phone_number: user.phone_number, code: phoneCode })
+      const updatedUser = await refreshUser()
+      if (updatedUser?.email && !updatedUser?.is_email_verified) {
+        setStep('email')
+      } else {
+        setTimeout(() => router.push('/dashboard'), 500)
+      }
+    } catch (error) {
+      console.error(error)
+    }
   }
 
-  const handleVerifyEmail = () => {
+  const handleSendEmailCode = async () => {
+    if (!user?.email) return
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/verify/send-code/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+        },
+        body: JSON.stringify({ type: 'email' })
+      })
+      setEmailCodeSent(true)
+      toast({
+        title: 'Success',
+        description: 'Verification code sent to your email',
+        duration: 3000
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const handleVerifyEmail = async () => {
     if (!user?.email || !emailCode) return
-    verifyEmail({ email: user.email, code: emailCode })
+    try {
+      await verifyEmail({ email: user.email, code: emailCode })
+      await refreshUser()
+      setTimeout(() => router.push('/dashboard'), 500)
+    } catch (error) {
+      console.error(error)
+    }
   }
 
-  // Redirect if not logged in
+  const handleSkipEmail = () => {
+    router.push('/dashboard')
+  }
+
   useEffect(() => {
     if (!user) {
-      router.push('/login')
+      router.push('/auth/login')
+      return
     }
-  }, [user, router])
-
-  // Redirect when fully verified
-  useEffect(() => {
-    if (user?.is_phone_verified && (!user.email || user.is_email_verified)) {
-      router.push('/dashboard')
+    
+    // Check if already verified
+    if (user.is_phone_verified && step === 'phone') {
+      if (!user.email || user.is_email_verified) {
+        router.push('/dashboard')
+      } else {
+        setStep('email')
+      }
     }
-  }, [user?.is_phone_verified, user?.is_email_verified, user?.email, router])
+  }, [user, router, step])
 
   if (!user) return null
 
@@ -60,90 +103,87 @@ function VerifyAccountPage() {
             <Shield className="h-12 w-12 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-gray-900">Verify Your Account</h1>
-          <p className="text-gray-600 mt-2 text-center">Complete verification to access your account</p>
+          <p className="text-gray-600 mt-2 text-center">
+            {step === 'phone' && 'Step 1: Verify your phone number'}
+            {step === 'email' && 'Step 2: Verify your email'}
+            {step === 'complete' && 'Verification complete!'}
+          </p>
         </div>
 
-        <div className="space-y-6">
-          {/* Phone Verification */}
-          {!user.is_phone_verified && (
-            <div className="border border-gray-200 rounded-lg p-4">
-              <div className="flex items-center gap-3 mb-4">
-                <Phone className="h-5 w-5 text-blue-600" />
-                <div>
-                  <h3 className="font-semibold">Phone Verification</h3>
-                  <p className="text-sm text-gray-600">{user.phone_number}</p>
-                </div>
-              </div>
-              
-              {!phoneSent ? (
-                <Button onClick={handleSendPhoneCode} disabled={isSendingPhone} className="w-full">
-                  {isSendingPhone ? 'Sending...' : 'Send Code'}
-                </Button>
-              ) : (
-                <div className="space-y-3">
-                  <Input
-                    placeholder="Enter 6-digit code"
-                    value={phoneCode}
-                    onChange={(e) => setPhoneCode(e.target.value)}
-                    maxLength={6}
-                  />
-                  <Button onClick={handleVerifyPhone} disabled={isVerifyingPhone || !phoneCode} className="w-full">
-                    {isVerifyingPhone ? 'Verifying...' : 'Verify Phone'}
-                  </Button>
-                </div>
-              )}
-            </div>
-          )}
-
-          {user.is_phone_verified && (
-            <div className="border border-green-200 bg-green-50 rounded-lg p-4">
-              <div className="flex items-center gap-3">
-                <CheckCircle className="h-5 w-5 text-green-600" />
-                <div>
-                  <h3 className="font-semibold text-green-900">Phone Verified</h3>
-                  <p className="text-sm text-green-700">{user.phone_number}</p>
-                </div>
+        {step === 'phone' && !user.is_phone_verified && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-lg">
+              <Phone className="h-5 w-5 text-blue-600" />
+              <div>
+                <p className="font-medium text-gray-900">Phone Number</p>
+                <p className="text-sm text-gray-600">{user.phone_number}</p>
               </div>
             </div>
-          )}
+            <Button onClick={handleSendPhoneCode} disabled={isSendingPhone} className="w-full">
+              {isSendingPhone ? 'Sending...' : 'Send Verification Code'}
+            </Button>
+            <Input
+              placeholder="Enter 6-digit code"
+              value={phoneCode}
+              onChange={(e) => setPhoneCode(e.target.value)}
+              maxLength={6}
+            />
+            <Button onClick={handleVerifyPhone} disabled={isVerifyingPhone || !phoneCode} className="w-full">
+              {isVerifyingPhone ? 'Verifying...' : 'Verify Phone'}
+            </Button>
+          </div>
+        )}
 
-          {/* Email Verification */}
-          {user.email && !user.is_email_verified && (
-            <div className="border border-gray-200 rounded-lg p-4">
-              <div className="flex items-center gap-3 mb-4">
-                <Mail className="h-5 w-5 text-blue-600" />
-                <div>
-                  <h3 className="font-semibold">Email Verification</h3>
-                  <p className="text-sm text-gray-600">{user.email}</p>
-                </div>
+        {step === 'email' && user.email && !user.is_email_verified && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-lg">
+              <Mail className="h-5 w-5 text-blue-600" />
+              <div>
+                <p className="font-medium text-gray-900">Email Address</p>
+                <p className="text-sm text-gray-600">{user.email}</p>
               </div>
-              
-              <div className="space-y-3">
+            </div>
+            
+            {!emailCodeSent ? (
+              <Button onClick={handleSendEmailCode} className="w-full">
+                Send Verification Code to Email
+              </Button>
+            ) : (
+              <>
+                <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                  <p className="text-sm text-green-800">Verification code sent to {user.email}</p>
+                </div>
                 <Input
                   placeholder="Enter 6-digit code"
                   value={emailCode}
-                  onChange={(e) => setEmailCode(e.target.value)}
+                  onChange={(e) => setEmailCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                   maxLength={6}
                 />
                 <Button onClick={handleVerifyEmail} disabled={isVerifyingEmail || !emailCode} className="w-full">
                   {isVerifyingEmail ? 'Verifying...' : 'Verify Email'}
                 </Button>
-              </div>
-            </div>
-          )}
+              </>
+            )}
+            
+            <Button onClick={handleSkipEmail} variant="outline" className="w-full">
+              Skip for Now
+            </Button>
+          </div>
+        )}
 
-          {user.email && user.is_email_verified && (
-            <div className="border border-green-200 bg-green-50 rounded-lg p-4">
-              <div className="flex items-center gap-3">
-                <CheckCircle className="h-5 w-5 text-green-600" />
-                <div>
-                  <h3 className="font-semibold text-green-900">Email Verified</h3>
-                  <p className="text-sm text-green-700">{user.email}</p>
-                </div>
+        {step === 'complete' && (
+          <div className="text-center space-y-4">
+            <div className="flex justify-center">
+              <div className="h-20 w-20 bg-green-100 rounded-full flex items-center justify-center">
+                <CheckCircle className="h-12 w-12 text-green-600" />
               </div>
             </div>
-          )}
-        </div>
+            <div>
+              <h3 className="text-xl font-bold text-gray-900">Verification Complete!</h3>
+              <p className="text-gray-600 mt-2">Redirecting to dashboard...</p>
+            </div>
+          </div>
+        )}
 
         <div className="mt-6 text-center text-sm text-gray-600">
           <p>Protected by GRAK © 2025</p>

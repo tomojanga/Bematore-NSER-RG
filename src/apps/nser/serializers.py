@@ -325,9 +325,22 @@ class RegisterExclusionSerializer(serializers.ModelSerializer):
         return attrs
     
     def create(self, validated_data):
+        from apps.bst.models import BSTToken
+        
         # Remove acknowledgment fields
         validated_data.pop('terms_acknowledged', None)
         validated_data.pop('consequences_understood', None)
+        
+        user = validated_data['user']
+        
+        # Get or create BST token for user
+        bst_token, created = BSTToken.objects.get_or_create(
+            user=user,
+            defaults={'is_active': True}
+        )
+        
+        # Add BST token to validated data
+        validated_data['bst_token'] = bst_token
         
         # Create exclusion
         exclusion = SelfExclusionRecord.objects.create(**validated_data)

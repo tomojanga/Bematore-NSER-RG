@@ -379,10 +379,14 @@ class Enable2FAView(TimingMixin, SuccessResponseMixin, APIView):
             
             # Send verification code
             from apps.users.tasks import send_2fa_code
-            send_2fa_code.delay(
-                user_id=str(request.user.id),
-                method=method
-            )
+            try:
+                send_2fa_code.delay(
+                    user_id=str(request.user.id),
+                    method=method
+                )
+            except AttributeError:
+                # Celery not configured, call directly
+                send_2fa_code(str(request.user.id), method)
             
             return self.success_response(
                 message=f'Verification code sent via {method}'

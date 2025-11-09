@@ -31,16 +31,20 @@ export function useExclusions(params?: PaginatedParams) {
 
   const createExclusionMutation = useMutation({
     mutationFn: async (exclusionData: ExclusionFormData) => {
+      console.log('Sending exclusion data:', exclusionData)
       const result = await api.nser.register(exclusionData)
       return result.data as SingleApiResponse<SelfExclusion>
     },
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ['exclusions'] })
       queryClient.invalidateQueries({ queryKey: ['exclusion-statistics'] })
+      queryClient.invalidateQueries({ queryKey: ['my-exclusions'] })
+      queryClient.invalidateQueries({ queryKey: ['my-active-exclusion'] })
       toast.success(response.message || 'Self-exclusion registered successfully')
     },
     onError: (error: any) => {
-      const message = error.response?.data?.message || 'Failed to register exclusion'
+      console.error('Exclusion error:', error.response?.data)
+      const message = error.response?.data?.message || error.response?.data?.reason?.[0] || 'Failed to register exclusion'
       toast.error(message)
     }
   })

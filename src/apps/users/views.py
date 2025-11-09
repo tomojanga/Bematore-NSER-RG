@@ -167,8 +167,7 @@ class VerifyPhoneView(TimingMixin, SuccessResponseMixin, APIView):
         verification.save()
         
         request.user.is_phone_verified = True
-        request.user.phone_verified_at = timezone.now()
-        request.user.save()
+        request.user.save(update_fields=['is_phone_verified'])
         
         return self.success_response(message='Phone number verified successfully')
 
@@ -217,8 +216,7 @@ class VerifyEmailView(TimingMixin, SuccessResponseMixin, APIView):
         verification.save()
         
         request.user.is_email_verified = True
-        request.user.email_verified_at = timezone.now()
-        request.user.save()
+        request.user.save(update_fields=['is_email_verified'])
         
         return self.success_response(message='Email verified successfully')
 

@@ -287,6 +287,17 @@ SMS_API_KEY = env('SMS_API_KEY', default='')
 SMS_USERNAME = env('SMS_USERNAME', default='')
 SMS_SENDER_ID = env('SMS_SENDER_ID', default='GRAK')
 
+# AfricasTalking (legacy naming for compatibility)
+AFRICASTALKING_USERNAME = env('AFRICASTALKING_USERNAME', default=env('SMS_USERNAME', default=''))
+AFRICASTALKING_API_KEY = env('AFRICASTALKING_API_KEY', default=env('SMS_API_KEY', default=''))
+AFRICASTALKING_SENDER_ID = env('AFRICASTALKING_SENDER_ID', default=env('SMS_SENDER_ID', default='GRAK'))
+
+# SendGrid Configuration
+SENDGRID_API_KEY = env('SENDGRID_API_KEY', default='')
+
+# Firebase Configuration
+FIREBASE_CREDENTIALS_PATH = env('FIREBASE_CREDENTIALS_PATH', default='')
+
 # M-Pesa Configuration (Safaricom Daraja API)
 MPESA_ENVIRONMENT = env('MPESA_ENVIRONMENT', default='sandbox')  # sandbox or production
 MPESA_CONSUMER_KEY = env('MPESA_CONSUMER_KEY', default='')

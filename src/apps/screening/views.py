@@ -413,6 +413,61 @@ class ScreeningScheduleViewSet(TimingMixin, viewsets.ModelViewSet):
 
 
 # Missing views
+class RespondToQuestionView(TimingMixin, SuccessResponseMixin, APIView):
+    """Submit single assessment response"""
+    permission_classes = [IsAuthenticated]
+    
+    @transaction.atomic
+    def post(self, request):
+        from .serializers import SubmitResponseSerializer
+        
+        serializer = SubmitResponseSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response({
+                'success': False,
+                'error': serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        session_id = serializer.validated_data['session_id']
+        question_id = serializer.validated_data['question_id']
+        response_value = serializer.validated_data['response_value']
+        
+        # Get session and verify ownership
+        session = AssessmentSession.objects.get(id=session_id, user=request.user)
+        question = AssessmentQuestion.objects.get(id=question_id)
+        
+        # Verify question belongs to assessment type
+        if question.assessment_type != session.assessment_type:
+            return Response({
+                'success': False,
+                'error': {'question_id': 'Question does not belong to this assessment type'}
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Calculate score based on response
+        score = 0
+        if question.response_type == 'yes_no':
+            score = question.max_score if response_value.lower() == 'yes' else 0
+        elif question.response_type == 'frequency':
+            # PGSI scoring: never=0, sometimes=1, most_of_time=2, almost_always=3
+            score_map = {'never': 0, 'sometimes': 1, 'most_of_time': 2, 'almost_always': 3}
+            score = score_map.get(response_value, 0)
+        
+        # Create or update response
+        response_obj, created = AssessmentResponse.objects.update_or_create(
+            session=session,
+            question=question,
+            defaults={
+                'response_value': response_value,
+                'score': score
+            }
+        )
+        
+        return self.success_response(
+            data=AssessmentResponseSerializer(response_obj).data,
+            message='Response recorded successfully'
+        )
+
+
 class SubmitAssessmentView(TimingMixin, SuccessResponseMixin, APIView):
     """Submit assessment responses"""
     permission_classes = [IsAuthenticated]
@@ -455,8 +510,10 @@ class StartLieBetAssessmentView(TimingMixin, SuccessResponseMixin, APIView):
     
     @transaction.atomic
     def post(self, request):
+        import uuid
         session = AssessmentSession.objects.create(
             user=request.user,
+            session_reference=f'LB-{uuid.uuid4().hex[:12].upper()}',
             assessment_type='lie_bet',
             status='in_progress',
             started_at=timezone.now()
@@ -482,8 +539,10 @@ class StartPGSIAssessmentView(TimingMixin, SuccessResponseMixin, APIView):
     
     @transaction.atomic
     def post(self, request):
+        import uuid
         session = AssessmentSession.objects.create(
             user=request.user,
+            session_reference=f'PGSI-{uuid.uuid4().hex[:12].upper()}',
             assessment_type='pgsi',
             status='in_progress',
             started_at=timezone.now()
@@ -509,8 +568,10 @@ class StartDSM5AssessmentView(TimingMixin, SuccessResponseMixin, APIView):
     
     @transaction.atomic
     def post(self, request):
+        import uuid
         session = AssessmentSession.objects.create(
             user=request.user,
+            session_reference=f'DSM5-{uuid.uuid4().hex[:12].upper()}',
             assessment_type='dsm5',
             status='in_progress',
             started_at=timezone.now()

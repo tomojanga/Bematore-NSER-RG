@@ -3,21 +3,33 @@
 import { useMyExclusions, useExclusionStatus } from '@/hooks/useExclusions'
 import { Card, CardContent, CardHeader, CardTitle, StatusBadge } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { Shield, AlertCircle, CheckCircle, Calendar, FileText, Clock } from 'lucide-react'
+import { Shield, AlertCircle, CheckCircle, Calendar, FileText, Clock, Loader2, TrendingUp, Activity } from 'lucide-react'
 import Link from 'next/link'
+import { useAuth } from '@/hooks/useAuth'
 
 export default function DashboardPage() {
-  const { data: exclusions } = useMyExclusions()
-  const { data: status } = useExclusionStatus()
+  const { user } = useAuth()
+  const { data: exclusions, isLoading: isLoadingExclusions } = useMyExclusions()
+  const { data: status, isLoading: isLoadingStatus } = useExclusionStatus()
 
   const activeExclusion = exclusions?.results?.find((e: any) => e.status === 'active')
   const daysRemaining = activeExclusion ? Math.ceil((new Date(activeExclusion.end_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : 0
 
+  if (isLoadingExclusions || isLoadingStatus) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">My Dashboard</h1>
-        <p className="text-gray-600 mt-1">Manage your self-exclusion and gambling activity</p>
+        <h1 className="text-3xl font-bold text-gray-900">
+          Welcome back{user?.first_name ? `, ${user.first_name}` : ''}!
+        </h1>
+        <p className="text-gray-600 mt-1">Here's your self-exclusion overview</p>
       </div>
 
       {activeExclusion ? (
@@ -77,7 +89,7 @@ export default function DashboardPage() {
                 <p className="text-sm text-green-700 mt-1">
                   You can participate in gambling activities. Consider self-excluding if you need help.
                 </p>
-                <Link href="/self-exclude">
+                <Link href="/dashboard/self-exclude">
                   <Button className="mt-4">Self-Exclude Now</Button>
                 </Link>
               </div>
@@ -86,45 +98,67 @@ export default function DashboardPage() {
         </Card>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Card className="hover:shadow-lg transition-shadow">
           <CardHeader>
-            <CardTitle className="text-sm flex items-center gap-2">
+            <CardTitle className="text-sm flex items-center gap-2 text-gray-600">
               <Shield className="h-4 w-4" />
               Total Exclusions
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">{exclusions?.count || 0}</p>
-            <p className="text-sm text-gray-600 mt-1">All time</p>
+            <p className="text-3xl font-bold text-gray-900">{exclusions?.count || 0}</p>
+            <p className="text-xs text-gray-500 mt-1">All time</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="hover:shadow-lg transition-shadow">
           <CardHeader>
-            <CardTitle className="text-sm flex items-center gap-2">
-              <Clock className="h-4 w-4" />
+            <CardTitle className="text-sm flex items-center gap-2 text-gray-600">
+              <Activity className="h-4 w-4" />
               Current Status
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <StatusBadge status={status?.data?.is_excluded ? 'excluded' : 'active'} />
-            <p className="text-sm text-gray-600 mt-2">
-              {status?.data?.is_excluded ? 'Excluded from gambling' : 'Can participate'}
-            </p>
+            {status?.data?.is_excluded ? (
+              <div>
+                <p className="text-3xl font-bold text-red-600">Excluded</p>
+                <p className="text-xs text-gray-500 mt-1">Protected</p>
+              </div>
+            ) : (
+              <div>
+                <p className="text-3xl font-bold text-green-600">Active</p>
+                <p className="text-xs text-gray-500 mt-1">No restrictions</p>
+              </div>
+            )}
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="hover:shadow-lg transition-shadow">
           <CardHeader>
-            <CardTitle className="text-sm flex items-center gap-2">
+            <CardTitle className="text-sm flex items-center gap-2 text-gray-600">
               <FileText className="h-4 w-4" />
               Assessments
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">0</p>
-            <p className="text-sm text-gray-600 mt-1">Completed</p>
+            <p className="text-3xl font-bold text-gray-900">0</p>
+            <p className="text-xs text-gray-500 mt-1">Completed</p>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader>
+            <CardTitle className="text-sm flex items-center gap-2 text-gray-600">
+              <Clock className="h-4 w-4" />
+              Account Age
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-3xl font-bold text-gray-900">
+              {Math.floor((Date.now() - new Date(user?.created_at || '').getTime()) / (1000 * 60 * 60 * 24))}
+            </p>
+            <p className="text-xs text-gray-500 mt-1">Days</p>
           </CardContent>
         </Card>
       </div>
@@ -134,17 +168,29 @@ export default function DashboardPage() {
           <CardTitle>Quick Actions</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 gap-4">
-            <Link href="/self-exclude">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <Link href="/dashboard/self-exclude" className="block">
               <button className="w-full flex flex-col items-center gap-3 p-6 border-2 border-dashed border-gray-300 rounded-lg hover:border-red-400 hover:bg-red-50 transition-all">
-                <Shield className="h-8 w-8 text-gray-400" />
+                <Shield className="h-8 w-8 text-red-400" />
                 <span className="text-sm font-medium text-gray-700">Self-Exclude</span>
               </button>
             </Link>
-            <Link href="/assessments">
+            <Link href="/dashboard/assessments" className="block">
               <button className="w-full flex flex-col items-center gap-3 p-6 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-all">
-                <Calendar className="h-8 w-8 text-gray-400" />
+                <FileText className="h-8 w-8 text-blue-400" />
                 <span className="text-sm font-medium text-gray-700">Take Assessment</span>
+              </button>
+            </Link>
+            <Link href="/dashboard/history" className="block">
+              <button className="w-full flex flex-col items-center gap-3 p-6 border-2 border-dashed border-gray-300 rounded-lg hover:border-purple-400 hover:bg-purple-50 transition-all">
+                <Clock className="h-8 w-8 text-purple-400" />
+                <span className="text-sm font-medium text-gray-700">View History</span>
+              </button>
+            </Link>
+            <Link href="/dashboard/settings" className="block">
+              <button className="w-full flex flex-col items-center gap-3 p-6 border-2 border-dashed border-gray-300 rounded-lg hover:border-gray-400 hover:bg-gray-50 transition-all">
+                <Activity className="h-8 w-8 text-gray-400" />
+                <span className="text-sm font-medium text-gray-700">Settings</span>
               </button>
             </Link>
           </div>

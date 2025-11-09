@@ -23,7 +23,7 @@ def propagate_exclusion_to_operators(self, exclusion_id):
     
     try:
         exclusion = SelfExclusionRecord.objects.get(id=exclusion_id)
-        operators = Operator.objects.filter(is_active=True, status='active')
+        operators = Operator.objects.filter(license_status='active')
         
         success_count = 0
         failed_count = 0
