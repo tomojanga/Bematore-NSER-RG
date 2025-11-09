@@ -279,7 +279,7 @@ class RegisterExclusionSerializer(serializers.ModelSerializer):
         model = SelfExclusionRecord
         fields = [
             'user', 'exclusion_period', 'reason', 'motivation_type',
-            'supporting_documents', 'is_auto_renewable',
+            'is_auto_renewable',
             'terms_acknowledged', 'consequences_understood'
         ]
     
@@ -325,9 +325,22 @@ class RegisterExclusionSerializer(serializers.ModelSerializer):
         return attrs
     
     def create(self, validated_data):
+        from apps.bst.models import BSTToken
+        
         # Remove acknowledgment fields
         validated_data.pop('terms_acknowledged', None)
         validated_data.pop('consequences_understood', None)
+        
+        user = validated_data['user']
+        
+        # Get or create BST token for user
+        bst_token, created = BSTToken.objects.get_or_create(
+            user=user,
+            defaults={'is_active': True}
+        )
+        
+        # Add BST token to validated data
+        validated_data['bst_token'] = bst_token
         
         # Create exclusion
         exclusion = SelfExclusionRecord.objects.create(**validated_data)
@@ -366,7 +379,7 @@ class ExtendExclusionSerializer(serializers.Serializer):
         required=True
     )
     reason = serializers.CharField(required=True, min_length=20)
-    supporting_documents = serializers.JSONField(required=False)
+
     
     def validate_reason(self, value):
         if len(value) < 20:

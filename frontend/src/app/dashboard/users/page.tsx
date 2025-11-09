@@ -2,159 +2,169 @@
 
 import { useState } from 'react'
 import { useUsers } from '@/hooks/useUsers'
-import { Plus, Search, Filter, Edit, Trash2, Eye } from 'lucide-react'
-import { formatDate, getStatusColor, getRoleColor } from '@/lib/utils'
-import Link from 'next/link'
+import { Card, CardContent, CardHeader, CardTitle, StatusBadge, RiskBadge } from '@/components/ui/Card'
+import { Button } from '@/components/ui/Button'
+import { Input } from '@/components/ui/Input'
+import { Table } from '@/components/ui/Table'
+import { Users, Search, Filter, Download, Eye, Shield, AlertCircle, CheckCircle } from 'lucide-react'
+import { formatDate, formatPhoneNumber, formatRole } from '@/lib/utils'
+import { Badge } from '@/components/ui/Card'
 
 export default function UsersPage() {
-  const [search, setSearch] = useState('')
-  const [page, setPage] = useState(1)
-  const { users, total, isLoading } = useUsers({ page, search, page_size: 20 })
+  const [searchTerm, setSearchTerm] = useState('')
+  const [roleFilter, setRoleFilter] = useState<string>('all')
+  const { data, isLoading } = useUsers({ 
+    search: searchTerm,
+    role: roleFilter !== 'all' ? roleFilter : undefined 
+  })
+
+  const users = data?.results || []
+
+  const columns = [
+    { key: 'user', label: 'User', render: (row: any) => (
+      <div className="flex items-center gap-3">
+        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold">
+          {row.first_name?.charAt(0)}{row.last_name?.charAt(0)}
+        </div>
+        <div>
+          <p className="font-medium">{row.first_name} {row.last_name}</p>
+          <p className="text-xs text-gray-500">{formatPhoneNumber(row.phone_number)}</p>
+        </div>
+      </div>
+    )},
+    { key: 'email', label: 'Email' },
+    { key: 'role', label: 'Role', render: (row: any) => (
+      <Badge variant="info">{formatRole(row.role)}</Badge>
+    )},
+    { key: 'verification_status', label: 'Verification', render: (row: any) => (
+      <div className="flex gap-1">
+        {row.phone_verified && <Badge variant="success" size="sm">Phone</Badge>}
+        {row.email_verified && <Badge variant="success" size="sm">Email</Badge>}
+        {row.id_verified && <Badge variant="success" size="sm">ID</Badge>}
+      </div>
+    )},
+    { key: 'is_excluded', label: 'Excluded', render: (row: any) => (
+      row.is_excluded ? 
+        <Shield className="h-5 w-5 text-red-600" /> : 
+        <span className="text-gray-400">-</span>
+    )},
+    { key: 'risk_level', label: 'Risk', render: (row: any) => (
+      row.risk_level ? <RiskBadge riskLevel={row.risk_level} /> : <span className="text-gray-400">-</span>
+    )},
+    { key: 'date_joined', label: 'Joined', render: (row: any) => formatDate(row.date_joined) },
+    { key: 'actions', label: 'Actions', render: (row: any) => (
+      <Button size="sm" variant="outline">
+        <Eye className="h-4 w-4 mr-1" />
+        View
+      </Button>
+    )}
+  ]
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Users</h1>
-          <p className="text-gray-600 mt-1">Manage system users and their roles</p>
-        </div>
-        <Link
-          href="/dashboard/users/new"
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center gap-2"
-        >
-          <Plus className="h-5 w-5" />
-          Add User
-        </Link>
-      </div>
-
-      {/* Filters */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-        <div className="flex gap-4">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search users by name, phone, or email..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
-          <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-2">
-            <Filter className="h-5 w-5" />
-            Filters
-          </button>
+          <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
+          <p className="text-gray-600 mt-1">Manage all registered users and their profiles</p>
         </div>
       </div>
 
-      {/* Users Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        {isLoading ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600"></div>
-          </div>
-        ) : (
-          <>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      User
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Phone/Email
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Role
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Joined
-                    </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {users.map((user) => (
-                    <tr key={user.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">
-                            {user.first_name} {user.last_name}
-                          </div>
-                          <div className="text-sm text-gray-500">ID: {user.id.slice(0, 8)}</div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{user.phone_number}</div>
-                        <div className="text-sm text-gray-500">{user.email || 'N/A'}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 py-1 text-xs rounded-full ${getRoleColor(user.role)}`}>
-                          {user.role.replace('_', ' ')}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(user.status)}`}>
-                          {user.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {formatDate(user.created_at)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div className="flex justify-end gap-2">
-                          <Link
-                            href={`/dashboard/users/${user.id}`}
-                            className="text-blue-600 hover:text-blue-900"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Link>
-                          <button className="text-indigo-600 hover:text-indigo-900">
-                            <Edit className="h-4 w-4" />
-                          </button>
-                          <button className="text-red-600 hover:text-red-900">
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Total Users</p>
+                <p className="text-2xl font-bold mt-1">{data?.count || 0}</p>
+              </div>
+              <Users className="h-8 w-8 text-blue-600" />
             </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Verified</p>
+                <p className="text-2xl font-bold mt-1 text-green-600">
+                  {users.filter((u: any) => u.phone_verified && u.email_verified).length}
+                </p>
+              </div>
+              <CheckCircle className="h-8 w-8 text-green-600" />
+            </div>
+          </CardContent>
+        </Card>
 
-            {/* Pagination */}
-            <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-              <div className="text-sm text-gray-700">
-                Showing <span className="font-medium">{users.length}</span> of{' '}
-                <span className="font-medium">{total}</span> users
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Excluded</p>
+                <p className="text-2xl font-bold mt-1 text-red-600">
+                  {users.filter((u: any) => u.is_excluded).length}
+                </p>
               </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setPage(page - 1)}
-                  disabled={page === 1}
-                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Previous
-                </button>
-                <button
-                  onClick={() => setPage(page + 1)}
-                  disabled={users.length < 20}
-                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Next
-                </button>
-              </div>
+              <Shield className="h-8 w-8 text-red-600" />
             </div>
-          </>
-        )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">High Risk</p>
+                <p className="text-2xl font-bold mt-1 text-yellow-600">
+                  {users.filter((u: any) => u.risk_level === 'high').length}
+                </p>
+              </div>
+              <AlertCircle className="h-8 w-8 text-yellow-600" />
+            </div>
+          </CardContent>
+        </Card>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>User Directory</CardTitle>
+          <div className="flex gap-3">
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                placeholder="Search users..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <select
+              value={roleFilter}
+              onChange={(e) => setRoleFilter(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="all">All Roles</option>
+              <option value="citizen">Citizen</option>
+              <option value="operator_user">Operator User</option>
+              <option value="operator_admin">Operator Admin</option>
+              <option value="grak_officer">GRAK Officer</option>
+              <option value="grak_admin">GRAK Admin</option>
+            </select>
+            <Button variant="outline">
+              <Download className="h-4 w-4 mr-2" />
+              Export
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <Table
+            columns={columns}
+            data={users}
+            isLoading={isLoading}
+            emptyMessage="No users found"
+          />
+        </CardContent>
+      </Card>
     </div>
   )
 }

@@ -125,10 +125,49 @@ class VerifyPhoneView(TimingMixin, SuccessResponseMixin, APIView):
         serializer = VerifyPhoneSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         
-        # Mark user as verified
+        # Get verification record
+        verification = IdentityVerification.objects.filter(
+            user=request.user,
+            verification_type='phone',
+            status='pending'
+        ).first()
+        
+        if not verification:
+            return self.error_response(
+                message='No pending verification found',
+                status_code=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Check if code expired
+        if verification.code_expires_at < timezone.now():
+            return self.error_response(
+                message='Verification code expired',
+                status_code=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Check attempts
+        if verification.attempts >= verification.max_attempts:
+            return self.error_response(
+                message='Maximum verification attempts exceeded',
+                status_code=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Verify code
+        if verification.verification_code != serializer.validated_data['verification_code']:
+            verification.attempts += 1
+            verification.save()
+            return self.error_response(
+                message='Invalid verification code',
+                status_code=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Mark as verified
+        verification.status = 'verified'
+        verification.verified_at = timezone.now()
+        verification.save()
+        
         request.user.is_phone_verified = True
-        request.user.phone_verified_at = timezone.now()
-        request.user.save()
+        request.user.save(update_fields=['is_phone_verified'])
         
         return self.success_response(message='Phone number verified successfully')
 
@@ -142,9 +181,42 @@ class VerifyEmailView(TimingMixin, SuccessResponseMixin, APIView):
         serializer = VerifyEmailSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         
+        # Get verification record
+        verification = IdentityVerification.objects.filter(
+            user=request.user,
+            verification_type='email',
+            status='pending'
+        ).first()
+        
+        if not verification:
+            return self.error_response(
+                message='No pending verification found',
+                status_code=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Check if code expired
+        if verification.code_expires_at < timezone.now():
+            return self.error_response(
+                message='Verification code expired',
+                status_code=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Verify code
+        if verification.verification_code != serializer.validated_data['verification_code']:
+            verification.attempts += 1
+            verification.save()
+            return self.error_response(
+                message='Invalid verification code',
+                status_code=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Mark as verified
+        verification.status = 'verified'
+        verification.verified_at = timezone.now()
+        verification.save()
+        
         request.user.is_email_verified = True
-        request.user.email_verified_at = timezone.now()
-        request.user.save()
+        request.user.save(update_fields=['is_email_verified'])
         
         return self.success_response(message='Email verified successfully')
 
@@ -368,9 +440,15 @@ class SendVerificationCodeView(TimingMixin, SuccessResponseMixin, APIView):
         verification_type = request.data.get('type', 'phone')
         
         from apps.users.tasks import send_verification_code
-        send_verification_code.delay(str(request.user.id), verification_type)
+        result = send_verification_code(str(request.user.id), verification_type)
         
-        return self.success_response(message='Verification code sent')
+        if result:
+            return self.success_response(message=f'Verification code sent to your {verification_type}')
+        else:
+            return self.error_response(
+                message='Failed to send verification code',
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class BlockDeviceView(TimingMixin, SuccessResponseMixin, APIView):

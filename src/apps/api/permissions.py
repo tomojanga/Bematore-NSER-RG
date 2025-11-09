@@ -3,6 +3,7 @@ Custom API Permissions
 Role-based access control for NSER-RG system
 """
 from rest_framework import permissions
+from django.utils import timezone
 
 
 class IsGRAKAdmin(permissions.BasePermission):
@@ -107,6 +108,23 @@ class CanLookupExclusion(permissions.BasePermission):
     message = "You don't have permission to lookup exclusions."
     
     def has_permission(self, request, view):
+        # Check for API key first
+        api_key = request.headers.get('X-API-Key')
+        if api_key:
+            from apps.operators.models import APIKey
+            try:
+                key = APIKey.objects.select_related('operator').get(
+                    api_key=api_key,
+                    is_active=True
+                )
+                if key.expires_at and key.expires_at < timezone.now():
+                    return False
+                request.api_key = key
+                request.operator = key.operator
+                return key.can_lookup
+            except APIKey.DoesNotExist:
+                pass
+        
         # Operators with API key and lookup scope
         if hasattr(request, 'api_key'):
             return request.api_key.can_lookup

@@ -27,6 +27,9 @@ export default function GRAKDashboardPage() {
   const { data: complianceData } = useRealTimeCompliance()
   const { data: systemHealth } = useSystemHealth()
 
+  const overview = dashboardData?.overview || {}
+  const systemStatus = systemHealth?.data || {}
+
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -48,8 +51,7 @@ export default function GRAKDashboardPage() {
     )
   }
 
-  const overview = dashboardData?.overview
-  const systemStatus = systemHealth?.data
+
 
   return (
     <div className="space-y-8">

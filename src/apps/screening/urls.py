@@ -33,7 +33,7 @@ urlpatterns = [
     path('questions/next/', views.NextQuestionView.as_view(), name='next_question'),
     
     # Responses
-    path('respond/', views.SubmitResponseView.as_view(), name='submit_response'),
+    path('respond/', views.RespondToQuestionView.as_view(), name='submit_response'),
     path('responses/batch/', views.BatchSubmitResponsesView.as_view(), name='batch_submit_responses'),
     
     # Risk Scoring

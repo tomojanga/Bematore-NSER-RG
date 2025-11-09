@@ -1,0 +1,9 @@
+{
+  "/not-found": "app/not-found.js",
+  "/auth/login/page": "app/auth/login/page.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/dashboard/self-exclude/page": "app/dashboard/self-exclude/page.js",
+  "/dashboard/assessments/page": "app/dashboard/assessments/page.js",
+  "/dashboard/account/page": "app/dashboard/account/page.js",
+  "/dashboard/history/page": "app/dashboard/history/page.js"
+}

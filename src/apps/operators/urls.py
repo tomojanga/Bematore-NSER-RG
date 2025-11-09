@@ -5,6 +5,7 @@ Operator management, licensing, API keys, compliance
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from . import views
+from . import views_public
 
 app_name = 'operators'
 
@@ -17,7 +18,10 @@ router.register(r'compliance-reports', views.ComplianceReportViewSet, basename='
 router.register(r'audit-logs', views.OperatorAuditLogViewSet, basename='audit_log')
 
 urlpatterns = [
-    # Operator Onboarding
+    # Public Operator Registration
+    path('public/register/', views_public.PublicRegisterOperatorView.as_view(), name='public_register_operator'),
+    
+    # Operator Onboarding (Admin)
     path('register/', views.RegisterOperatorView.as_view(), name='register_operator'),
     path('onboard/', views.OnboardOperatorView.as_view(), name='onboard_operator'),
     path('<uuid:pk>/activate/', views.ActivateOperatorView.as_view(), name='activate_operator'),
@@ -64,6 +68,9 @@ urlpatterns = [
     path('search/', views.SearchOperatorsView.as_view(), name='search_operators'),
     path('filter/compliant/', views.CompliantOperatorsView.as_view(), name='compliant_operators'),
     path('filter/non-compliant/', views.NonCompliantOperatorsView.as_view(), name='non_compliant_operators'),
+    
+    # Current Operator
+    path('me/', views.MyOperatorView.as_view(), name='my_operator'),
     
     # Router URLs
     path('', include(router.urls)),

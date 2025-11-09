@@ -40,9 +40,22 @@ export default function ForgotPasswordPage() {
     }
   }
 
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
+        <Link
+          href="/login"
+          className="flex items-center text-blue-600 hover:text-blue-700 mb-6"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Login
+        </Link>
+        
         <div className="flex flex-col items-center mb-8">
           <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-4 rounded-full mb-4">
             <Shield className="h-12 w-12 text-white" />

@@ -19,6 +19,11 @@ def send_sms(self, phone_number, message):
         from django.conf import settings
         import africastalking
         
+        # Check if SMS is configured
+        if not hasattr(settings, 'AFRICASTALKING_USERNAME') or not settings.AFRICASTALKING_USERNAME:
+            logger.warning(f"SMS not configured, skipping SMS to {phone_number}")
+            return {'sent': False, 'reason': 'not_configured'}
+        
         # Initialize Africa's Talking
         africastalking.initialize(
             username=settings.AFRICASTALKING_USERNAME,
@@ -49,10 +54,11 @@ def send_sms(self, phone_number, message):
             SMSLog.objects.create(
                 phone_number=phone_number,
                 message=message,
+                sender_id=settings.AFRICASTALKING_SENDER_ID,
+                provider='africastalking',
                 status='sent' if status_code == 101 else 'failed',
-                status_code=status_code,
                 message_id=recipient.get('messageId'),
-                cost=recipient.get('cost'),
+                total_cost=recipient.get('cost'),
                 sent_at=timezone.now()
             )
             
@@ -71,12 +77,18 @@ def send_sms(self, phone_number, message):
             SMSLog.objects.create(
                 phone_number=phone_number,
                 message=message,
+                sender_id=getattr(settings, 'AFRICASTALKING_SENDER_ID', 'GRAK'),
+                provider='africastalking',
                 status='failed',
-                error_message=str(exc),
+                delivery_error=str(exc),
                 sent_at=timezone.now()
             )
         except:
             pass
+        
+        # Don't retry if it's a configuration error
+        if 'AFRICASTALKING' in str(exc) or 'not configured' in str(exc).lower():
+            return {'sent': False, 'error': str(exc)}
             
         raise self.retry(exc=exc, countdown=60)
 
@@ -91,6 +103,11 @@ def send_email(self, email, subject, message, html_content=None):
         from django.conf import settings
         from sendgrid import SendGridAPIClient
         from sendgrid.helpers.mail import Mail, Email, To, Content
+        
+        # Check if email is configured
+        if not hasattr(settings, 'SENDGRID_API_KEY') or not settings.SENDGRID_API_KEY:
+            logger.warning(f"Email not configured, skipping email to {email}")
+            return {'sent': False, 'reason': 'not_configured'}
         
         # Create SendGrid client
         sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
@@ -112,11 +129,13 @@ def send_email(self, email, subject, message, html_content=None):
         
         # Log email
         EmailLog.objects.create(
-            email=email,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to_email=email,
             subject=subject,
-            message=message,
+            body_text=message,
+            body_html=html_content or '',
+            provider='sendgrid',
             status='sent' if response.status_code == 202 else 'failed',
-            status_code=response.status_code,
             message_id=response.headers.get('X-Message-Id'),
             sent_at=timezone.now()
         )
@@ -132,15 +151,21 @@ def send_email(self, email, subject, message, html_content=None):
         # Log failed email
         try:
             EmailLog.objects.create(
-                email=email,
+                from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@grak.go.ke'),
+                to_email=email,
                 subject=subject,
-                message=message,
+                body_text=message,
+                provider='sendgrid',
                 status='failed',
                 error_message=str(exc),
                 sent_at=timezone.now()
             )
         except:
             pass
+        
+        # Don't retry if it's a configuration error
+        if 'SENDGRID' in str(exc) or 'not configured' in str(exc).lower():
+            return {'sent': False, 'error': str(exc)}
             
         raise self.retry(exc=exc, countdown=60)
 
@@ -398,3 +423,80 @@ def send_scheduled_notifications():
             logger.error(f"Failed to send scheduled notification {notification.id}: {str(e)}")
     
     return {'sent': sent_count}
+
+
+@shared_task(bind=True, max_retries=3)
+def send_exclusion_confirmation(self, user_id, exclusion_id):
+    """Send self-exclusion confirmation to user via SMS and email"""
+    try:
+        from apps.users.models import User
+        from apps.nser.models import SelfExclusionRecord
+        
+        user = User.objects.get(id=user_id)
+        exclusion = SelfExclusionRecord.objects.get(id=exclusion_id)
+        
+        # Prepare message
+        expiry_date_str = exclusion.expiry_date.strftime('%d %B %Y') if exclusion.expiry_date else 'indefinitely'
+        
+        sms_message = f"Your self-exclusion has been registered (Ref: {exclusion.exclusion_reference}). You are excluded from gambling until {expiry_date_str}. Contact GRAK for support."
+        
+        email_subject = "Self-Exclusion Confirmation - NSER"
+        email_message = f"""Dear {user.get_full_name()},
+
+Your self-exclusion has been successfully registered with the National Self-Exclusion Register (NSER).
+
+Exclusion Details:
+- Reference Number: {exclusion.exclusion_reference}
+- Period: {exclusion.get_exclusion_period_display()}
+- Start Date: {exclusion.effective_date.strftime('%d %B %Y')}
+- Expiry Date: {expiry_date_str}
+
+During this period, you will not be able to participate in gambling activities with any licensed operator in Kenya.
+
+If you need support or have questions, please contact GRAK:
+- Phone: +254 XXX XXX XXX
+- Email: support@grak.go.ke
+
+Thank you for taking this important step.
+
+Best regards,
+Gambling Regulatory Authority of Kenya (GRAK)
+"""
+        
+        results = {'sms': False, 'email': False, 'push': False}
+        
+        # Send SMS (non-blocking)
+        if user.phone_number:
+            try:
+                send_sms.apply_async(args=[str(user.phone_number), sms_message], countdown=1)
+                results['sms'] = True
+            except Exception as e:
+                logger.warning(f"Could not queue SMS: {str(e)}")
+        
+        # Send Email (non-blocking)
+        if user.email:
+            try:
+                send_email.apply_async(args=[user.email, email_subject, email_message], countdown=1)
+                results['email'] = True
+            except Exception as e:
+                logger.warning(f"Could not queue email: {str(e)}")
+        
+        # Send push notification (non-blocking)
+        try:
+            send_push_notification.apply_async(
+                args=[str(user.id), "Self-Exclusion Confirmed", f"Your self-exclusion is now active until {expiry_date_str}"],
+                countdown=1
+            )
+            results['push'] = True
+        except Exception as e:
+            logger.warning(f"Could not queue push notification: {str(e)}")
+        
+        logger.info(f"Queued exclusion confirmations for user {user_id}: {results}")
+        return {'sent': True, 'user_id': str(user_id), 'exclusion_id': str(exclusion_id), 'results': results}
+        
+    except Exception as exc:
+        logger.error(f"Failed to send exclusion confirmation: {str(exc)}")
+        # Don't retry for user/exclusion not found errors
+        if 'DoesNotExist' in str(exc):
+            return {'sent': False, 'error': str(exc)}
+        raise self.retry(exc=exc, countdown=60)

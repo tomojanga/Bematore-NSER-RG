@@ -209,10 +209,10 @@ REST_FRAMEWORK = {
 
 # JWT Settings
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
-    'ROTATE_REFRESH_TOKENS': True,
-    'BLACKLIST_AFTER_ROTATION': True,
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=24),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': False,
     'UPDATE_LAST_LOGIN': True,
     'ALGORITHM': 'HS256',
     'SIGNING_KEY': SECRET_KEY,
@@ -287,6 +287,17 @@ SMS_API_KEY = env('SMS_API_KEY', default='')
 SMS_USERNAME = env('SMS_USERNAME', default='')
 SMS_SENDER_ID = env('SMS_SENDER_ID', default='GRAK')
 
+# AfricasTalking (legacy naming for compatibility)
+AFRICASTALKING_USERNAME = env('AFRICASTALKING_USERNAME', default=env('SMS_USERNAME', default=''))
+AFRICASTALKING_API_KEY = env('AFRICASTALKING_API_KEY', default=env('SMS_API_KEY', default=''))
+AFRICASTALKING_SENDER_ID = env('AFRICASTALKING_SENDER_ID', default=env('SMS_SENDER_ID', default='GRAK'))
+
+# SendGrid Configuration
+SENDGRID_API_KEY = env('SENDGRID_API_KEY', default='')
+
+# Firebase Configuration
+FIREBASE_CREDENTIALS_PATH = env('FIREBASE_CREDENTIALS_PATH', default='')
+
 # M-Pesa Configuration (Safaricom Daraja API)
 MPESA_ENVIRONMENT = env('MPESA_ENVIRONMENT', default='sandbox')  # sandbox or production
 MPESA_CONSUMER_KEY = env('MPESA_CONSUMER_KEY', default='')
@@ -351,34 +362,37 @@ LOGGING = {
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
-        },
-        'file': {
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': BASE_DIR / 'logs' / 'django.log',
-            'maxBytes': 1024 * 1024 * 15,  # 15MB
-            'backupCount': 10,
-            'formatter': 'verbose',
+            'formatter': 'simple',
         },
     },
     'root': {
-        'handlers': ['console', 'file'],
+        'handlers': ['console'],
         'level': 'INFO',
     },
     'loggers': {
         'django': {
-            'handlers': ['console', 'file'],
-            'level': env('DJANGO_LOG_LEVEL', default='INFO'),
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'django.server': {
+            'handlers': ['console'],
+            'level': 'INFO',
             'propagate': False,
         },
         'django.request': {
-            'handlers': ['console', 'file'],
-            'level': 'ERROR',
+            'handlers': ['console'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+        'django.db.backends': {
+            'handlers': [],
+            'level': 'WARNING',
             'propagate': False,
         },
         'apps': {
-            'handlers': ['console', 'file'],
-            'level': 'DEBUG',
+            'handlers': ['console'],
+            'level': 'INFO',
             'propagate': False,
         },
     },

@@ -1,4 +1,5 @@
 # Python
+__pycache__/
 *.py[cod]
 *$py.class
 *.so
@@ -15,7 +16,6 @@ parts/
 sdist/
 var/
 wheels/
-share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
@@ -25,60 +25,28 @@ MANIFEST
 pip-log.txt
 pip-delete-this-directory.txt
 
-# Virtual Environments
+# Virtual Environment
 venv/
-ienv/
-ENV/
 env/
-.venv
-pyvenv.cfg
+ENV/
+env.bak/
+venv.bak/
 
 # Django
 *.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
-media/
-staticfiles/
-static_collected/
+/media
+/staticfiles
+/static
 
-# Django migrations (keep structure, ignore generated)
-**/migrations/__pycache__/
-
-# Django Secret Keys
+# Environment Variables
 .env
 .env.local
-.env.*.local
-*.key
-*.pem
-secrets.json
-
-# Celery
-celerybeat-schedule
-celerybeat.pid
-
-# Database
-*.db
-*.sqlite
-*.sqlite3
-
-# Redis
-dump.rdb
-
-# Testing
-.tox/
-.nox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.py,cover
-.hypothesis/
-.pytest_cache/
-cover/
-htmlcov/
+.env.development.local
+.env.test.local
+.env.production.local
 
 # IDEs
 .vscode/
@@ -87,184 +55,53 @@ htmlcov/
 *.swo
 *~
 .DS_Store
-*.sublime-project
-*.sublime-workspace
-.project
-.pydevproject
-.settings/
 
-# Jupyter Notebook
-.ipynb_checkpoints
+# Testing
+.coverage
+.pytest_cache/
+htmlcov/
+.tox/
+.nox/
 
-# IPython
-profile_default/
-ipython_config.py
+# Celery
+celerybeat-schedule
+celerybeat.pid
 
-# pyenv
-.python-version
-
-# Environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
-# Spyder project settings
-.spyderproject
-.spyproject
-
-# Rope project settings
-.ropeproject
-
-# mkdocs documentation
-/site
-
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
-
-# Pyre type checker
-.pyre/
-
-# pytype static type analyzer
-.pytype/
-
-# Cython debug symbols
-cython_debug/
-
-# Media files (user uploads)
-media/
-
-# Static files
-staticfiles/
-static/
-
-# Node modules (if using frontend build tools)
+# Node.js (Frontend)
 node_modules/
-npm-debug.log
-yarn-error.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Next.js
+.next/
+out/
+.vercel
+
+# Production
+/build
+
+# Misc
+.cache/
+*.pid
+*.seed
+*.pid.lock
+.npm
+.eslintcache
+.node_repl_history
+*.tgz
+.yarn-integrity
 
 # Logs
 logs/
 *.log
 
-# OS Files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
 # Backup files
 *.bak
 *.backup
-*~
+*.old
 
-# Compiled files
-*.com
-*.class
-*.dll
-*.exe
-*.o
-*.so
-
-# Temporary files
-tmp/
-temp/
-*.tmp
-
-# Firebase credentials
-*firebase*.json
-serviceAccountKey.json
-
-# API Keys and Secrets
-.secrets/
-credentials/
-*.credentials
-
-# Docker
-docker-compose.override.yml
-.dockerignore
-
-# Kubernetes
-*.kubeconfig
-
-# Local environment settings
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Sentry
-.sentryclirc
-
-# Coverage reports
-htmlcov/
-.coverage
-.coverage.*
-
-# Sphinx documentation
-docs/_build/
-
-# PyBuilder
-target/
-
-# Celery beat schedule
-celerybeat-schedule.db
-
-# SageMath parsed files
-*.sage.py
-
-# Elastic Beanstalk Files
-.elasticbeanstalk/*
-!.elasticbeanstalk/*.cfg.yml
-!.elasticbeanstalk/*.global.yml
-
-# Redis dump
-dump.rdb
-
-# ElasticSearch
-elasticsearch_data/
-
-# ML Models
-*.pkl
-*.joblib
-*.h5
-*.model
-models/
-
-# Data files
-*.csv
-*.xlsx
-*.xls
-data/
-datasets/
-
-# Terraform
-*.tfstate
-*.tfstate.*
-.terraform/
-
-# AWS
-.aws/
-
-# Cache
-__pycache__/
-*.pyc
-
-# Monitoring
-prometheus_data/
-grafana_data/
-
-# Local documentation builds
-docs/_build/
-docs/_static/
-docs/_templates/
-src/config/__pycache__/__init__.cpython-314.pyc
-
+# OS
+Thumbs.db
+.DS_Store

@@ -12,6 +12,9 @@ from django.db import transaction
 from django.core.cache import cache
 from datetime import timedelta
 import time
+import logging
+
+logger = logging.getLogger(__name__)
 
 from .models import (
     SelfExclusionRecord, OperatorExclusionMapping,
@@ -91,29 +94,34 @@ class RegisterExclusionView(TimingMixin, SuccessResponseMixin, AuditLogMixin, AP
         # Create exclusion
         exclusion = serializer.save()
         
-        # Trigger async propagation to operators
+        # Trigger async propagation to operators (non-blocking)
         from .tasks import propagate_exclusion_to_operators
-        propagate_exclusion_to_operators.delay(str(exclusion.id))
+        try:
+            propagate_exclusion_to_operators.apply_async(args=[str(exclusion.id)], countdown=1)
+        except Exception as e:
+            logger.warning(f"Could not queue propagation task: {str(e)}")
         
-        # Send confirmation notification
+        # Send confirmation notification (non-blocking)
         from apps.notifications.tasks import send_exclusion_confirmation
-        send_exclusion_confirmation.delay(
-            user_id=str(request.user.id),
-            exclusion_id=str(exclusion.id)
-        )
+        try:
+            send_exclusion_confirmation.apply_async(
+                args=[str(request.user.id), str(exclusion.id)],
+                countdown=2
+            )
+        except Exception as e:
+            logger.warning(f"Could not queue notification task: {str(e)}")
         
         # Create audit log
         ExclusionAuditLog.objects.create(
             exclusion=exclusion,
-            action='EXCLUSION_REGISTERED',
+            action='created',
+            description='Self-exclusion registered by user',
             performed_by=request.user,
             ip_address=self.get_client_ip(request),
-            old_values={},
-            new_values={
+            changes={
                 'exclusion_period': exclusion.exclusion_period,
-                'end_date': str(exclusion.end_date) if exclusion.end_date else None
-            },
-            success=True
+                'expiry_date': str(exclusion.expiry_date) if exclusion.expiry_date else None
+            }
         )
         
         return self.success_response(
@@ -545,10 +553,17 @@ class ExclusionStatisticsView(TimingMixin, CacheMixin, SuccessResponseMixin, API
     
     GET /api/v1/nser/statistics/
     """
-    permission_classes = [IsAuthenticated, IsGRAKStaff]
+    permission_classes = [IsAuthenticated]
     cache_timeout = 300  # 5 minutes
     
     def get(self, request):
+        # Check if user has permission
+        if not hasattr(request.user, "role") or request.user.role not in ["grak_admin", "grak_officer"]:
+            return self.error_response(
+                message="Access denied. GRAK staff role required.",
+                status_code=status.HTTP_403_FORBIDDEN
+            )
+        
         # Try cache first
         cached = self.get_cached_response(request)
         if cached:

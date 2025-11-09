@@ -195,7 +195,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
         }
     
     def get_device_count(self, obj):
-        return obj.devices.filter(is_active=True).count()
+        return obj.devices.count()
     
     def get_active_exclusions_count(self, obj):
         return obj.exclusions.filter(is_active=True).count()
