@@ -1,0 +1,132 @@
+# Core Django
+Django==5.2.1
+django-environ==0.11.2
+pytz==2025.2
+
+# Database
+psycopg[binary]==3.2.12  # Modern PostgreSQL adapter with better Windows support
+# psycopg2-binary==2.9.10  # Old version - requires Visual C++ Redistributable on Windows
+django-postgres-extra==2.0.9
+django-pgviews==0.6.0
+pymysql==1.1.1  # If MySQL is needed
+
+# API & GraphQL
+djangorestframework==3.14.0
+djangorestframework-simplejwt==5.3.1
+django-filter==24.3  # Updated for Python 3.14 compatibility
+drf-spectacular==0.27.2  # Modern OpenAPI documentation
+drf-yasg==1.21.8  # Legacy Swagger documentation (consider migrating to drf-spectacular)
+graphene-django==3.2.2
+django-cors-headers==4.3.1
+
+# Async & Channels
+channels==4.0.0
+channels-redis==4.1.0
+daphne==4.0.0
+
+# Task Queue
+celery[redis]==5.3.4
+django-celery-beat==2.8.1
+django-celery-results==2.6.0
+flower==2.0.1
+
+# Caching & Redis
+redis==4.6.0  # celery 5.3.4 requires <5.0.0
+django-redis==5.4.0
+hiredis==2.2.3
+
+# Security & Authentication
+django-oauth-toolkit==2.4.0
+PyJWT==2.10.1
+python-jose[cryptography]==3.3.0
+cryptography==45.0.3
+pyotp==2.9.0
+argon2-cffi==23.1.0
+
+# Encryption & Hashing
+django-cryptography==1.1
+pycryptodome==3.19.0
+bcrypt==4.2.0
+
+# Validation & Forms
+django-phonenumber-field[phonenumbers]==7.1.0
+phonenumbers==8.13.23
+python-magic==0.4.27
+django-countries==7.5.1
+
+# File Storage
+boto3==1.29.7
+django-storages==1.14.2
+Pillow==12.0.0
+
+# Search
+elasticsearch==8.11.0
+elasticsearch-dsl==8.11.0
+django-elasticsearch-dsl==8.0
+django-elasticsearch-dsl-drf==0.22.5
+
+# Reports & Analytics
+reportlab==4.4.4
+openpyxl==3.1.5
+
+# ML & Data Science
+# scikit-learn==1.3.2
+# xgboost==2.0.2  # Heavy package, install separately if needed
+# tensorflow==2.15.0  # Heavy package, install separately if needed
+# pandas==2.1.4
+# numpy==1.26.4
+# scipy==1.11.4
+
+# Monitoring & Logging
+sentry-sdk==1.38.0
+django-prometheus==2.3.1
+prometheus-client==0.19.0
+structlog==24.4.0
+python-json-logger==2.0.7
+
+# Testing
+pytest==8.3.4
+pytest-django==4.9.0
+pytest-cov==6.0.0
+pytest-asyncio==0.24.0
+factory-boy==3.3.1
+faker==33.1.0
+coverage==7.6.9
+
+# Utilities
+python-dateutil==2.8.2
+python-slugify==8.0.4
+humanize==4.9.0
+arrow==1.3.0
+psutil==7.1.0
+
+# HTTP & Requests
+requests==2.31.0
+httpx==0.28.1  # Required by firebase-admin 7.1.0
+urllib3==2.0.7
+
+# Data Parsing
+python-dotenv==1.0.0
+PyYAML==6.0.2
+toml==0.10.2
+
+# External API Integrations
+# SMS Gateway - Africa's Talking
+africastalking==1.2.9
+
+# Email Gateway - SendGrid
+sendgrid==6.11.0
+
+# Push Notifications - Firebase Cloud Messaging
+firebase-admin==7.1.0
+
+# Payment Gateway - M-Pesa (Safaricom)
+# python-mpesa==0.1.10  # Outdated - requires requests==2.8.1 (conflicts)
+# daraja==0.0.4  # May have compatibility issues
+# Note: Implement M-Pesa integration directly using requests library with Safaricom Daraja API
+
+# QR Code Generation
+qrcode==8.2
+
+# Production Server
+whitenoise==6.9.0
