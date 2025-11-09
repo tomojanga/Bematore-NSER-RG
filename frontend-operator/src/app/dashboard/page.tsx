@@ -1,8 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import api from '@/lib/api'
+import apiService from '@/lib/api-service'
 import { Activity, Users, CheckCircle, Clock } from 'lucide-react'
+import type { Operator, NSERStatistics } from '@/types/api'
 
 export default function DashboardPage() {
   const [stats, setStats] = useState<any>(null)
@@ -14,10 +15,17 @@ export default function DashboardPage() {
 
   const fetchStats = async () => {
     try {
-      const response = await api.get('/operators/me/')
-      setStats(response.data)
+      const [operatorRes, statsRes] = await Promise.all([
+        apiService.operator.getMe(),
+        apiService.nser.getStatistics()
+      ])
+      setStats({
+        operator: operatorRes.data.data as Operator,
+        lookups: (statsRes.data.data as NSERStatistics)?.total_active_exclusions || 0,
+        exclusions: (statsRes.data.data as NSERStatistics)?.new_exclusions_today || 0
+      })
     } catch (error) {
-      console.error(error)
+      console.error('Failed to fetch stats:', error)
     } finally {
       setLoading(false)
     }
@@ -39,7 +47,7 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Total Lookups</p>
-              <p className="text-2xl font-bold text-gray-900">0</p>
+              <p className="text-2xl font-bold text-gray-900">{stats?.lookups || 0}</p>
             </div>
             <Activity className="h-8 w-8 text-indigo-600" />
           </div>
@@ -59,7 +67,7 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Exclusions Found</p>
-              <p className="text-2xl font-bold text-gray-900">0</p>
+              <p className="text-2xl font-bold text-gray-900">{stats?.exclusions || 0}</p>
             </div>
             <CheckCircle className="h-8 w-8 text-red-600" />
           </div>

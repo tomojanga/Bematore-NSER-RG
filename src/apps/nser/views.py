@@ -553,10 +553,17 @@ class ExclusionStatisticsView(TimingMixin, CacheMixin, SuccessResponseMixin, API
     
     GET /api/v1/nser/statistics/
     """
-    permission_classes = [IsAuthenticated, IsGRAKStaff]
+    permission_classes = [IsAuthenticated]
     cache_timeout = 300  # 5 minutes
     
     def get(self, request):
+        # Check if user has permission
+        if not hasattr(request.user, "role") or request.user.role not in ["grak_admin", "grak_officer"]:
+            return self.error_response(
+                message="Access denied. GRAK staff role required.",
+                status_code=status.HTTP_403_FORBIDDEN
+            )
+        
         # Try cache first
         cached = self.get_cached_response(request)
         if cached:

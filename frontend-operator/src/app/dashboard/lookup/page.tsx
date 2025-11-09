@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import api from '@/lib/api'
-import { toast } from 'react-hot-toast'
+
 import { Search, CheckCircle, XCircle, Clock } from 'lucide-react'
 
 export default function LookupPage() {
@@ -21,15 +21,19 @@ export default function LookupPage() {
     const startTime = performance.now()
 
     try {
-      const response = await api.post('/nser/lookup/', formData)
+      const payload: any = { operator_id: 'operator-placeholder' }
+      if (formData.phone_number) payload.phone_number = formData.phone_number
+      if (formData.national_id) payload.national_id = formData.national_id
+      if (formData.bst_token) payload.bst_token = formData.bst_token
+      
+      const response = await api.post('/nser/lookup/', payload)
       const endTime = performance.now()
       setResponseTime(Math.round(endTime - startTime))
       setResult(response.data)
-      toast.success('Lookup completed')
     } catch (error: any) {
       const endTime = performance.now()
       setResponseTime(Math.round(endTime - startTime))
-      toast.error('Lookup failed')
+      setResult({ data: { error: 'Lookup failed' } })
     } finally {
       setLoading(false)
     }

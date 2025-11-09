@@ -14,8 +14,8 @@ export default function StatisticsPage() {
 
   const fetchStats = async () => {
     try {
-      const response = await api.get('/operators/statistics/')
-      setStats(response.data)
+      const response = await api.get('/nser/statistics/')
+      setStats(response.data.data || {})
     } catch (error) {
       console.error(error)
     } finally {

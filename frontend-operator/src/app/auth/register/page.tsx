@@ -2,8 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import api from '@/lib/api'
-import { toast } from 'react-hot-toast'
+import apiService from '@/lib/api-service'
 import Link from 'next/link'
 
 export default function RegisterPage() {
@@ -28,22 +27,49 @@ export default function RegisterPage() {
     e.preventDefault()
     
     if (formData.password !== formData.password_confirm) {
-      toast.error('Passwords do not match')
+      alert('Passwords do not match')
       return
     }
 
     if (!formData.terms_accepted) {
-      toast.error('Please accept terms and conditions')
+      alert('Please accept terms and conditions')
       return
     }
 
     setLoading(true)
     try {
-      await api.post('/operators/', formData)
-      toast.success('Registration submitted! Awaiting GRAK approval.')
-      router.push('/auth/login')
+      // Register user account first
+      await apiService.auth.register({
+        phone_number: formData.phone_number,
+        email: formData.email,
+        password: formData.password,
+        password_confirm: formData.password_confirm,
+        first_name: formData.contact_person_name.split(' ')[0],
+        last_name: formData.contact_person_name.split(' ').slice(1).join(' '),
+        role: 'operator_admin',
+        terms_accepted: formData.terms_accepted,
+        privacy_policy_accepted: formData.terms_accepted
+      })
+      
+      // Then register operator via public endpoint
+      try {
+        await apiService.operator.publicRegister({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone_number,
+          registration_number: formData.business_registration_number,
+          license_number: formData.license_number,
+          website: formData.website_url,
+          terms_accepted: formData.terms_accepted
+        })
+      } catch (opError: any) {
+        console.error('Operator registration failed:', opError)
+      }
+      
+      alert('Registration successful! Your account is pending approval.')
+      router.push('/auth/pending-approval')
     } catch (error: any) {
-      toast.error(error.response?.data?.error?.message || 'Registration failed')
+      alert(error.response?.data?.message || 'Registration failed')
     } finally {
       setLoading(false)
     }

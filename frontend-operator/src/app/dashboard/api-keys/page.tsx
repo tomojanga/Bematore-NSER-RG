@@ -1,12 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import api from '@/lib/api'
-import { toast } from 'react-hot-toast'
+import apiService from '@/lib/api-service'
 import { Plus, Copy, Eye, EyeOff, Trash2, RefreshCw } from 'lucide-react'
+import type { APIKey } from '@/types/api'
 
 export default function APIKeysPage() {
-  const [keys, setKeys] = useState<any[]>([])
+  const [keys, setKeys] = useState<APIKey[]>([])
   const [loading, setLoading] = useState(true)
   const [showKey, setShowKey] = useState<string | null>(null)
   const [creating, setCreating] = useState(false)
@@ -17,10 +17,10 @@ export default function APIKeysPage() {
 
   const fetchKeys = async () => {
     try {
-      const response = await api.get('/operators/api-keys/')
-      setKeys(response.data.data || [])
+      const response = await apiService.apiKey.getAll()
+      setKeys(response.data.data?.results || response.data.results || [])
     } catch (error) {
-      toast.error('Failed to load API keys')
+      console.error('Failed to fetch API keys:', error)
     } finally {
       setLoading(false)
     }
@@ -29,14 +29,24 @@ export default function APIKeysPage() {
   const createKey = async () => {
     setCreating(true)
     try {
-      await api.post('/operators/api-keys/', {
-        name: `API Key ${new Date().toLocaleDateString()}`,
-        environment: 'production'
+      // Get operator ID first
+      const operatorRes = await apiService.operator.getMe()
+      const operatorId = operatorRes.data.data.id
+      
+      await apiService.apiKey.generate(operatorId, {
+        key_name: `API Key ${new Date().toLocaleDateString()}`,
+        can_lookup: true,
+        can_register: false,
+        can_screen: false,
+        expires_in_days: 365,
+        rate_limit_per_second: 100,
+        rate_limit_per_day: 100000
       })
-      toast.success('API key created')
+      alert('API key created successfully!')
       fetchKeys()
     } catch (error: any) {
-      toast.error(error.response?.data?.error?.message || 'Failed to create API key')
+      alert('Failed to create API key')
+      console.error(error)
     } finally {
       setCreating(false)
     }
@@ -44,7 +54,7 @@ export default function APIKeysPage() {
 
   const copyKey = (key: string) => {
     navigator.clipboard.writeText(key)
-    toast.success('Copied to clipboard')
+    alert('Copied to clipboard!')
   }
 
   if (loading) return <div className="flex items-center justify-center h-64">Loading...</div>
@@ -82,15 +92,15 @@ export default function APIKeysPage() {
             <div key={key.id} className="bg-white p-6 rounded-lg shadow">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <h3 className="font-semibold text-gray-900 mb-2">{key.name}</h3>
+                  <h3 className="font-semibold text-gray-900 mb-2">{key.key_name}</h3>
                   <div className="flex items-center gap-2 mb-3">
                     <code className="bg-gray-100 px-3 py-1 rounded text-sm font-mono">
-                      {showKey === key.id ? key.key : '••••••••••••••••••••••••••••••••'}
+                      {showKey === key.id ? key.api_key : '••••••••••••••••••••••••••••••••'}
                     </code>
                     <button onClick={() => setShowKey(showKey === key.id ? null : key.id)} className="text-gray-600">
                       {showKey === key.id ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
-                    <button onClick={() => copyKey(key.key)} className="text-indigo-600">
+                    <button onClick={() => copyKey(key.api_key)} className="text-indigo-600">
                       <Copy className="h-4 w-4" />
                     </button>
                   </div>

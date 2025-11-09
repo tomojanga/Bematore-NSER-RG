@@ -2,8 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import api from '@/lib/api'
-import { toast } from 'react-hot-toast'
+import apiService from '@/lib/api-service'
 import Link from 'next/link'
 
 export default function LoginPage() {
@@ -19,13 +18,29 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      const response = await api.post('/auth/login/', formData)
-      localStorage.setItem('operator_token', response.data.access)
-      localStorage.setItem('operator_refresh', response.data.refresh)
-      toast.success('Login successful')
-      router.push('/dashboard')
+      const response = await apiService.auth.login(formData.email, formData.password)
+      localStorage.setItem('operator_token', response.data.data.access)
+      localStorage.setItem('operator_refresh', response.data.data.refresh)
+      
+      // Check operator approval status
+      try {
+        const operatorRes = await apiService.operator.getMe()
+        const operator = operatorRes.data.data
+        
+        if (operator.license_status === 'pending' || !operator.is_api_active) {
+          router.push('/auth/pending-approval')
+        } else {
+          router.push('/dashboard')
+        }
+      } catch (error: any) {
+        if (error.response?.status === 403) {
+          router.push('/auth/pending-approval')
+        } else {
+          router.push('/dashboard')
+        }
+      }
     } catch (error: any) {
-      toast.error(error.response?.data?.error?.message || 'Login failed')
+      alert(error.response?.data?.message || 'Login failed')
     } finally {
       setLoading(false)
     }
@@ -36,15 +51,16 @@ export default function LoginPage() {
       <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Operator Login</h1>
-          <p className="text-gray-600 mt-2">Access your NSER operator portal</p>
+          <p className="text-gray-600 mt-2">Login with your phone number</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
             <input
-              type="email"
+              type="tel"
               required
+              placeholder="+254712345678"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
