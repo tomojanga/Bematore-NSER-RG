@@ -8,6 +8,7 @@ psycopg[binary]==3.2.12  # Modern PostgreSQL adapter with better Windows support
 # psycopg2-binary==2.9.10  # Old version - requires Visual C++ Redistributable on Windows
 django-postgres-extra==2.0.9
 django-pgviews==0.6.0
+pymysql==1.1.1  # If MySQL is needed
 
 # API & GraphQL
 djangorestframework==3.14.0
