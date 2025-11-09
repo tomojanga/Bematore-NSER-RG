@@ -169,3 +169,6 @@ dmypy.json
 # Temporary folders
 tmp/
 temp/
+/frontend-grak/.next/cache
+/frontend-grak/.next
+/frontend-grak/.next
