@@ -45,6 +45,10 @@ db.sqlite3-journal
 /static
 *.pot
 
+# Migrations - KEEP in git for development
+# For cPanel deployment: migrations are excluded via .cpanelignore
+# They will be generated fresh on the server
+
 # Environment Variables
 .env
 .env.local
@@ -89,9 +93,11 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 lerna-debug.log*
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
+
+# Lock files - KEEP THESE FOR DEPLOYMENT (now kept in git)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
 
 # Next.js
 .next/

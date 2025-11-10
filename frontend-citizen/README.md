@@ -1,45 +1,53 @@
 # NSER Citizen Portal
+**Self-Exclusion Registration Portal for Kenyan Citizens**
 
-Self-Exclusion Registration Portal for Kenyan Citizens
+## 🌐 Deployment
 
-## Quick Start
+**Production URL:** https://citizen.bematore.com  
+**Platform:** Netlify  
+**Backend API:** https://api.bematore.com ✅ LIVE  
+**Status:** ✅ Configured & Ready to Deploy
+
+## 🚀 Quick Deploy
 
 ```bash
 # Install dependencies
 npm install
 
-# Run development server
-npm run dev
-
 # Build for production
 npm run build
 
-# Start production server
-npm start
+# Deploy to Netlify
+netlify login
+netlify deploy --prod
 ```
 
-## Access
+## 📝 Environment Variables
 
-- Development: http://localhost:3001
-- Production: https://citizen.nser.grak.ke
-
-## Features
-
-- ✅ Self-exclusion registration (6mo, 1yr, 5yr, permanent)
-- ✅ Risk assessments (Lie/Bet, PGSI, DSM-5)
-- ✅ Exclusion history
-- ✅ Account settings
-- ✅ Dashboard
-
-## Environment Variables
-
-Create `.env.local`:
-
+### Local Development (`.env.local`)
 ```env
-NEXT_PUBLIC_API_URL=http://127.0.0.1:8000/api/v1
+NEXT_PUBLIC_API_URL=https://api.bematore.com/api/v1
 NEXT_PUBLIC_SITE_URL=http://localhost:3001
 NEXT_PUBLIC_PORTAL_TYPE=citizen
 ```
+
+### Production (`.env.production`)
+```env
+NEXT_PUBLIC_API_URL=https://api.bematore.com/api/v1
+NEXT_PUBLIC_SITE_URL=https://citizen.bematore.com
+NEXT_PUBLIC_PORTAL_TYPE=citizen
+NEXT_PUBLIC_ENABLE_ANALYTICS=true
+```
+
+## ✨ Features
+
+- ✅ Self-exclusion registration (6mo, 1yr, 3yr, 5yr, permanent)
+- ✅ Risk assessments (Lie/Bet, PGSI, DSM-5)
+- ✅ Exclusion history and status
+- ✅ Account settings and profile
+- ✅ Real-time dashboard
+- ✅ Phone and ID verification
+- ✅ Support resources
 
 ## Tech Stack
 
@@ -67,21 +75,56 @@ src/
 └── types/            # TypeScript types
 ```
 
-## Deployment
+## 🏗️ Build & Deployment
 
-### Docker
-
+### Build Locally
 ```bash
-docker build -t nser-citizen .
-docker run -p 3001:3000 nser-citizen
+npm run build
+npm start
 ```
 
-### Vercel
+### Deploy to Netlify
+
+1. **Install Netlify CLI:**
+   ```bash
+   npm install -g netlify-cli
+   ```
+
+2. **Login:**
+   ```bash
+   netlify login
+   ```
+
+3. **Deploy:**
+   ```bash
+   netlify deploy --prod
+   ```
+
+4. **Configure Environment:**
+   - Add all variables from `.env.production` in Netlify dashboard
+   - Site settings → Environment variables
+
+5. **Add Custom Domain (Optional):**
+   - Domain settings → Add `citizen.bematore.com`
+   - Update DNS with CNAME record
+
+## 📦 Netlify Configuration
+
+The `netlify.toml` file configures:
+- Build command: `npm run build`
+- Publish directory: `.next`
+- Node.js version: 18
+- Security headers
+- Next.js plugin
+
+## 🔧 Local Development
 
 ```bash
-vercel --prod
+npm install
+npm run dev
+# Open http://localhost:3001
 ```
 
 ## License
 
-Proprietary - GRAK 2025
+Proprietary - Bematore Technologies 2025

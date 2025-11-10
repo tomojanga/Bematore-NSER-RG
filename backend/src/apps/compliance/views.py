@@ -33,7 +33,7 @@ class ComplianceCheckViewSet(TimingMixin, viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsGRAKStaff]
     
     def get_queryset(self):
-        return ComplianceCheck.objects.order_by('-check_date')
+        return ComplianceCheck.objects.order_by('-scheduled_at')
 
 
 class DataRetentionPolicyViewSet(TimingMixin, viewsets.ModelViewSet):
@@ -51,7 +51,7 @@ class IncidentReportViewSet(TimingMixin, viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsGRAKStaff]
     
     def get_queryset(self):
-        return IncidentReport.objects.select_related('reported_by').order_by('-incident_date')
+        return IncidentReport.objects.select_related('reported_by').order_by('-discovered_at')
 
 
 class RegulatoryReportViewSet(TimingMixin, viewsets.ModelViewSet):
@@ -60,7 +60,7 @@ class RegulatoryReportViewSet(TimingMixin, viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsGRAKStaff]
     
     def get_queryset(self):
-        return RegulatoryReport.objects.order_by('-report_date')
+        return RegulatoryReport.objects.order_by('-submitted_at')
 
 
 class ComplianceDashboardView(TimingMixin, SuccessResponseMixin, APIView):

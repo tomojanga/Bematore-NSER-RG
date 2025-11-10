@@ -1,0 +1,49 @@
+# Netlify Configuration for NSER Public Portal
+# This file configures how Netlify builds and deploys the Next.js app
+
+[build]
+  # Build command
+  command = "npm run build"
+  
+  # Publish directory (Next.js build output)
+  publish = ".next"
+  
+  # Functions directory (for serverless functions if needed)
+  # functions = "netlify/functions"
+
+[build.environment]
+  # Node.js version
+  NODE_VERSION = "18"
+  
+  # Next.js specific
+  NEXT_TELEMETRY_DISABLED = "1"
+
+# Redirects and rewrites
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Headers for security
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Cache static assets
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Plugin configuration (Next.js on Netlify)
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

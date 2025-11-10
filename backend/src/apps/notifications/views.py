@@ -16,7 +16,8 @@ from .models import (
 from .serializers import (
     NotificationSerializer, NotificationTemplateSerializer,
     NotificationBatchSerializer, NotificationPreferenceSerializer,
-    SendSMSSerializer, SendEmailSerializer, SendPushSerializer
+    SendSMSSerializer, SendEmailSerializer, SendPushSerializer,
+    EmailLogSerializer, SMSLogSerializer, PushNotificationLogSerializer
 )
 from apps.api.permissions import IsGRAKStaff
 from apps.api.mixins import TimingMixin, SuccessResponseMixin
@@ -319,6 +320,7 @@ class DeliveryStatusView(TimingMixin, SuccessResponseMixin, APIView):
 
 class EmailLogsView(TimingMixin, generics.ListAPIView):
     """Email delivery logs"""
+    serializer_class = EmailLogSerializer
     permission_classes = [IsAuthenticated, IsGRAKStaff]
     
     def get_queryset(self):
@@ -327,6 +329,7 @@ class EmailLogsView(TimingMixin, generics.ListAPIView):
 
 class SMSLogsView(TimingMixin, generics.ListAPIView):
     """SMS delivery logs"""
+    serializer_class = SMSLogSerializer
     permission_classes = [IsAuthenticated, IsGRAKStaff]
     
     def get_queryset(self):
@@ -335,6 +338,7 @@ class SMSLogsView(TimingMixin, generics.ListAPIView):
 
 class PushLogsView(TimingMixin, generics.ListAPIView):
     """Push notification logs"""
+    serializer_class = PushNotificationLogSerializer
     permission_classes = [IsAuthenticated, IsGRAKStaff]
     
     def get_queryset(self):
