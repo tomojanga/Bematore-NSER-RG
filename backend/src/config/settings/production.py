@@ -62,10 +62,15 @@ DATABASES['default']['OPTIONS'] = {
 # Disable ATOMIC_REQUESTS for better performance (manual transaction management)
 DATABASES['default']['ATOMIC_REQUESTS'] = False
 
-# Ensure only 'default' database exists - no replica
+# CRITICAL: Force remove replica database configuration for cPanel deployment
+# cPanel doesn't support multiple databases - only use 'default'
+if 'replica' in DATABASES:
+    del DATABASES['replica']
+    
 DATABASES = {'default': DATABASES['default']}
 
-# Disable database routers - no replica routing
+# CRITICAL: Disable database routers completely
+# No read replicas on cPanel shared hosting
 DATABASE_ROUTERS = []
 
 # Read replicas - Disabled for cPanel deployment (shared hosting)

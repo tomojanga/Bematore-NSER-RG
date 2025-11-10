@@ -69,6 +69,13 @@ def remove_replica_database():
                 del settings.DATABASES['replica']
                 print("[INFO] Removed replica database from DATABASES")
             
+            # Ensure only default database exists
+            databases_copy = settings.DATABASES.copy()
+            settings.DATABASES.clear()
+            if 'default' in databases_copy:
+                settings.DATABASES['default'] = databases_copy['default']
+                print("[INFO] Ensured only 'default' database is configured")
+            
             # Remove database router if it exists
             if hasattr(settings, 'DATABASE_ROUTERS'):
                 settings.DATABASE_ROUTERS = []
@@ -76,7 +83,12 @@ def remove_replica_database():
                 
             # Verify main database
             main_db = settings.DATABASES.get('default', {})
-            print(f"[INFO] Using database: {main_db.get('HOST', 'unknown')}")
+            db_host = main_db.get('HOST', 'unknown')
+            db_name = main_db.get('NAME', 'unknown')
+            print(f"[INFO] Using database: {db_name}@{db_host}")
+            
+            # Log all configured databases
+            print(f"[INFO] Configured databases: {list(settings.DATABASES.keys())}")
     except Exception as e:
         print(f"[WARNING] Could not verify database settings: {e}")
 
