@@ -56,9 +56,16 @@ lerna-debug.log*
 # Vercel
 .vercel
 
+# Netlify
+.netlify
+
 # TypeScript
 *.tsbuildinfo
 # next-env.d.ts - Keep for deployment (generated file but needed)
+
+# cPanel-specific files (not needed for Netlify)
+server.js
+.cpanelignore
 
 # IDE
 .vscode/

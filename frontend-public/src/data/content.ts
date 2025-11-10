@@ -1,7 +1,9 @@
+// Portal links - uses environment variables for flexibility
 export const portalLinks = {
-  citizen: "http://localhost:3001",
-  operator: "http://localhost:3002",
-  grak: "http://localhost:3003"
+  // For local development, use localhost; for production, use deployed URLs
+  citizen: process.env.NEXT_PUBLIC_CITIZEN_URL || "https://citizen.bematore.com",
+  operator: process.env.NEXT_PUBLIC_OPERATOR_URL || "https://operator.bematore.com",
+  grak: process.env.NEXT_PUBLIC_GRAK_URL || "https://admin.bematore.com"
 }
 
 export const aboutData = {
