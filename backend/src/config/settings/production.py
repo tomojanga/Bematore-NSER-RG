@@ -54,10 +54,22 @@ SECURE_HSTS_PRELOAD = True
 
 # Database connection pooling
 DATABASES['default']['CONN_MAX_AGE'] = 600
-DATABASES['default']['OPTIONS'] = {
-    'connect_timeout': 10,
-    'options': '-c statement_timeout=30000',  # 30 seconds
-}
+
+# Database-specific options (already configured in base.py, but can override here)
+DATABASE_ENGINE = DATABASES['default'].get('ENGINE', '')
+
+# Additional PostgreSQL optimizations for production
+if 'postgresql' in DATABASE_ENGINE or 'postgres' in DATABASE_ENGINE:
+    DATABASES['default']['OPTIONS'].update({
+        'options': '-c statement_timeout=30000',  # 30 seconds
+    })
+    
+# Additional MySQL optimizations for production
+elif 'mysql' in DATABASE_ENGINE:
+    DATABASES['default']['OPTIONS'].update({
+        'read_timeout': 30,
+        'write_timeout': 30,
+    })
 
 # Add read replicas for scaling
 DATABASES['replica'] = {

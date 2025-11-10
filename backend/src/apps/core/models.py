@@ -4,8 +4,6 @@ Google/Amazon-level production-ready base classes for NSER-RG System
 """
 import uuid
 from django.db import models
-from django.contrib.postgres.fields import ArrayField
-from django.contrib.postgres.indexes import GinIndex, BTreeIndex
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 from django.utils import timezone

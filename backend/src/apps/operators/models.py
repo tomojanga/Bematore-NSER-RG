@@ -4,7 +4,6 @@ Licensed gambling operators integration, compliance tracking, and API management
 """
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django.contrib.postgres.fields import ArrayField
 from django.utils import timezone
 import secrets
 
@@ -95,7 +94,10 @@ class APIKey(BaseModel):
     api_secret = models.CharField(max_length=255)
     
     # Permissions
-    scopes = ArrayField(models.CharField(max_length=50), default=list)
+    scopes = models.JSONField(
+        default=list,
+        help_text=_('API scopes - stored as JSON array')
+    )
     can_lookup = models.BooleanField(default=True)
     can_register = models.BooleanField(default=True)
     can_screen = models.BooleanField(default=True)
@@ -111,7 +113,11 @@ class APIKey(BaseModel):
     rate_limit_per_day = models.PositiveIntegerField(default=100000)
     
     # IP Whitelist
-    ip_whitelist = ArrayField(models.GenericIPAddressField(), default=list, blank=True)
+    ip_whitelist = models.JSONField(
+        default=list,
+        blank=True,
+        help_text=_('Whitelisted IP addresses - stored as JSON array')
+    )
     
     class Meta:
         db_table = 'operator_api_keys'

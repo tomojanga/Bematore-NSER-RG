@@ -4,7 +4,6 @@ Comprehensive multi-channel notification system (SMS, Email, Push, Webhooks)
 """
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django.contrib.postgres.fields import ArrayField
 from django.utils import timezone
 
 from apps.core.models import (
@@ -72,11 +71,10 @@ class Notification(BaseModel):
     
     # Rich Content
     html_content = models.TextField(_('HTML content'), blank=True)
-    attachments = ArrayField(
-        models.CharField(max_length=500),
+    attachments = models.JSONField(
         default=list,
         blank=True,
-        help_text=_('File URLs for attachments')
+        help_text=_('File URLs for attachments - stored as JSON array')
     )
     action_url = models.URLField(_('action URL'), blank=True)
     action_label = models.CharField(_('action label'), max_length=100, blank=True)
@@ -311,15 +309,15 @@ class EmailLog(TimeStampedModel, UUIDModel):
     # Email Details
     from_email = models.EmailField(_('from email'))
     to_email = models.EmailField(_('to email'), db_index=True)
-    cc_emails = ArrayField(
-        models.EmailField(),
+    cc_emails = models.JSONField(
         default=list,
-        blank=True
+        blank=True,
+        help_text=_('CC email addresses - stored as JSON array')
     )
-    bcc_emails = ArrayField(
-        models.EmailField(),
+    bcc_emails = models.JSONField(
         default=list,
-        blank=True
+        blank=True,
+        help_text=_('BCC email addresses - stored as JSON array')
     )
     
     # Content
@@ -516,10 +514,10 @@ class NotificationBatch(BaseModel):
     )
     
     # Target Audience
-    target_user_ids = ArrayField(
-        models.UUIDField(),
+    target_user_ids = models.JSONField(
         default=list,
-        blank=True
+        blank=True,
+        help_text=_('Target user UUIDs - stored as JSON array of strings')
     )
     target_criteria = models.JSONField(
         _('target criteria'),

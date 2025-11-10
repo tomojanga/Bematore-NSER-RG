@@ -4,7 +4,6 @@ Comprehensive gambling risk assessment system with Lie/Bet, PGSI, DSM-5
 """
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django.contrib.postgres.fields import ArrayField
 from django.utils import timezone
 from decimal import Decimal
 
@@ -98,7 +97,11 @@ class BehavioralProfile(BaseModel):
     late_night_betting_count = models.PositiveIntegerField(default=0)
     loss_chasing_score = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     overall_risk_score = models.DecimalField(max_digits=5, decimal_places=2, default=0)
-    anomaly_flags = ArrayField(models.CharField(max_length=100), default=list, blank=True)
+    anomaly_flags = models.JSONField(
+        default=list,
+        blank=True,
+        help_text=_('Anomaly flags - stored as JSON array')
+    )
     last_analyzed_at = models.DateTimeField(null=True, blank=True)
     
     class Meta:

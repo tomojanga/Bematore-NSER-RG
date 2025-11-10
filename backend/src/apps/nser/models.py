@@ -4,7 +4,6 @@ Core self-exclusion functionality with real-time multi-operator propagation
 """
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django.contrib.postgres.fields import ArrayField
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from datetime import timedelta

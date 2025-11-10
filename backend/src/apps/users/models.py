@@ -5,7 +5,6 @@ Comprehensive user system with multi-role support, device tracking, and security
 import hashlib
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
-from django.contrib.postgres.fields import ArrayField
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import RegexValidator
 from django.utils import timezone
@@ -249,11 +248,10 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, GeoLocationModel):
         blank=True,
         help_text=_('Encrypted TOTP secret for 2FA')
     )
-    backup_codes = ArrayField(
-        models.CharField(max_length=20),
+    backup_codes = models.JSONField(
         default=list,
         blank=True,
-        help_text=_('Backup codes for 2FA recovery')
+        help_text=_('Backup codes for 2FA recovery - stored as JSON array')
     )
     
     # Terms & Consent
