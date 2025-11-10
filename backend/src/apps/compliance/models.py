@@ -4,6 +4,7 @@ Comprehensive audit logging, compliance tracking, and regulatory reporting
 """
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.contrib.postgres.fields import ArrayField
 from django.utils import timezone
 
 from apps.core.models import (
@@ -135,10 +136,7 @@ class DataRetentionPolicy(BaseModel):
     
     # Legal Basis
     legal_basis = models.TextField(_('legal basis'))
-    regulatory_requirement = models.JSONField(
-        default=list,
-        help_text=_('Regulatory requirements - stored as JSON array')
-    )
+    regulatory_requirement = ArrayField(models.CharField(max_length=100), default=list)
     
     # Settings
     is_active = models.BooleanField(_('is active'), default=True)
@@ -170,10 +168,7 @@ class IncidentReport(BaseModel):
     title = models.CharField(_('title'), max_length=255)
     description = models.TextField(_('description'))
     affected_users_count = models.PositiveIntegerField(_('affected users'), default=0)
-    affected_data_types = models.JSONField(
-        default=list,
-        help_text=_('Affected data types - stored as JSON array')
-    )
+    affected_data_types = ArrayField(models.CharField(max_length=100), default=list)
     
     # Timeline
     discovered_at = models.DateTimeField(_('discovered at'), db_index=True)

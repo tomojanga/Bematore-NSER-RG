@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.postgres',
     
     # Third-party
     'rest_framework',
@@ -131,21 +132,6 @@ DATABASES['default'].update({
 
 DATABASES['default'].setdefault('OPTIONS', {})
 DATABASES['default']['OPTIONS'].setdefault('connect_timeout', 10)
-
-# Database-specific configuration
-DATABASE_ENGINE = DATABASES['default'].get('ENGINE', '')
-
-# Add PostgreSQL-specific app if using PostgreSQL
-if 'postgresql' in DATABASE_ENGINE or 'postgres' in DATABASE_ENGINE:
-    if 'django.contrib.postgres' not in INSTALLED_APPS:
-        INSTALLED_APPS.insert(6, 'django.contrib.postgres')  # After staticfiles
-        
-# MySQL-specific configuration
-elif 'mysql' in DATABASE_ENGINE:
-    DATABASES['default']['OPTIONS'].update({
-        'charset': 'utf8mb4',
-        'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-    })
 
 # Custom User Model
 AUTH_USER_MODEL = 'users.User'
