@@ -59,20 +59,45 @@ DATABASES['default']['OPTIONS'] = {
     'options': '-c statement_timeout=30000',  # 30 seconds
 }
 
-# Add read replicas for scaling
-DATABASES['replica'] = {
-    **DATABASES['default'],
-    'NAME': env('DB_REPLICA_NAME', default=DATABASES['default']['NAME']),
-    'HOST': env('DB_REPLICA_HOST', default=DATABASES['default']['HOST']),
-}
+# Disable ATOMIC_REQUESTS for better performance (manual transaction management)
+DATABASES['default']['ATOMIC_REQUESTS'] = False
 
-# Database routing for read replicas
-DATABASE_ROUTERS = ['config.db_router.ReplicaRouter']
+# Ensure only 'default' database exists - no replica
+DATABASES = {'default': DATABASES['default']}
 
-# Cache - production Redis with connection pooling
-CACHES['default']['OPTIONS']['CONNECTION_POOL_KWARGS'] = {
-    'max_connections': 100,
-    'retry_on_timeout': True,
+# Disable database routers - no replica routing
+DATABASE_ROUTERS = []
+
+# Read replicas - Disabled for cPanel deployment (shared hosting)
+# Uncomment and configure if you have a dedicated replica database
+# DATABASES['replica'] = {
+#     **DATABASES['default'],
+#     'NAME': env('DB_REPLICA_NAME', default=DATABASES['default']['NAME']),
+#     'HOST': env('DB_REPLICA_HOST', default=DATABASES['default']['HOST']),
+# }
+# DATABASE_ROUTERS = ['config.db_router.ReplicaRouter']
+
+# Cache - Use local memory cache for cPanel (Redis not available on shared hosting)
+# Old Redis cache config (requires Redis server):
+# try:
+#     if 'OPTIONS' in CACHES['default']:
+#         CACHES['default']['OPTIONS']['CONNECTION_POOL_KWARGS'] = {
+#             'max_connections': 100,
+#             'retry_on_timeout': True,
+#         }
+# except (KeyError, TypeError):
+#     pass
+
+# Active cache config for cPanel shared hosting
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'nser-production-cache',
+        'TIMEOUT': 300,
+        'OPTIONS': {
+            'MAX_ENTRIES': 1000
+        }
+    }
 }
 
 # Static files - AWS S3 for production
@@ -108,29 +133,32 @@ if env('SENTRY_DSN', default=''):
         release=env('GIT_COMMIT', default='unknown'),
     )
 
-# Logging - production logging to files and external services
-LOGGING['handlers']['file']['filename'] = '/var/log/nser-rg/django.log'
-LOGGING['handlers']['celery'] = {
-    'class': 'logging.handlers.RotatingFileHandler',
-    'filename': '/var/log/nser-rg/celery.log',
-    'maxBytes': 1024 * 1024 * 15,
-    'backupCount': 10,
-    'formatter': 'verbose',
-}
-LOGGING['loggers']['celery'] = {
-    'handlers': ['celery', 'console'],
-    'level': 'INFO',
-    'propagate': False,
-}
+# Logging - Disabled file logging for cPanel (no /var/log access on shared hosting)
+# Logs will go to console/passenger logs instead
+# LOGGING['handlers']['file']['filename'] = '/var/log/nser-rg/django.log'
+# LOGGING['handlers']['celery'] = {
+#     'class': 'logging.handlers.RotatingFileHandler',
+#     'filename': '/var/log/nser-rg/celery.log',
+#     'maxBytes': 1024 * 1024 * 15,
+#     'backupCount': 10,
+#     'formatter': 'verbose',
+# }
+# LOGGING['loggers']['celery'] = {
+#     'handlers': ['celery', 'console'],
+#     'level': 'INFO',
+#     'propagate': False,
+# }
 
 # Performance optimizations
 CONN_MAX_AGE = 600
-MIDDLEWARE.insert(1, 'django.middleware.cache.UpdateCacheMiddleware')
-MIDDLEWARE.append('django.middleware.cache.FetchFromCacheMiddleware')
 
-CACHE_MIDDLEWARE_ALIAS = 'default'
-CACHE_MIDDLEWARE_SECONDS = 600
-CACHE_MIDDLEWARE_KEY_PREFIX = 'nser_prod'
+# Cache middleware - Disabled for cPanel (requires Redis)
+# Uncomment if you have Redis available
+# MIDDLEWARE.insert(1, 'django.middleware.cache.UpdateCacheMiddleware')
+# MIDDLEWARE.append('django.middleware.cache.FetchFromCacheMiddleware')
+# CACHE_MIDDLEWARE_ALIAS = 'default'
+# CACHE_MIDDLEWARE_SECONDS = 600
+# CACHE_MIDDLEWARE_KEY_PREFIX = 'nser_prod'
 
 # REST Framework - production optimizations
 REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] = [
@@ -155,10 +183,11 @@ EMAIL_USE_TLS = True
 # M-Pesa - production mode
 MPESA_ENVIRONMENT = 'production'
 
-# Monitoring - Prometheus metrics
-INSTALLED_APPS += ['django_prometheus']
-MIDDLEWARE.insert(0, 'django_prometheus.middleware.PrometheusBeforeMiddleware')
-MIDDLEWARE.append('django_prometheus.middleware.PrometheusAfterMiddleware')
+# Monitoring - Prometheus metrics (optional)
+# Disabled for cPanel - enable if you install django-prometheus
+# INSTALLED_APPS += ['django_prometheus']
+# MIDDLEWARE.insert(0, 'django_prometheus.middleware.PrometheusBeforeMiddleware')
+# MIDDLEWARE.append('django_prometheus.middleware.PrometheusAfterMiddleware')
 
 # Admin URL - obscure in production
 ADMIN_URL = env('ADMIN_URL', default='admin/')
@@ -166,4 +195,4 @@ ADMIN_URL = env('ADMIN_URL', default='admin/')
 # Production-specific settings
 PRODUCTION_MODE = True
 MOCK_EXTERNAL_APIS = False
-ENABLE_API_DOCS = False  # Disable Swagger in production
+ENABLE_API_DOCS = env.bool('ENABLE_API_DOCS', default=False)  # Enable via .env

@@ -688,6 +688,10 @@ class HighRiskUsersView(TimingMixin, generics.ListAPIView):
     """High risk users"""
     permission_classes = [IsAuthenticated, IsGRAKStaff]
     
+    def get_serializer_class(self):
+        from apps.screening.serializers import RiskScoreSerializer
+        return RiskScoreSerializer
+    
     def get_queryset(self):
         from apps.screening.models import RiskScore
         return RiskScore.objects.filter(risk_level__in=['high', 'severe', 'critical'], is_current=True)

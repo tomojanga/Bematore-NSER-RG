@@ -9,6 +9,7 @@ from django.conf.urls.static import static
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from apps.core.views import landing_page
 
 # API Documentation
 schema_view = get_schema_view(
@@ -42,6 +43,9 @@ schema_view = get_schema_view(
 
 # URL Patterns
 urlpatterns = [
+    # Landing Page
+    path('', landing_page, name='landing'),
+    
     # Admin (use settings.ADMIN_URL for obscurity in production)
     path(settings.ADMIN_URL if hasattr(settings, 'ADMIN_URL') else 'admin/', admin.site.urls),
     

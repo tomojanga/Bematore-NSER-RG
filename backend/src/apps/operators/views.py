@@ -655,12 +655,13 @@ class ConfigureWebhooksView(TimingMixin, SuccessResponseMixin, APIView):
 
 class WebhookLogsView(TimingMixin, generics.ListAPIView):
     """Webhook logs"""
+    serializer_class = OperatorAuditLogSerializer  # Using audit log as placeholder
     permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
         operator_id = self.kwargs['pk']
         # Placeholder - would query webhook logs
-        return []
+        return OperatorAuditLog.objects.none()  # Return empty queryset instead of list
 
 
 class RunComplianceCheckView(TimingMixin, SuccessResponseMixin, APIView):
