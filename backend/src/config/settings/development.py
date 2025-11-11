@@ -4,9 +4,8 @@ Settings for local development environment
 """
 from .base import *
 
-# Debug - read from environment, default to True in development
+# Debug - ensure True in development (can be overridden by env var)
 DEBUG = env.bool('DEBUG', default=True)
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1', '[::1]'])
 
 # Database - use local PostgreSQL
 # DATABASES['default']['NAME'] = 'nser_rg_dev'  # Commented out to use nser_rg from .env
