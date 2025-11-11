@@ -6,7 +6,7 @@ from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 from django.utils.html import format_html
 from django.utils import timezone
-from .models import BSTToken, BSTTokenUsageLog
+from .models import BSTToken, BSTAuditLog
 
 
 @admin.register(BSTToken)
@@ -87,30 +87,37 @@ class BSTTokenAdmin(admin.ModelAdmin):
     token_summary.short_description = _('Summary')
 
 
-@admin.register(BSTTokenUsageLog)
-class BSTTokenUsageLogAdmin(admin.ModelAdmin):
-    """BST token usage and access logs"""
+@admin.register(BSTAuditLog)
+class BSTAuditLogAdmin(admin.ModelAdmin):
+    """BST token audit logs for all operations"""
     list_display = (
-        'token_value_short', 'operator_name', 'action_badge',
-        'ip_address', 'created_at'
+        'token_short', 'action_badge', 'operator_name',
+        'ip_address', 'success_display', 'created_at'
     )
-    list_filter = ('action', 'created_at')
-    search_fields = ('bst_token__token_value', 'operator__name', 'ip_address')
+    list_filter = ('action', 'success', 'created_at')
+    search_fields = ('bst_token__token', 'operator__name', 'ip_address')
     readonly_fields = ('created_at',)
     
     fieldsets = (
-        (_('Access'), {
-            'fields': ('bst_token', 'operator', 'action')
+        (_('Action'), {
+            'fields': ('bst_token', 'action', 'success')
         }),
-        (_('IP'), {
-            'fields': ('ip_address',),
+        (_('Actor'), {
+            'fields': ('performed_by', 'operator')
+        }),
+        (_('Context'), {
+            'fields': ('ip_address', 'user_agent'),
+            'classes': ('collapse',)
+        }),
+        (_('Details'), {
+            'fields': ('details', 'error_message'),
             'classes': ('collapse',)
         }),
     )
     
-    def token_value_short(self, obj):
-        return format_html('<code>...{}</code>', obj.bst_token.token_value[-8:])
-    token_value_short.short_description = _('Token')
+    def token_short(self, obj):
+        return format_html('<code>...{}</code>', obj.bst_token.token[-8:])
+    token_short.short_description = _('Token')
     
     def operator_name(self, obj):
         return obj.operator.name if obj.operator else 'System'
@@ -118,22 +125,32 @@ class BSTTokenUsageLogAdmin(admin.ModelAdmin):
     
     def action_badge(self, obj):
         colors = {
-            'token_created': '#2166ac',
-            'token_used': '#7fbc41',
-            'lookup': '#b35806',
-            'registration': '#fc8d59'
+            'generated': '#2166ac',
+            'validated': '#7fbc41',
+            'used': '#b35806',
+            'rotated': '#fc8d59',
+            'compromised': '#d73026',
+            'deactivated': '#cccccc',
+            'lookup': '#f7b6d2',
+            'cross_referenced': '#b35806'
         }
         color = colors.get(obj.action, '#cccccc')
         return format_html(
             '<span style="background-color: {}; color: white; padding: 3px 10px; border-radius: 3px;">{}</span>',
-            color, obj.action.replace('_', ' ').title()
+            color, obj.get_action_display()
         )
     action_badge.short_description = _('Action')
     
+    def success_display(self, obj):
+        if obj.success:
+            return format_html('<span style="color: green;">✓ Success</span>')
+        return format_html('<span style="color: red;">✗ Failed</span>')
+    success_display.short_description = _('Status')
+    
     def has_add_permission(self, request):
-        """Usage logs are auto-generated"""
+        """Audit logs are auto-generated"""
         return False
     
     def has_delete_permission(self, request, obj=None):
-        """Keep usage logs for audit"""
+        """Keep audit logs immutable"""
         return False
