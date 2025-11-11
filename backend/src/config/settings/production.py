@@ -84,28 +84,42 @@ DATABASE_ROUTERS = []
 # }
 # DATABASE_ROUTERS = ['config.db_router.ReplicaRouter']
 
-# Cache - Use local memory cache for cPanel (Redis not available on shared hosting)
-# Old Redis cache config (requires Redis server):
-# try:
-#     if 'OPTIONS' in CACHES['default']:
-#         CACHES['default']['OPTIONS']['CONNECTION_POOL_KWARGS'] = {
-#             'max_connections': 100,
-#             'retry_on_timeout': True,
-#         }
-# except (KeyError, TypeError):
-#     pass
+# Cache Configuration - Auto-detect Redis availability
+# Uses Redis if REDIS_URL is set, falls back to local memory otherwise
+REDIS_URL = env('REDIS_URL', default=None)
 
-# Active cache config for cPanel shared hosting
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'nser-production-cache',
-        'TIMEOUT': 300,
-        'OPTIONS': {
-            'MAX_ENTRIES': 1000
+if REDIS_URL:
+    # Redis cache configuration (recommended for production)
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': env('REDIS_CACHE_URL', default=REDIS_URL.replace('/0', '/1')),  # Use DB 1 for cache
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+                'PARSER_CLASS': 'redis.connection.HiredisParser',
+                'CONNECTION_POOL_KWARGS': {
+                    'max_connections': 100,
+                    'retry_on_timeout': True,
+                },
+                'SOCKET_CONNECT_TIMEOUT': 5,
+                'SOCKET_TIMEOUT': 5,
+            },
+            'KEY_PREFIX': 'nser-prod',
+            'TIMEOUT': 300,
         }
     }
-}
+else:
+    # Local memory cache fallback (when Redis is not available)
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'nser-production-cache',
+            'TIMEOUT': 300,
+            'OPTIONS': {
+                'MAX_ENTRIES': 1000
+            }
+        }
+    }
 
 # Static files - AWS S3 for production
 if env.bool('USE_S3', default=False):
@@ -179,11 +193,39 @@ REST_FRAMEWORK['DEFAULT_THROTTLE_RATES'] = {
     'operator': '50000/hour',
 }
 
-# Celery - production settings
+# Celery - Production configuration with Redis broker
 CELERY_TASK_ALWAYS_EAGER = False
 CELERY_TASK_ACKS_LATE = True
 CELERY_WORKER_PREFETCH_MULTIPLIER = 4
 CELERY_WORKER_MAX_TASKS_PER_CHILD = 1000
+CELERY_RESULT_BACKEND = 'django-db'  # Store results in database (saves Redis memory)
+
+# Use Redis as Celery broker (auto-configured if REDIS_URL is set)
+if REDIS_URL:
+    # Redis broker with connection resilience
+    CELERY_BROKER_URL = env('CELERY_BROKER_URL', default=REDIS_URL)
+    CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+    CELERY_BROKER_CONNECTION_RETRY = True
+    CELERY_BROKER_CONNECTION_MAX_RETRIES = 10
+    CELERY_BROKER_POOL_LIMIT = None  # No pool limit for reliability
+    CELERY_BROKER_TRANSPORT_OPTIONS = {
+        'socket_connect_timeout': 5,
+        'socket_timeout': 5,
+        'retry_on_timeout': True,
+        'max_retries': 10,
+        'interval_start': 0,
+        'interval_step': 0.2,
+        'interval_max': 0.2,
+    }
+else:
+    # Fallback: Use database as broker (not recommended for production)
+    CELERY_BROKER_URL = 'sqla+postgresql://'
+    import warnings
+    warnings.warn(
+        'REDIS_URL not set in environment. Using database broker. '
+        'This is not recommended for production. '
+        'Set REDIS_URL environment variable to use Redis broker.'
+    )
 
 # Email - production SMTP
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
