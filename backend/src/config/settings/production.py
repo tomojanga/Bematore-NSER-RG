@@ -8,7 +8,7 @@ from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
 
-# Debug - read from environment, default to False in production
+# Debug - ensure False in production (can be overridden by env var)
 DEBUG = env.bool('DEBUG', default=False)
 
 # Security
