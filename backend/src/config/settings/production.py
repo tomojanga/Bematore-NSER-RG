@@ -139,6 +139,7 @@ if sentry_dsn and sentry_dsn.strip():
         send_default_pii=False,
         environment='production',
         release=env('GIT_COMMIT', default='unknown'),
+        include_local_variables=False,  # Avoid FrameLocalsProxy issues in Python 3.13
     )
 
 # Logging - Disabled file logging for cPanel (no /var/log access on shared hosting)
