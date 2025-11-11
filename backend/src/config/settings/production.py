@@ -13,7 +13,12 @@ DEBUG = False
 
 # Security
 SECRET_KEY = env('SECRET_KEY')
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[
+    'api-bematore.onrender.com',
+    'bematore.com',
+    'www.bematore.com',
+    'api.bematore.com',
+])
 
 # CORS settings for production
 CORS_ALLOW_ALL_ORIGINS = False
