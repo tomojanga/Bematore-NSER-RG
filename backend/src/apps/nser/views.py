@@ -635,8 +635,8 @@ class ExclusionExtensionRequestViewSet(TimingMixin, viewsets.ModelViewSet):
                 'exclusion', 'user', 'reviewed_by'
             ).all()
         return ExclusionExtensionRequest.objects.select_related(
-            'exclusion', 'user'
-        ).filter(user=self.request.user)
+            'exclusion', 'exclusion__user'
+        ).filter(exclusion__user=self.request.user)
     
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated, IsGRAKStaff])
     def approve(self, request, pk=None):

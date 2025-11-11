@@ -19,7 +19,7 @@ router.register(r'activity-logs', views.UserActivityLogViewSet, basename='activi
 urlpatterns = [
     # User Management
     path('me/', views.CurrentUserView.as_view(), name='current_user'),
-    path('me/profile/', views.CurrentUserProfileView.as_view(), name='current_user_profile'),
+    path('me/profile/', views.ProfileUpdateView.as_view(), name='current_user_profile'),
     path('me/devices/', views.CurrentUserDevicesView.as_view(), name='current_user_devices'),
     path('me/sessions/', views.CurrentUserSessionsView.as_view(), name='current_user_sessions'),
     

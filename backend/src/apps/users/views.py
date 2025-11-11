@@ -98,20 +98,80 @@ class ProfileView(TimingMixin, SuccessResponseMixin, APIView):
         )
 
 
-class UpdateProfileView(TimingMixin, SuccessResponseMixin, APIView):
-    """Update current user profile"""
+class ProfileUpdateView(TimingMixin, SuccessResponseMixin, APIView):
+    """Get and update current user profile"""
     permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        """Get current user profile"""
+        user = request.user
+        profile, _ = UserProfile.objects.get_or_create(user=user)
+        
+        return self.success_response(
+            data={
+                'id': str(user.id),
+                'email': user.email,
+                'phone_number': str(user.phone_number) if user.phone_number else '',
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'date_of_birth': user.date_of_birth,
+                'national_id': user.national_id,
+                'gender': user.gender,
+                'country_code': user.country_code,
+                'is_email_verified': user.is_email_verified,
+                'is_phone_verified': user.is_phone_verified,
+                'is_id_verified': user.is_verified,
+                'verification_status': 'verified' if user.is_verified else 'pending',
+                'created_at': user.created_at,
+                'last_login': user.last_login_at,
+                'profile': UserProfileSerializer(profile).data
+            }
+        )
     
     @transaction.atomic
     def put(self, request):
-        profile, _ = UserProfile.objects.get_or_create(user=request.user)
+        """Update current user profile"""
+        user = request.user
+        profile, _ = UserProfile.objects.get_or_create(user=user)
         
-        serializer = UpdateProfileSerializer(profile, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+        # Update user fields
+        user_fields = ['first_name', 'last_name', 'email', 'phone_number', 'date_of_birth', 'gender', 'country_code']
+        for field in user_fields:
+            if field in request.data:
+                setattr(user, field, request.data[field])
+        user.save()
+        
+        # Update profile fields
+        profile_fields = ['avatar', 'bio', 'occupation', 'employer', 'secondary_phone', 
+                         'secondary_email', 'address_line1', 'address_line2',
+                         'emergency_contact_name', 'emergency_contact_phone', 
+                         'emergency_contact_relationship']
+        for field in profile_fields:
+            if field in request.data:
+                setattr(profile, field, request.data[field])
+        profile.save()
+        profile.calculate_completion()
+        profile.save()
         
         return self.success_response(
-            data=UserProfileSerializer(profile).data,
+            data={
+                'id': str(user.id),
+                'email': user.email,
+                'phone_number': str(user.phone_number) if user.phone_number else '',
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'date_of_birth': user.date_of_birth,
+                'national_id': user.national_id,
+                'gender': user.gender,
+                'country_code': user.country_code,
+                'is_email_verified': user.is_email_verified,
+                'is_phone_verified': user.is_phone_verified,
+                'is_id_verified': user.is_verified,
+                'verification_status': 'verified' if user.is_verified else 'pending',
+                'created_at': user.created_at,
+                'last_login': user.last_login_at,
+                'profile': UserProfileSerializer(profile).data
+            },
             message='Profile updated successfully'
         )
 

@@ -235,7 +235,7 @@ export function DeviceManager({ onTrustDevice }: DeviceManagerProps) {
                 </div>
               )}
               <div className="text-sm text-gray-500">
-                IP: {device.ip || 'Unknown'}
+                IP: {device.ip_address || 'Unknown'}
               </div>
             </div>
             <div className="flex items-center gap-2">

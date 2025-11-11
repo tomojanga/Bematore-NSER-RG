@@ -169,7 +169,7 @@ class ReconciliationViewSet(TimingMixin, viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsGRAKStaff]
     
     def get_queryset(self):
-        return Reconciliation.objects.select_related('operator').order_by('-reconciliation_date')
+        return Reconciliation.objects.select_related('operator').order_by('-reconciled_at')
 
 
 class LedgerEntryViewSet(TimingMixin, viewsets.ReadOnlyModelViewSet):

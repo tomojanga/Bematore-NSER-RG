@@ -1,230 +1,364 @@
 'use client'
 
-import { useMyExclusions, useExclusionStatus } from '@/hooks/useExclusions'
-import { Card, CardContent, CardHeader, CardTitle, StatusBadge } from '@/components/ui/Card'
-import { Button } from '@/components/ui/Button'
-import { Shield, AlertCircle, CheckCircle, Calendar, FileText, Clock, Loader2, TrendingUp, Activity } from 'lucide-react'
-import Link from 'next/link'
+import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
+import { DashboardHeader } from '@/components/Dashboard/DashboardHeader'
+import { StatsCard } from '@/components/Dashboard/StatsCard'
+import { ExclusionCard } from '@/components/Dashboard/ExclusionCard'
+import { api } from '@/lib/api-client'
+import { useToast } from '@/components/ui/use-toast'
+import { 
+  Shield, 
+  TrendingDown, 
+  Activity, 
+  AlertCircle,
+  BarChart3,
+  Calendar,
+  User,
+  Zap,
+  Loader2
+} from 'lucide-react'
+import Link from 'next/link'
+
+interface DashboardStats {
+  activeExclusions: number
+  totalDuration: number
+  daysRemaining: number
+  riskLevel: 'low' | 'medium' | 'high'
+}
+
+interface Exclusion {
+  id: string
+  status: 'active' | 'pending' | 'expired' | 'lifted'
+  type: 'self' | 'operator' | 'regulatory'
+  startDate: string
+  endDate: string
+  daysRemaining: number
+  reason?: string
+  duration: number
+}
+
+interface RiskProfile {
+  current_risk_level: 'low' | 'medium' | 'high' | 'severe'
+  score: number
+  last_assessment: string
+}
 
 export default function DashboardPage() {
+  const router = useRouter()
   const { user } = useAuth()
-  const { data: exclusions, isLoading: isLoadingExclusions } = useMyExclusions()
-  const { data: status, isLoading: isLoadingStatus } = useExclusionStatus()
+  const { toast } = useToast()
+  
+  const [exclusions, setExclusions] = useState<Exclusion[]>([])
+  const [riskProfile, setRiskProfile] = useState<RiskProfile | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [stats, setStats] = useState<DashboardStats>({
+    activeExclusions: 0,
+    totalDuration: 0,
+    daysRemaining: 0,
+    riskLevel: 'low'
+  })
 
-  const activeExclusion = exclusions?.results?.find((e: any) => e.status === 'active')
-  const daysRemaining = activeExclusion ? Math.ceil((new Date(activeExclusion.end_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : 0
+  // Fetch exclusions
+  useEffect(() => {
+    const fetchExclusions = async () => {
+      try {
+        const { data } = await api.get('/nser/my-exclusions/')
+        if (data.success && data.data?.items) {
+          const mappedExclusions: Exclusion[] = data.data.items.map((e: any) => ({
+            id: e.id,
+            status: e.status,
+            type: e.exclusion_type || 'self',
+            startDate: e.start_date,
+            endDate: e.end_date,
+            daysRemaining: Math.max(0, Math.ceil((new Date(e.end_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24))),
+            reason: e.reason,
+            duration: Math.ceil((new Date(e.end_date).getTime() - new Date(e.start_date).getTime()) / (1000 * 60 * 60 * 24))
+          }))
+          setExclusions(mappedExclusions)
+        }
+      } catch (error) {
+        console.error('Failed to fetch exclusions:', error)
+        toast({
+          title: 'Error',
+          description: 'Failed to load exclusions',
+          variant: 'destructive'
+        })
+      }
+    }
 
-  if (isLoadingExclusions || isLoadingStatus) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-      </div>
-    )
-  }
+    fetchExclusions()
+  }, [toast])
+
+  // Fetch risk profile
+  useEffect(() => {
+    const fetchRiskProfile = async () => {
+      try {
+        const { data } = await api.get('/screening/current-risk/')
+        if (data.success && data.data) {
+          setRiskProfile(data.data)
+        }
+      } catch (error) {
+        console.error('Failed to fetch risk profile:', error)
+      }
+    }
+
+    fetchRiskProfile()
+  }, [])
+
+  // Update stats based on actual exclusions
+  useEffect(() => {
+    if (exclusions && exclusions.length > 0) {
+      const active = exclusions.filter(e => e.status === 'active')
+      setStats({
+        activeExclusions: active.length,
+        totalDuration: active.reduce((sum, e) => sum + e.duration, 0),
+        daysRemaining: active.reduce((sum, e) => sum + e.daysRemaining, 0),
+        riskLevel: riskProfile?.current_risk_level || 'low'
+      })
+    }
+    setIsLoading(false)
+  }, [exclusions, riskProfile])
+
+  const recentExclusions = exclusions?.slice(0, 3) || []
+  const activeExclusion = exclusions?.find(e => e.status === 'active')
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">
-          Welcome back{user?.first_name ? `, ${user.first_name}` : ''}!
-        </h1>
-        <p className="text-gray-600 mt-1">Here's your self-exclusion overview</p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+      {/* Header */}
+      <DashboardHeader 
+        title="Dashboard"
+        subtitle={`Welcome back, ${user?.first_name || 'User'}`}
+      />
 
-      {activeExclusion ? (
-        <Card className="border-red-200 bg-red-50">
-          <CardContent className="pt-6">
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-6 py-8">
+        {/* Quick Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <StatsCard
+            icon={Shield}
+            label="Active Exclusions"
+            value={stats.activeExclusions}
+            color={stats.activeExclusions > 0 ? 'red' : 'green'}
+            description="Self-exclusions currently active"
+          />
+          <StatsCard
+            icon={Calendar}
+            label="Total Duration"
+            value={`${stats.totalDuration} days`}
+            color="blue"
+            description="Combined exclusion duration"
+          />
+          <StatsCard
+            icon={TrendingDown}
+            label="Days Remaining"
+            value={stats.daysRemaining}
+            color="yellow"
+            description="Until next exclusion expires"
+          />
+          <StatsCard
+            icon={Activity}
+            label="Risk Level"
+            value={stats.riskLevel.toUpperCase()}
+            color={stats.riskLevel === 'high' ? 'red' : stats.riskLevel === 'medium' ? 'yellow' : 'green'}
+            description="Current assessment status"
+            onClick={() => window.location.href = '/dashboard/assessments'}
+          />
+        </div>
+
+        {/* Alert Banner */}
+        {activeExclusion && (
+          <div className="mb-8 bg-red-50 border-l-4 border-red-500 p-6 rounded-lg">
             <div className="flex items-start gap-4">
-              <div className="h-12 w-12 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <Shield className="h-6 w-6 text-red-600" />
-              </div>
+              <AlertCircle className="h-6 w-6 text-red-600 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <h3 className="text-lg font-semibold text-red-900">You are currently self-excluded</h3>
-                <p className="text-sm text-red-700 mt-1">
-                  Your self-exclusion is active and will expire on{' '}
-                  {new Date(activeExclusion.end_date).toLocaleDateString()}
+                <h3 className="font-bold text-red-900 mb-2">Self-Exclusion Active</h3>
+                <p className="text-red-800 mb-4">
+                  You currently have an active self-exclusion. This means you are excluded from all licensed gambling operators during this period.
                 </p>
-                <div className="mt-4 grid grid-cols-3 gap-4">
-                  <div>
-                    <p className="text-xs text-red-600">Start Date</p>
-                    <p className="text-sm font-medium text-red-900">
-                      {new Date(activeExclusion.start_date).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-red-600">End Date</p>
-                    <p className="text-sm font-medium text-red-900">
-                      {new Date(activeExclusion.end_date).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-red-600">Days Remaining</p>
-                    <p className="text-sm font-medium text-red-900">{daysRemaining} days</p>
-                  </div>
-                </div>
-                <div className="mt-4">
-                  <div className="w-full bg-red-200 rounded-full h-2">
-                    <div
-                      className="bg-red-600 h-2 rounded-full"
-                      style={{
-                        width: `${Math.min(100, ((activeExclusion.period_months * 30 - daysRemaining) / (activeExclusion.period_months * 30)) * 100)}%`
-                      }}
-                    />
-                  </div>
+                <div className="flex gap-2">
+                  <Link 
+                    href="/dashboard/help"
+                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
+                  >
+                    Get Support
+                  </Link>
+                  <Link 
+                    href="/dashboard/self-exclude"
+                    className="px-4 py-2 bg-white text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors font-medium"
+                  >
+                    Manage Exclusion
+                  </Link>
                 </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
-      ) : (
-        <Card className="border-green-200 bg-green-50">
-          <CardContent className="pt-6">
-            <div className="flex items-start gap-4">
-              <div className="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <CheckCircle className="h-6 w-6 text-green-600" />
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Content */}
+          <div className="lg:col-span-2">
+            {/* Exclusion History */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-gray-900">Your Exclusions</h2>
+                <Link 
+                  href="/dashboard/history"
+                  className="text-blue-600 hover:text-blue-700 font-medium text-sm"
+                >
+                  View All →
+                </Link>
               </div>
-              <div className="flex-1">
-                <h3 className="text-lg font-semibold text-green-900">No active self-exclusion</h3>
-                <p className="text-sm text-green-700 mt-1">
-                  You can participate in gambling activities. Consider self-excluding if you need help.
-                </p>
-                <Link href="/dashboard/self-exclude">
-                  <Button className="mt-4">Self-Exclude Now</Button>
+
+              {isLoading ? (
+                <div className="space-y-4">
+                  {[1, 2, 3].map(i => (
+                    <div key={i} className="h-24 bg-gray-100 rounded-lg animate-pulse" />
+                  ))}
+                </div>
+              ) : recentExclusions.length > 0 ? (
+                <div className="space-y-4">
+                  {recentExclusions.map(exclusion => (
+                    <ExclusionCard 
+                      key={exclusion.id}
+                      exclusion={exclusion}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <Shield className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                  <p className="text-gray-600 font-medium mb-2">No active exclusions</p>
+                  <p className="text-gray-500 text-sm mb-4">You have not registered any self-exclusions</p>
+                  <Link
+                    href="/dashboard/self-exclude"
+                    className="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                  >
+                    Register Self-Exclusion
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            {/* Quick Actions */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <h2 className="text-xl font-bold text-gray-900 mb-6">Quick Actions</h2>
+              <div className="grid grid-cols-2 gap-4">
+                <Link
+                  href="/dashboard/self-exclude"
+                  className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-all group"
+                >
+                  <div className="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors">
+                    <Shield className="h-5 w-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">Self-Exclude</p>
+                    <p className="text-xs text-gray-500">Register new exclusion</p>
+                  </div>
+                </Link>
+
+                <Link
+                  href="/dashboard/assessments"
+                  className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50 transition-all group"
+                >
+                  <div className="p-3 bg-purple-100 rounded-lg group-hover:bg-purple-200 transition-colors">
+                    <BarChart3 className="h-5 w-5 text-purple-600" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">Risk Assessment</p>
+                    <p className="text-xs text-gray-500">Take a screening test</p>
+                  </div>
+                </Link>
+
+                <Link
+                  href="/dashboard/account"
+                  className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-green-300 hover:bg-green-50 transition-all group"
+                >
+                  <div className="p-3 bg-green-100 rounded-lg group-hover:bg-green-200 transition-colors">
+                    <User className="h-5 w-5 text-green-600" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">Account Settings</p>
+                    <p className="text-xs text-gray-500">Manage your profile</p>
+                  </div>
+                </Link>
+
+                <Link
+                  href="/dashboard/help"
+                  className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-orange-300 hover:bg-orange-50 transition-all group"
+                >
+                  <div className="p-3 bg-orange-100 rounded-lg group-hover:bg-orange-200 transition-colors">
+                    <Zap className="h-5 w-5 text-orange-600" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">Get Help</p>
+                    <p className="text-xs text-gray-500">Support & resources</p>
+                  </div>
                 </Link>
               </div>
             </div>
-          </CardContent>
-        </Card>
-      )}
-
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardHeader>
-            <CardTitle className="text-sm flex items-center gap-2 text-gray-600">
-              <Shield className="h-4 w-4" />
-              Total Exclusions
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold text-gray-900">{exclusions?.count || 0}</p>
-            <p className="text-xs text-gray-500 mt-1">All time</p>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardHeader>
-            <CardTitle className="text-sm flex items-center gap-2 text-gray-600">
-              <Activity className="h-4 w-4" />
-              Current Status
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {status?.data?.is_excluded ? (
-              <div>
-                <p className="text-3xl font-bold text-red-600">Excluded</p>
-                <p className="text-xs text-gray-500 mt-1">Protected</p>
-              </div>
-            ) : (
-              <div>
-                <p className="text-3xl font-bold text-green-600">Active</p>
-                <p className="text-xs text-gray-500 mt-1">No restrictions</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardHeader>
-            <CardTitle className="text-sm flex items-center gap-2 text-gray-600">
-              <FileText className="h-4 w-4" />
-              Assessments
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold text-gray-900">0</p>
-            <p className="text-xs text-gray-500 mt-1">Completed</p>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardHeader>
-            <CardTitle className="text-sm flex items-center gap-2 text-gray-600">
-              <Clock className="h-4 w-4" />
-              Account Age
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold text-gray-900">
-              {Math.floor((Date.now() - new Date(user?.created_at || '').getTime()) / (1000 * 60 * 60 * 24))}
-            </p>
-            <p className="text-xs text-gray-500 mt-1">Days</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Link href="/dashboard/self-exclude" className="block">
-              <button className="w-full flex flex-col items-center gap-3 p-6 border-2 border-dashed border-gray-300 rounded-lg hover:border-red-400 hover:bg-red-50 transition-all">
-                <Shield className="h-8 w-8 text-red-400" />
-                <span className="text-sm font-medium text-gray-700">Self-Exclude</span>
-              </button>
-            </Link>
-            <Link href="/dashboard/assessments" className="block">
-              <button className="w-full flex flex-col items-center gap-3 p-6 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-all">
-                <FileText className="h-8 w-8 text-blue-400" />
-                <span className="text-sm font-medium text-gray-700">Take Assessment</span>
-              </button>
-            </Link>
-            <Link href="/dashboard/history" className="block">
-              <button className="w-full flex flex-col items-center gap-3 p-6 border-2 border-dashed border-gray-300 rounded-lg hover:border-purple-400 hover:bg-purple-50 transition-all">
-                <Clock className="h-8 w-8 text-purple-400" />
-                <span className="text-sm font-medium text-gray-700">View History</span>
-              </button>
-            </Link>
-            <Link href="/dashboard/settings" className="block">
-              <button className="w-full flex flex-col items-center gap-3 p-6 border-2 border-dashed border-gray-300 rounded-lg hover:border-gray-400 hover:bg-gray-50 transition-all">
-                <Activity className="h-8 w-8 text-gray-400" />
-                <span className="text-sm font-medium text-gray-700">Settings</span>
-              </button>
-            </Link>
           </div>
-        </CardContent>
-      </Card>
 
-      {exclusions?.results && exclusions.results.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {exclusions.results.slice(0, 3).map((exclusion: any) => (
-                <div key={exclusion.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <Shield className="h-5 w-5 text-gray-400" />
-                    <div>
-                      <p className="font-medium text-gray-900">Self-Exclusion</p>
-                      <p className="text-sm text-gray-600">{exclusion.period_months} months</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <StatusBadge status={exclusion.status} />
-                    <p className="text-xs text-gray-500 mt-1">
-                      {new Date(exclusion.created_at).toLocaleDateString()}
-                    </p>
-                  </div>
+          {/* Sidebar */}
+          <div className="lg:col-span-1 space-y-6">
+            {/* Account Info Card */}
+            <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl p-6 text-white shadow-lg">
+              <p className="text-blue-100 text-sm font-medium mb-2">Account Status</p>
+              <p className="text-2xl font-bold mb-4">Active</p>
+              
+              <div className="space-y-3 mb-6 pb-6 border-b border-blue-500">
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 bg-green-400 rounded-full" />
+                  <span className="text-sm">Email Verified</span>
                 </div>
-              ))}
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 bg-green-400 rounded-full" />
+                  <span className="text-sm">Phone Verified</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 bg-yellow-400 rounded-full" />
+                  <span className="text-sm">ID Verification Pending</span>
+                </div>
+              </div>
+
+              <Link
+                href="/dashboard/settings"
+                className="w-full px-4 py-2 bg-white text-blue-600 rounded-lg font-medium hover:bg-blue-50 transition-colors text-center"
+              >
+                Complete Verification
+              </Link>
             </div>
-          </CardContent>
-        </Card>
-      )}
+
+            {/* Helpful Resources */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <h3 className="font-bold text-gray-900 mb-4">Helpful Resources</h3>
+              <ul className="space-y-3">
+                <li>
+                  <Link href="/dashboard/help#how-to" className="text-blue-600 hover:text-blue-700 font-medium text-sm">
+                    → How Self-Exclusion Works
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/dashboard/help#faq" className="text-blue-600 hover:text-blue-700 font-medium text-sm">
+                    → Frequently Asked Questions
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/dashboard/help#support" className="text-blue-600 hover:text-blue-700 font-medium text-sm">
+                    → Contact Support
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/dashboard/help#resources" className="text-blue-600 hover:text-blue-700 font-medium text-sm">
+                    → Gambling Resources
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
   )
 }

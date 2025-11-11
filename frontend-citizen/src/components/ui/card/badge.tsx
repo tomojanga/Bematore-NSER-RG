@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils'
 
-interface BadgeProps {
+export interface BadgeProps {
   children: React.ReactNode
   variant?: 'default' | 'success' | 'warning' | 'danger' | 'info'
   size?: 'sm' | 'md' | 'lg'
@@ -34,7 +34,7 @@ export function Badge({ children, variant = 'default', size = 'sm', className }:
   )
 }
 
-interface StatusBadgeProps {
+export interface StatusBadgeProps {
   status: string
   className?: string
 }
@@ -56,7 +56,7 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
   )
 }
 
-interface RiskBadgeProps {
+export interface RiskBadgeProps {
   riskLevel: string
   className?: string
 }

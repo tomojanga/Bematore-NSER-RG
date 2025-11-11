@@ -277,13 +277,21 @@ export const api = {
 
   // Risk assessments
   screening: {
+    sessions: (params?: any) => api.get('/screening/sessions/', { params }),
+    start: (data: any) => api.post('/screening/sessions/start/', data),
     startLiebet: () => api.post('/screening/liebet/start/'),
     startPGSI: () => api.post('/screening/pgsi/start/'),
     startDSM5: () => api.post('/screening/dsm5/start/'),
     submitResponse: (data: any) => api.post('/screening/respond/', data),
+    batchResponses: (data: any) => api.post('/screening/batch-responses/', data),
+    calculateRisk: (data: any) => api.post('/screening/calculate-risk/', data),
+    questionsByType: (type: string) => api.get(`/screening/questions/${type}/`),
     myAssessments: () => api.get('/screening/my-assessments/'),
+    currentRisk: () => api.get('/screening/current-risk/'),
+    riskHistory: () => api.get('/screening/risk-history/'),
     myRiskProfile: () => api.get('/screening/my-risk/'),
     recommendations: () => api.get('/screening/recommendations/'),
+    statistics: () => api.get('/screening/statistics/'),
   },
 
   // Notifications
@@ -294,6 +302,14 @@ export const api = {
     markAllRead: () => api.post('/notifications/mark-all-read/'),
     preferences: () => api.get('/notifications/preferences/'),
     updatePreferences: (data: any) => api.post('/notifications/preferences/update/', data),
+  },
+
+  // Analytics
+  analytics: {
+    dashboard: () => api.get('/analytics/dashboard/'),
+    userGrowth: (params?: any) => api.get('/analytics/user-growth/', { params }),
+    exclusionTrends: (params?: any) => api.get('/analytics/exclusion-trends/', { params }),
+    riskDistribution: () => api.get('/analytics/risk-distribution/'),
   },
 }
 
