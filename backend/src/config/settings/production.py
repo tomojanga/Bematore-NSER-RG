@@ -12,13 +12,17 @@ from sentry_sdk.integrations.redis import RedisIntegration
 DEBUG = False
 
 # Security
-SECRET_KEY = env('SECRET_KEY')
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[
+SECRET_KEY = env('SECRET_KEY', default='your-secret-key-change-in-env')
+ALLOWED_HOSTS = [
     'api-bematore.onrender.com',
     'bematore.com',
     'www.bematore.com',
     'api.bematore.com',
-])
+    'localhost',
+    '127.0.0.1',
+    '0.0.0.0',
+    '*',  # Allow all for now - restrict later
+]
 
 # CORS settings for production
 CORS_ALLOW_ALL_ORIGINS = False
