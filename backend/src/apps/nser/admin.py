@@ -66,8 +66,7 @@ class SelfExclusionRecordAdmin(admin.ModelAdmin):
         }),
         (_('Consent & Legal'), {
             'fields': (
-                'terms_accepted', 'consent_recorded_at', 'consent_ip_address',
-                'digital_signature'
+                'terms_accepted', 'consent_ip_address', 'digital_signature'
             ),
             'classes': ('collapse',)
         }),
