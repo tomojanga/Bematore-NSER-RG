@@ -32,12 +32,12 @@ export default function HistoryPage() {
                     {exclusions?.results && exclusions.results.length > 0 ? (
                         <div className="space-y-4">
                             {exclusions.results.map((exclusion: any) => {
-                                const daysRemaining = exclusion.status === 'active' && exclusion.end_date
-                                    ? Math.ceil((new Date(exclusion.end_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
-                                    : 0
-                                const totalDays = exclusion.start_date && exclusion.end_date
-                                    ? Math.ceil((new Date(exclusion.end_date).getTime() - new Date(exclusion.start_date).getTime()) / (1000 * 60 * 60 * 24))
-                                    : 0
+                            const daysRemaining = exclusion.status === 'active' && (exclusion.expiry_date || exclusion.end_date)
+                            ? Math.ceil((new Date(exclusion.expiry_date || exclusion.end_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+                            : 0
+                            const totalDays = (exclusion.effective_date || exclusion.start_date) && (exclusion.expiry_date || exclusion.end_date)
+                            ? Math.ceil((new Date(exclusion.expiry_date || exclusion.end_date).getTime() - new Date(exclusion.effective_date || exclusion.start_date).getTime()) / (1000 * 60 * 60 * 24))
+                            : 0
                                 const progress = exclusion.status === 'active' && totalDays > 0
                                     ? Math.min(100, Math.max(0, ((totalDays - daysRemaining) / totalDays) * 100))
                                     : exclusion.status === 'expired' ? 100 : 0
@@ -73,12 +73,12 @@ export default function HistoryPage() {
                                                                 <p className="font-semibold text-gray-900">{exclusion.exclusion_period?.replace(/_/g, ' ').toUpperCase()}</p>
                                                             </div>
                                                             <div>
-                                                                <p className="text-gray-500 text-xs mb-0.5">Start Date</p>
-                                                                <p className="font-semibold text-gray-900">{new Date(exclusion.start_date || exclusion.created_at).toLocaleDateString()}</p>
+                                                            <p className="text-gray-500 text-xs mb-0.5">Start Date</p>
+                                                            <p className="font-semibold text-gray-900">{new Date(exclusion.effective_date || exclusion.start_date || exclusion.created_at).toLocaleDateString()}</p>
                                                             </div>
                                                             <div>
-                                                                <p className="text-gray-500 text-xs mb-0.5">End Date</p>
-                                                                <p className="font-semibold text-gray-900">{exclusion.end_date ? new Date(exclusion.end_date).toLocaleDateString() : 'N/A'}</p>
+                                                            <p className="text-gray-500 text-xs mb-0.5">End Date</p>
+                                                            <p className="font-semibold text-gray-900">{exclusion.expiry_date || exclusion.end_date ? new Date(exclusion.expiry_date || exclusion.end_date).toLocaleDateString() : 'N/A'}</p>
                                                             </div>
                                                             <div>
                                                                 <p className="text-gray-500 text-xs mb-0.5">Duration</p>

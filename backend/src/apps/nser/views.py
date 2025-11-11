@@ -27,7 +27,7 @@ from .serializers import (
     ExclusionLookupResponseSerializer, BulkExclusionLookupSerializer,
     PropagationStatusSerializer, ExclusionTrendsSerializer,
     OperatorExclusionMappingSerializer, ExclusionAuditLogSerializer,
-    ExclusionExtensionRequestSerializer
+    ExclusionExtensionRequestSerializer, ExclusionStatisticsSerializer
 )
 from apps.api.permissions import (
     IsGRAKStaff, IsCitizen, CanLookupExclusion, IsOwnerOrGRAKStaff
@@ -192,8 +192,8 @@ class ExclusionLookupView(TimingMixin, SuccessResponseMixin, CacheMixin, APIView
                     user=token.user,
                     is_active=True
                 ).only(
-                    'id', 'reference_number', 'exclusion_period',
-                    'start_date', 'end_date', 'is_permanent'
+                    'id', 'exclusion_reference', 'exclusion_period',
+                    'effective_date', 'expiry_date'
                 ).first()
         else:
             # Direct lookup via user identifiers
@@ -212,8 +212,8 @@ class ExclusionLookupView(TimingMixin, SuccessResponseMixin, CacheMixin, APIView
                     user=user,
                     is_active=True
                 ).only(
-                    'id', 'reference_number', 'exclusion_period',
-                    'start_date', 'end_date', 'is_permanent'
+                    'id', 'exclusion_reference', 'exclusion_period',
+                    'effective_date', 'expiry_date'
                 ).first()
         
         # Calculate response time
@@ -221,19 +221,20 @@ class ExclusionLookupView(TimingMixin, SuccessResponseMixin, CacheMixin, APIView
         
         # Build response
         if exclusion:
+            is_permanent = exclusion.exclusion_period == 'permanent'
             days_remaining = None
-            if not exclusion.is_permanent and exclusion.end_date:
-                delta = exclusion.end_date - timezone.now().date()
+            if not is_permanent and exclusion.expiry_date:
+                delta = exclusion.expiry_date - timezone.now()
                 days_remaining = max(0, delta.days)
             
             response_data = {
                 'is_excluded': True,
                 'exclusion_id': str(exclusion.id),
-                'reference_number': exclusion.reference_number,
+                'reference_number': exclusion.exclusion_reference,
                 'exclusion_period': exclusion.exclusion_period,
-                'start_date': str(exclusion.start_date),
-                'end_date': str(exclusion.end_date) if exclusion.end_date else None,
-                'is_permanent': exclusion.is_permanent,
+                'start_date': str(exclusion.effective_date),
+                'end_date': str(exclusion.expiry_date) if exclusion.expiry_date else None,
+                'is_permanent': is_permanent,
                 'days_remaining': days_remaining,
                 'user_message': 'User is currently self-excluded and cannot participate in gambling activities.',
                 'lookup_timestamp': timezone.now().isoformat(),
@@ -335,7 +336,7 @@ class ActivateExclusionView(TimingMixin, SuccessResponseMixin, APIView):
         # Activate
         exclusion.status = 'active'
         exclusion.is_active = True
-        exclusion.start_date = timezone.now().date()
+        exclusion.effective_date = timezone.now()
         exclusion.save()
         
         # Trigger propagation
@@ -409,11 +410,8 @@ class ExtendExclusionView(TimingMixin, SuccessResponseMixin, APIView):
         extension_request = ExclusionExtensionRequest.objects.create(
             exclusion=exclusion,
             user=request.user,
-            current_end_date=exclusion.end_date,
-            requested_end_date=serializer.validated_data.get('requested_end_date'),
-            extension_period=serializer.validated_data['extension_period'],
+            requested_new_period=serializer.validated_data['extension_period'],
             reason=serializer.validated_data['reason'],
-            supporting_documents=serializer.validated_data.get('supporting_documents'),
             status='pending'
         )
         
@@ -648,10 +646,14 @@ class ExclusionExtensionRequestViewSet(TimingMixin, viewsets.ModelViewSet):
         extension_request.reviewed_at = timezone.now()
         extension_request.save()
         
-        # Update exclusion
+        # Update exclusion expiry date based on extension period
         exclusion = extension_request.exclusion
-        exclusion.end_date = extension_request.requested_end_date
-        exclusion.save()
+        if extension_request.requested_new_period:
+            from datetime import timedelta
+            periods = {'6_months': 180, '1_year': 365, '3_years': 1095, '5_years': 1825}
+            days = periods.get(extension_request.requested_new_period, 365)
+            exclusion.expiry_date = exclusion.expiry_date + timedelta(days=days)
+            exclusion.save()
         
         return Response({'message': 'Extension approved successfully'})
     
@@ -691,15 +693,15 @@ class RenewExclusionView(TimingMixin, SuccessResponseMixin, APIView):
     def post(self, request, pk):
         exclusion = SelfExclusionRecord.objects.get(pk=pk)
         
-        if not exclusion.auto_renew:
+        if not exclusion.is_auto_renewable:
             return self.error_response(message='Auto-renew not enabled')
         
-        # Calculate new end date
+        # Calculate new expiry date
         from datetime import timedelta
         periods = {'6_months': 180, '1_year': 365, '3_years': 1095, '5_years': 1825}
         days = periods.get(exclusion.exclusion_period, 365)
         
-        exclusion.end_date = exclusion.end_date + timedelta(days=days)
+        exclusion.expiry_date = exclusion.expiry_date + timedelta(days=days)
         exclusion.renewal_count += 1
         exclusion.last_renewed_at = timezone.now()
         exclusion.save()
@@ -747,9 +749,10 @@ class CheckExclusionStatusView(TimingMixin, SuccessResponseMixin, APIView):
                 data={'is_excluded': False, 'message': 'No active self-exclusion'}
             )
         
+        is_permanent = exclusion.exclusion_period == 'permanent'
         days_remaining = None
-        if not exclusion.is_permanent and exclusion.end_date:
-            delta = exclusion.end_date - timezone.now().date()
+        if not is_permanent and exclusion.expiry_date:
+            delta = exclusion.expiry_date - timezone.now()
             days_remaining = max(0, delta.days)
         
         return self.success_response(
@@ -757,10 +760,10 @@ class CheckExclusionStatusView(TimingMixin, SuccessResponseMixin, APIView):
                 'is_excluded': True,
                 'exclusion_id': str(exclusion.id),
                 'exclusion_period': exclusion.exclusion_period,
-                'start_date': str(exclusion.start_date),
-                'end_date': str(exclusion.end_date) if exclusion.end_date else None,
+                'start_date': str(exclusion.effective_date),
+                'end_date': str(exclusion.expiry_date) if exclusion.expiry_date else None,
                 'days_remaining': days_remaining,
-                'is_permanent': exclusion.is_permanent,
+                'is_permanent': is_permanent,
                 'message': 'You are currently self-excluded'
             }
         )
@@ -858,14 +861,14 @@ class CheckExpiryView(TimingMixin, SuccessResponseMixin, APIView):
     permission_classes = [IsAuthenticated, IsGRAKStaff]
     
     def get(self, request):
-        today = timezone.now().date()
+        today = timezone.now()
+        tomorrow_plus_7 = today + timedelta(days=7)
         expiring_soon = SelfExclusionRecord.objects.filter(
             is_active=True,
-            is_permanent=False,
-            end_date__lte=today + timedelta(days=7),
-            end_date__gt=today
-        )
-        
+            expiry_date__lte=tomorrow_plus_7,
+            expiry_date__gt=today
+        ).exclude(exclusion_period='permanent')
+         
         return self.success_response(
             data={
                 'expiring_soon_count': expiring_soon.count(),
@@ -880,12 +883,12 @@ class AutoRenewView(TimingMixin, SuccessResponseMixin, APIView):
     
     @transaction.atomic
     def post(self, request):
-        today = timezone.now().date()
+        today = timezone.now()
         
         renewals = SelfExclusionRecord.objects.filter(
             is_active=True,
-            auto_renew=True,
-            end_date__lte=today
+            is_auto_renewable=True,
+            expiry_date__lte=today
         )
         
         count = 0
@@ -894,7 +897,7 @@ class AutoRenewView(TimingMixin, SuccessResponseMixin, APIView):
             periods = {'6_months': 180, '1_year': 365, '3_years': 1095, '5_years': 1825}
             days = periods.get(exclusion.exclusion_period, 365)
             
-            exclusion.end_date = exclusion.end_date + timedelta(days=days)
+            exclusion.expiry_date = exclusion.expiry_date + timedelta(days=days)
             exclusion.renewal_count += 1
             exclusion.last_renewed_at = timezone.now()
             exclusion.save()

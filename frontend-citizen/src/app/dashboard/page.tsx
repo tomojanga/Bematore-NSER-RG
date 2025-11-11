@@ -78,14 +78,14 @@ export default function DashboardPage() {
                 const { data } = await api.get('/nser/my-exclusions/')
                 if (data.success && data.data?.items) {
                     const mappedExclusions: Exclusion[] = data.data.items.map((e: any) => ({
-                        id: e.id,
-                        status: e.status,
-                        type: e.exclusion_type || 'self',
-                        startDate: e.start_date,
-                        endDate: e.end_date,
-                        daysRemaining: Math.max(0, Math.ceil((new Date(e.end_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24))),
-                        reason: e.reason,
-                        duration: Math.ceil((new Date(e.end_date).getTime() - new Date(e.start_date).getTime()) / (1000 * 60 * 60 * 24))
+                    id: e.id,
+                    status: e.status,
+                    type: e.exclusion_type || 'self',
+                    startDate: e.effective_date || e.start_date,
+                    endDate: e.expiry_date || e.end_date,
+                    daysRemaining: Math.max(0, Math.ceil((new Date(e.expiry_date || e.end_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24))),
+                    reason: e.reason,
+                    duration: Math.ceil((new Date(e.expiry_date || e.end_date).getTime() - new Date(e.effective_date || e.start_date).getTime()) / (1000 * 60 * 60 * 24))
                     }))
                     setExclusions(mappedExclusions)
                 }

@@ -266,7 +266,8 @@ class SelfExclusionDetailSerializer(serializers.ModelSerializer):
     
     def get_can_extend(self, obj):
         # Can extend if active and not permanent
-        return obj.is_active and not obj.is_permanent
+        is_permanent = obj.exclusion_period == 'permanent'
+        return obj.is_active and not is_permanent
 
 
 class RegisterExclusionSerializer(serializers.ModelSerializer):
