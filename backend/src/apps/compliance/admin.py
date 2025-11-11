@@ -12,8 +12,8 @@ from .models import ComplianceCheck, AuditLog, DataRetentionPolicy, IncidentRepo
 @admin.register(ComplianceCheck)
 class ComplianceCheckAdmin(admin.ModelAdmin):
     """Compliance checks and assessments"""
-    list_display = ('check_type_badge', 'result_badge', 'compliance_score', 'created_at')
-    list_filter = ('check_type', 'result', 'created_at')
+    list_display = ('check_type_badge', 'result_badge', 'created_at')
+    list_filter = ('check_type', 'created_at')
     readonly_fields = ('created_at', 'updated_at', 'check_summary')
     
     fieldsets = (
@@ -143,7 +143,7 @@ class AuditLogAdmin(admin.ModelAdmin):
 @admin.register(DataRetentionPolicy)
 class DataRetentionPolicyAdmin(admin.ModelAdmin):
     """Data retention and deletion policies"""
-    list_display = ('policy_name', 'data_type', 'retention_days', 'is_active')
+    list_display = ('policy_name', 'data_type', 'is_active')
     list_filter = ('is_active', 'created_at')
     search_fields = ('policy_name',)
     readonly_fields = ('created_at', 'updated_at')
@@ -178,7 +178,7 @@ class DataRetentionPolicyAdmin(admin.ModelAdmin):
 class IncidentReportAdmin(admin.ModelAdmin):
     """Security incident reporting"""
     list_display = (
-        'incident_code', 'incident_type_badge', 'severity_badge',
+        'incident_type_badge', 'severity_badge',
         'status_badge', 'created_at'
     )
     list_filter = ('incident_type', 'severity', 'status', 'created_at')
@@ -276,7 +276,7 @@ class IncidentReportAdmin(admin.ModelAdmin):
 @admin.register(RegulatoryReport)
 class RegulatoryReportAdmin(admin.ModelAdmin):
     """Regulatory compliance reports"""
-    list_display = ('report_type_badge', 'submission_deadline', 'status_badge', 'created_at')
+    list_display = ('report_type_badge', 'status_badge', 'created_at')
     list_filter = ('report_type', 'status', 'created_at')
     readonly_fields = ('created_at', 'updated_at', 'report_summary')
     

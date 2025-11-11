@@ -357,12 +357,12 @@ class BehavioralProfileAdmin(admin.ModelAdmin):
     """User behavioral profile and ML-powered analysis"""
     list_display = (
         'user_phone', 'total_bets_count', 'betting_frequency_daily',
-        'overall_risk_score_badge', 'last_updated'
+        'overall_risk_score_badge'
     )
-    list_filter = ('last_updated',)
+    list_filter = ()
     search_fields = ('user__phone_number', 'user__email')
     readonly_fields = (
-        'user', 'last_updated', 'behavioral_summary'
+        'user', 'behavioral_summary'
     )
     
     fieldsets = (

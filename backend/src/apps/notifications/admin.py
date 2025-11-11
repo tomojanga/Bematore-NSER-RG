@@ -17,8 +17,8 @@ class NotificationAdmin(admin.ModelAdmin):
         'priority_badge', 'delivery_status_badge', 'created_at'
     )
     list_filter = (
-        'notification_type', 'category', 'priority', 'delivery_status',
-        'created_at', 'scheduled_for'
+        'notification_type', 'category', 'priority',
+        'created_at'
     )
     search_fields = (
         'user__phone_number', 'user__email', 'title', 'message'

@@ -18,16 +18,18 @@ class UserProfileInline(admin.StackedInline):
     """Inline user profile editing"""
     model = UserProfile
     extra = 0
-    fields = ('bio', 'profile_photo', 'date_of_birth', 'gender', 'country')
-    readonly_fields = ('created_at', 'updated_at')
+    fk_name = 'user'
+    fields = ('bio', 'profile_photo', 'date_of_birth', 'gender')
+    readonly_fields = ('created_at', 'updated_at', 'user')
 
 
 class UserDeviceInline(admin.TabularInline):
     """User devices inline"""
     model = UserDevice
     extra = 0
-    fields = ('device_name', 'device_type', 'is_trusted', 'last_seen')
-    readonly_fields = ('created_at', 'last_seen')
+    fk_name = 'user'
+    fields = ('device_name', 'device_type', 'is_trusted')
+    readonly_fields = ('created_at', 'updated_at', 'user')
     can_delete = True
 
 
@@ -182,20 +184,31 @@ class UserAdmin(admin.ModelAdmin):
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
     """User profile administration"""
-    list_display = ('user_phone', 'bio_preview', 'country', 'created_at')
-    list_filter = ('country', 'created_at')
+    list_display = ('user_display', 'created_at')
+    list_filter = ('created_at',)
     search_fields = ('user__phone_number', 'bio')
     readonly_fields = ('created_at', 'updated_at')
+    
+    def get_list_display(self, request):
+        return self.list_display
+    
+    def user_display(self, obj):
+        return obj.user.phone_number if obj.user else 'N/A'
+    user_display.short_description = _('User')
 
 
 @admin.register(UserDevice)
 class UserDeviceAdmin(admin.ModelAdmin):
     """Device management"""
-    list_display = ('device_name', 'user_phone', 'device_type', 'is_trusted', 'last_seen')
+    list_display = ('device_name', 'user_display', 'device_type', 'is_trusted')
     list_filter = ('device_type', 'is_trusted', 'created_at')
     search_fields = ('user__phone_number', 'device_name')
-    readonly_fields = ('created_at', 'updated_at')
+    readonly_fields = ('created_at', 'updated_at', 'user')
     actions = ['trust_devices', 'untrust_devices', 'block_devices']
+    
+    def user_display(self, obj):
+        return obj.user.phone_number if obj.user else 'N/A'
+    user_display.short_description = _('User')
     
     @admin.action(description=_('Trust selected devices'))
     def trust_devices(self, request, queryset):
@@ -216,10 +229,14 @@ class UserDeviceAdmin(admin.ModelAdmin):
 @admin.register(LoginHistory)
 class LoginHistoryAdmin(admin.ModelAdmin):
     """Login history audit trail"""
-    list_display = ('user_phone', 'ip_address', 'device_name', 'login_status', 'created_at')
-    list_filter = ('login_status', 'created_at')
+    list_display = ('user_display', 'ip_address', 'created_at')
+    list_filter = ('created_at',)
     search_fields = ('user__phone_number', 'ip_address')
-    readonly_fields = ('created_at',)
+    readonly_fields = ('created_at', 'user')
+    
+    def user_display(self, obj):
+        return obj.user.phone_number if obj.user else 'N/A'
+    user_display.short_description = _('User')
     
     def has_delete_permission(self, request, obj=None):
         """Super admin only can view, no delete"""
@@ -229,19 +246,28 @@ class LoginHistoryAdmin(admin.ModelAdmin):
 @admin.register(IdentityVerification)
 class IdentityVerificationAdmin(admin.ModelAdmin):
     """Identity verification tracking"""
-    list_display = ('user_phone', 'verification_type', 'status', 'verified_by', 'created_at')
-    list_filter = ('verification_type', 'status', 'created_at')
+    list_display = ('user_display', 'verification_type', 'created_at')
+    list_filter = ('verification_type', 'created_at')
     search_fields = ('user__phone_number',)
-    readonly_fields = ('created_at', 'updated_at')
+    readonly_fields = ('created_at', 'updated_at', 'user')
+    
+    def user_display(self, obj):
+        return obj.user.phone_number if obj.user else 'N/A'
+    user_display.short_description = _('User')
 
 
 @admin.register(UserSession)
 class UserSessionAdmin(admin.ModelAdmin):
     """Active user sessions"""
-    list_display = ('user_phone', 'device_name', 'is_active', 'expires_at', 'created_at')
+    list_display = ('user_display', 'is_active', 'created_at')
     list_filter = ('is_active', 'created_at')
     search_fields = ('user__phone_number',)
+    readonly_fields = ('user',)
     actions = ['terminate_sessions']
+    
+    def user_display(self, obj):
+        return obj.user.phone_number if obj.user else 'N/A'
+    user_display.short_description = _('User')
     
     @admin.action(description=_('Terminate selected sessions'))
     def terminate_sessions(self, request, queryset):
@@ -253,10 +279,14 @@ class UserSessionAdmin(admin.ModelAdmin):
 @admin.register(UserActivityLog)
 class UserActivityLogAdmin(admin.ModelAdmin):
     """User activity audit log"""
-    list_display = ('user_phone', 'activity_type', 'ip_address', 'created_at')
+    list_display = ('user_display', 'activity_type', 'ip_address', 'created_at')
     list_filter = ('activity_type', 'created_at')
     search_fields = ('user__phone_number', 'ip_address')
-    readonly_fields = ('created_at',)
+    readonly_fields = ('created_at', 'user')
+    
+    def user_display(self, obj):
+        return obj.user.phone_number if obj.user else 'N/A'
+    user_display.short_description = _('User')
     
     def has_add_permission(self, request):
         return False

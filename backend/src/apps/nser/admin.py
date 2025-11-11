@@ -17,8 +17,8 @@ class OperatorExclusionMappingInline(admin.TabularInline):
     """Inline operator propagation status"""
     model = OperatorExclusionMapping
     extra = 0
-    fields = ('operator', 'propagation_status_badge', 'is_compliant', 'notified_at', 'acknowledged_at')
-    readonly_fields = ('propagation_status_badge', 'notified_at', 'acknowledged_at', 'created_at')
+    fields = ('operator', 'propagation_status', 'is_compliant', 'notified_at', 'acknowledged_at')
+    readonly_fields = ('notified_at', 'acknowledged_at', 'created_at')
     can_delete = False
 
 
