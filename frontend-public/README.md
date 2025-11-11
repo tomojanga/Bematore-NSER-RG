@@ -31,7 +31,7 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 NEXT_PUBLIC_PORTAL_TYPE=public
 NEXT_PUBLIC_CITIZEN_URL=http://localhost:3001
 NEXT_PUBLIC_OPERATOR_URL=http://localhost:3002
-NEXT_PUBLIC_GRAK_URL=http://localhost:3003
+NEXT_PUBLIC_ADMIN_URL=http://localhost:3003
 ```
 
 ### Production (`.env.production`)
@@ -41,7 +41,7 @@ NEXT_PUBLIC_SITE_URL=https://nser.bematore.com
 NEXT_PUBLIC_PORTAL_TYPE=public
 NEXT_PUBLIC_CITIZEN_URL=https://citizen.bematore.com
 NEXT_PUBLIC_OPERATOR_URL=https://operator.bematore.com
-NEXT_PUBLIC_GRAK_URL=https://admin.bematore.com
+NEXT_PUBLIC_ADMIN_URL=https://admin.bematore.com
 ```
 
 ## 📁 Project Structure
@@ -75,7 +75,7 @@ frontend-public/
 - **Self-Exclusion Guide:** Step-by-step exclusion process
 - **Resources:** Helplines, counseling centers, support
 - **FAQ:** Common questions and answers
-- **Contact:** GRAK offices and contact information
+- **Contact:** NSER offices and contact information
 - **Portal Links:** Navigate to Citizen/Operator portals
 - **Responsive Design:** Mobile-first, fully responsive
 - **SEO Optimized:** Meta tags, Open Graph, structured data

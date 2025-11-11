@@ -1,5 +1,5 @@
 # NSER-RG: National Self-Exclusion Register & Responsible Gambling System
-## Enterprise-Grade Platform for GRAK (Gambling Regulatory Authority of Kenya)
+## Enterprise-Grade Multi-Country Platform for Responsible Gambling Regulation
 
 [![Django](https://img.shields.io/badge/Django-5.2.1-green.svg)](https://www.djangoproject.com/)
 [![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/)
@@ -10,7 +10,7 @@
 
 ## 🚀 **Project Status: 90% Complete - Backend LIVE!**
 
-**Latest Update**: Backend API deployed and all frontends ready!
+**Latest Update**: Backend API deployed and all frontends ready with NSER branding!
 
 ### Deployment Status
 
@@ -27,7 +27,7 @@
 - ✅ Public Portal (frontend-public) → nser.bematore.com
 - ✅ Citizen Portal (frontend-citizen) → citizen.bematore.com
 - ✅ Operator Portal (frontend-operator) → operator.bematore.com
-- ✅ GRAK Admin (frontend-grak) → admin.bematore.com
+- ✅ Regulator Admin (frontend-regulator) → admin.bematore.com
 - 📦 Platform: Netlify (ready to deploy)
 
 ### Core Features
@@ -52,13 +52,13 @@
 - 🏠 **Public Portal** → `nser.bematore.com` - Public information
 - 👤 **Citizen Portal** → `citizen.bematore.com` - Self-exclusion registration
 - 🏢 **Operator Portal** → `operator.bematore.com` - Licensed operators
-- 👨‍💼 **GRAK Admin** → `admin.bematore.com` - Regulatory oversight
+- 👨‍💼 **Regulator Admin** → `admin.bematore.com` - Regulatory oversight
 
 ---
 
 ## Executive Summary
 
-Production-ready, enterprise-grade National Self-Exclusion Register and Responsible Gambling platform for GRAK. Handles 10M+ users, 10,000+ requests/second, **<50ms exclusion lookups**, and 99.9% uptime SLA.
+Production-ready, enterprise-grade National Self-Exclusion Register and Responsible Gambling platform for multi-country deployment. Handles 10M+ users, 10,000+ requests/second, **<50ms exclusion lookups**, and 99.9% uptime SLA.
 
 ## Core Capabilities
 
@@ -73,9 +73,9 @@ Production-ready, enterprise-grade National Self-Exclusion Register and Responsi
 2. **BST System** - Cryptographic cross-operator tracking
 3. **Risk Engine** - ML-powered behavioral analysis (92%+ accuracy)
 4. **Operator APIs** - REST/GraphQL/WebSocket integration
-5. **Dashboards** - GRAK, Operator, HQ real-time insights
-6. **Settlement** - Automated M-Pesa reconciliation
-7. **Compliance** - ISO 27001, SOC 2, DPA 2019 compliant
+5. **Dashboards** - Regulator, Operator, HQ real-time insights
+6. **Settlement** - Automated payment reconciliation
+7. **Compliance** - ISO 27001, SOC 2, DPA compliant
 
 ## Technology Stack
 
@@ -141,7 +141,7 @@ nser-rg/
 │   │   └── components/
 │   └── netlify.toml
 │
-├── frontend-grak/           # GRAK admin ✅ READY
+├── frontend-regulator/      # Regulator admin ✅ READY
 │   ├── src/
 │   │   ├── app/
 │   │   │   ├── dashboard/   # Admin dashboard
@@ -211,8 +211,8 @@ npm install
 npm run dev
 # Open http://localhost:3002
 
-# GRAK Admin Portal
-cd frontend-grak
+# Regulator Admin Portal
+cd frontend-regulator
 npm install
 npm run dev
 # Open http://localhost:3003
@@ -235,10 +235,10 @@ npm run dev:all  # If configured
 - [**Public Portal README**](frontend-public/README.md) - Public portal deployment
 - [**Citizen Portal README**](frontend-citizen/README.md) - Citizen portal deployment
 - [**Operator Portal README**](frontend-operator/README.md) - Operator portal deployment
-- [**GRAK Admin README**](frontend-grak/README.md) - Admin portal deployment
+- [**Regulator Admin README**](frontend-regulator/README.md) - Admin portal deployment
 - [**Landing Page**](backend/LANDING_PAGE_DEPLOYMENT.md) - API landing page setup
 - [**Schema Fixes**](backend/SCHEMA_FIXES.md) - API schema generation fixes
-- [**Create GRAK Users**](backend/CREATE_GRAK_USERS.md) - GRAK user creation guide
+- [**Create Admin Users**](backend/CREATE_GRAK_USERS.md) - Admin user creation guide
 
 ### Architecture & Design
 - [System Architecture Overview](backend/docs/architecture/system-overview.md) - Complete system architecture with mermaid diagrams

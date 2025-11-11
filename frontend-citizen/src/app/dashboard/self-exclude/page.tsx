@@ -49,7 +49,7 @@ export default function SelfExcludePage() {
             <div>
               <p className="text-sm font-medium text-yellow-900">Important Information</p>
               <p className="text-sm text-yellow-700 mt-1">
-                Self-exclusion is a serious commitment. Once registered, you will be blocked from all licensed gambling operators in Kenya for the selected period.
+                Self-exclusion is a serious commitment. Once registered, you will be blocked from all licensed gambling operators for the selected period.
               </p>
             </div>
           </div>

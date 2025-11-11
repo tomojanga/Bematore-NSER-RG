@@ -122,7 +122,7 @@ export default function AccountPage() {
                 <p className="mt-1 text-sm font-mono text-gray-600 bg-gray-50 p-2 rounded break-all">
                   {user.bst_token}
                 </p>
-                <p className="mt-1 text-xs text-gray-500">This unique token tracks your gambling activity across all licensed operators in Kenya.</p>
+                <p className="mt-1 text-xs text-gray-500">This unique token tracks your gambling activity across all licensed operators.</p>
               </div>
             )}
           </CardContent>

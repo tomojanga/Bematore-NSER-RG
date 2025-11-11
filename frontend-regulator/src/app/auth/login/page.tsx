@@ -18,7 +18,7 @@ export default function LoginPage() {
       const user = response.data.data
       
       if (!['grak_admin', 'grak_officer'].includes(user.user?.role)) {
-        alert('Access denied. GRAK staff only.')
+        alert('Access denied. Admin staff only.')
         return
       }
 
@@ -36,8 +36,8 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4">
       <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">GRAK Admin Portal</h1>
-          <p className="text-gray-600 mt-2">Gambling Regulatory Authority of Kenya</p>
+          <h1 className="text-3xl font-bold text-gray-900">Admin Portal</h1>
+          <p className="text-gray-600 mt-2">National Self-Exclusion Register</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">

@@ -5,7 +5,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { Home, Users, Shield, BarChart3, LogOut, Settings, FileText, Activity, Bell, AlertTriangle, Search } from 'lucide-react'
 
-// GRAK Dashboard Navigation - Regulatory Focus Only
+// Admin Dashboard Navigation - Regulatory Focus Only
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: Home },
   { name: 'Operators', href: '/dashboard/operators', icon: Users },
@@ -37,8 +37,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <div className="min-h-screen bg-gray-50 flex">
       <div className="w-64 bg-blue-700 text-white flex flex-col">
         <div className="p-6 border-b border-blue-600">
-          <h1 className="text-xl font-bold">GRAK Admin</h1>
-          <p className="text-blue-200 text-sm">NSER Portal</p>
+          <h1 className="text-xl font-bold">NSER Admin</h1>
+          <p className="text-blue-200 text-sm">National Self-Exclusion Register</p>
         </div>
 
         <nav className="flex-1 p-4">

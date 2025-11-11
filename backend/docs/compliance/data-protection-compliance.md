@@ -236,7 +236,7 @@ class AuditMiddleware:
 
 ## Data Subject Rights
 
-### 1. Right to Access (Article 38)
+### 1. Right to Access
 
 **Implementation**:
 - Users can download all their data in machine-readable format (JSON)
@@ -245,7 +245,7 @@ class AuditMiddleware:
 ```python
 # src/users/views.py
 class DataExportView(LoginRequiredMixin, View):
-    """Export all user data (GDPR/DPA compliance)"""
+    """Export all user data (DPA compliance)"""
     
     def post(self, request):
         # Collect all user data
@@ -276,17 +276,17 @@ class DataExportView(LoginRequiredMixin, View):
         return response
 ```
 
-### 2. Right to Rectification (Article 39)
+### 2. Right to Rectification
 
 **Implementation**:
 - Users can update their information via profile settings
 - Verification for critical changes (phone, ID)
 
-### 3. Right to Erasure/"Right to be Forgotten" (Article 40)
+### 3. Right to Erasure/"Right to be Forgotten"
 
 **Limitations**:
 - Cannot delete if legal obligation exists (active self-exclusion)
-- Cannot delete financial records (7-year retention requirement)
+- Cannot delete financial records (retention requirement)
 - Can anonymize non-essential data
 
 ```python
@@ -327,19 +327,19 @@ class AccountDeletionView(LoginRequiredMixin, View):
         return JsonResponse({'success': True})
 ```
 
-### 4. Right to Data Portability (Article 41)
+### 4. Right to Data Portability
 
 **Implementation**:
 - Export in JSON format (machine-readable)
 - Can transfer to another system
 
-### 5. Right to Object (Article 42)
+### 5. Right to Object
 
 **Implementation**:
 - Users can object to processing for direct marketing
 - Users can object to automated decision-making
 
-### 6. Right to Restrict Processing (Article 43)
+### 6. Right to Restrict Processing
 
 **Implementation**:
 - Users can request processing restriction while disputes are resolved
@@ -432,7 +432,7 @@ Data Affected: [Types of data]
 Actions Taken: [Response measures]
 Your Actions: [Recommended steps]
 
-For more information: security@bematore.com
+For more information: security@nser.io
 
 Sincerely,
 NSER Security Team
@@ -451,7 +451,7 @@ NSER Security Team
   - Point of contact for data subjects
 
 ### Data Processing Register
-Maintained in accordance with Article 27:
+Maintained in accordance with applicable regulations:
 
 | Processing Activity | Purpose | Legal Basis | Data Categories | Retention |
 |---------------------|---------|-------------|-----------------|-----------|
@@ -487,8 +487,6 @@ All processors vetted for compliance.
 
 ---
 
----
-
 ## Compliance Checklist
 
 - [x] Privacy Policy published
@@ -503,7 +501,6 @@ All processors vetted for compliance.
 - [x] Data processing register maintained
 - [x] DPIA conducted
 - [x] Staff training completed
-- [ ] ODPC registration obtained
 - [x] DPAs signed with all processors
 
 ---
@@ -528,7 +525,7 @@ All processors vetted for compliance.
 
 ---
 
-**Document Version**: 1.0  
+**Document Version**: 2.0  
 **Last Updated**: November 2025  
 **Next Review**: November 2026  
 **Owner**: Legal & Compliance Team

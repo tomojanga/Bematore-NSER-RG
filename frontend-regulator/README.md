@@ -1,5 +1,5 @@
-# GRAK Admin Portal - NSER
-**Gambling Regulatory Authority of Kenya - Admin Portal**
+# Regulator Admin Portal - NSER
+**National Self-Exclusion Register - Regulator Admin Portal**
 
 ## 🌐 Deployment
 
@@ -23,14 +23,14 @@ netlify deploy --prod
 ```env
 NEXT_PUBLIC_API_URL=https://api.bematore.com/api/v1
 NEXT_PUBLIC_SITE_URL=http://localhost:3003
-NEXT_PUBLIC_PORTAL_TYPE=grak
+NEXT_PUBLIC_PORTAL_TYPE=regulator
 ```
 
 ### Production (`.env.production`)
 ```env
 NEXT_PUBLIC_API_URL=https://api.bematore.com/api/v1
 NEXT_PUBLIC_SITE_URL=https://admin.bematore.com
-NEXT_PUBLIC_PORTAL_TYPE=grak
+NEXT_PUBLIC_PORTAL_TYPE=regulator
 NEXT_PUBLIC_ENABLE_ANALYTICS=true
 NEXT_PUBLIC_ENABLE_2FA=true
 ```
@@ -43,7 +43,7 @@ NEXT_PUBLIC_ENABLE_2FA=true
 - **Exclusions Management** - View and terminate self-exclusions
 - **BST Token Management** - Bematore Screening Tokens for cross-operator tracking
 - **Analytics** - System performance and insights
-- **Role-Based Access** - GRAK admin/officer only
+- **Role-Based Access** - Regulator staff only
 
 ## BST (Bematore Screening Token)
 
@@ -53,7 +53,7 @@ Cryptographic token system for pseudonymized cross-operator user tracking:
 - **Security**: SHA-512 hashing, zero collisions in 10M+ tokens
 - **Format**: `BST-{VERSION}-{HASH}-{CHECKSUM}`
 
-### BST Features in GRAK
+### BST Features in Regulator Portal
 - Real-time token validation
 - Token rotation for security
 - Compromise marking for fraud detection
@@ -85,17 +85,17 @@ npm start
 ## Login Credentials
 
 ```bash
-# Create GRAK users first
+# Create admin users first
 python src/manage.py create_grak_admin
 ```
 
-**GRAK Admin**
+**Admin User**
 - Phone: `+254700000001`
-- Password: `GRAKAdmin@2024`
+- Password: `Admin@2024`
 
-**GRAK Officer**
+**Admin Officer**
 - Phone: `+254700000002`
-- Password: `GRAKOfficer@2024`
+- Password: `Officer@2024`
 
 ## API Integration
 
@@ -125,7 +125,7 @@ Uses comprehensive API client with:
 
 ## 🔐 Security
 
-- Role-based access control (grak_admin, grak_officer, grak_auditor, super_admin)
+- Role-based access control (admin, officer, auditor, super_admin)
 - JWT authentication with auto-refresh
 - 2FA required for production
 - Protected routes

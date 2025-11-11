@@ -60,8 +60,8 @@ export default function AnalyticsPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">GRAK Analytics Dashboard</h1>
-          <p className="text-gray-600 mt-1">Comprehensive system insights and performance metrics</p>
+        <h1 className="text-3xl font-bold text-gray-900">Analytics Dashboard</h1>
+        <p className="text-gray-600 mt-1">Comprehensive system insights and performance metrics</p>
         </div>
         <div className="text-sm text-gray-500">
           Last updated: {new Date().toLocaleTimeString()}
@@ -183,7 +183,7 @@ export default function AnalyticsPage() {
           </h2>
           <div className="space-y-3">
             {dashboard?.geographic_distribution && Object.entries(dashboard.geographic_distribution).map(([county, count]: [string, any]) => {
-              const maxCount = Math.max(...Object.values(dashboard.geographic_distribution))
+              const maxCount = Math.max(...Object.values(dashboard.geographic_distribution).map(v => Number(v)))
               return (
                 <div key={county} className="flex items-center justify-between">
                   <span className="text-gray-600 min-w-0 flex-shrink-0">{county}</span>
@@ -212,7 +212,7 @@ export default function AnalyticsPage() {
             {demographics?.risk_distribution && Object.entries(demographics.risk_distribution).map(([level, count]: [string, any]) => {
               const colors = { low: 'green', medium: 'yellow', high: 'yellow', severe: 'red', critical: 'purple' }
               const color = colors[level as keyof typeof colors] || 'blue'
-              const maxCount = Math.max(...Object.values(demographics.risk_distribution))
+              const maxCount = Math.max(...Object.values(demographics.risk_distribution).map(v => Number(v)))
               return (
                 <div key={level} className="flex items-center justify-between">
                   <span className="text-gray-600 capitalize min-w-0 flex-shrink-0">{level} Risk</span>

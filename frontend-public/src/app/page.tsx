@@ -15,7 +15,7 @@ export default function HomePage() {
             </div>
             <h1 className="text-5xl font-bold mb-6">National Self-Exclusion Register</h1>
             <p className="text-xl mb-8 max-w-3xl mx-auto">
-              Take control of your gambling. Protect yourself and your loved ones through Kenya's official self-exclusion program.
+              Take control of your gambling. Protect yourself and your loved ones through the official self-exclusion program.
             </p>
             <div className="flex gap-4 justify-center">
               <Link href="/self-exclude" className="bg-white text-blue-900 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition">
@@ -95,12 +95,12 @@ export default function HomePage() {
             <div className="bg-white p-6 rounded-lg shadow">
               <CheckCircle className="h-10 w-10 text-green-600 mb-4" />
               <h3 className="text-xl font-semibold mb-3">Government Backed</h3>
-              <p className="text-gray-600">Official program by GRAK with legal enforcement</p>
+              <p className="text-gray-600">Official program with legal enforcement</p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow">
               <Shield className="h-10 w-10 text-blue-600 mb-4" />
               <h3 className="text-xl font-semibold mb-3">Complete Protection</h3>
-              <p className="text-gray-600">Covers all licensed gambling operators in Kenya</p>
+              <p className="text-gray-600">Covers all licensed gambling operators</p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow">
               <FileText className="h-10 w-10 text-purple-600 mb-4" />

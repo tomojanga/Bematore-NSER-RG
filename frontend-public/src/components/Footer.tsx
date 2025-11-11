@@ -11,11 +11,11 @@ export default function Footer() {
               <Shield className="h-8 w-8" />
               <div>
                 <div className="font-bold text-lg">NSER</div>
-                <div className="text-xs text-gray-400">GRAK Kenya</div>
+                <div className="text-xs text-gray-400">National Self-Exclusion Register</div>
               </div>
             </div>
             <p className="text-gray-400 text-sm">
-              National Self-Exclusion Register - Protecting Kenyans through responsible gambling initiatives.
+              National Self-Exclusion Register - Protecting citizens through responsible gambling initiatives.
             </p>
           </div>
 
@@ -44,7 +44,7 @@ export default function Footer() {
             <ul className="space-y-3 text-sm text-gray-400">
               <li className="flex items-start gap-2">
                 <MapPin className="h-4 w-4 mt-1 flex-shrink-0" />
-                <span>GRAK Headquarters<br />Nairobi, Kenya</span>
+                <span>NSER Headquarters<br />Regional Office</span>
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="h-4 w-4 flex-shrink-0" />
@@ -60,7 +60,7 @@ export default function Footer() {
 
         <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm">
-            © 2025 Gambling Regulatory Authority of Kenya (GRAK). All rights reserved.
+            © 2025 National Self-Exclusion Register. All rights reserved.
           </p>
           <div className="flex gap-4 mt-4 md:mt-0">
             <a href="#" className="text-gray-400 hover:text-white"><Facebook className="h-5 w-5" /></a>

@@ -1,4 +1,4 @@
-# NSER-RG Backend API
+# NSER Backend API
 **Django REST Framework API for National Self-Exclusion Register**
 
 ## 🌐 Deployment
@@ -236,7 +236,7 @@ python src/manage.py collectstatic
 # Run shell
 python src/manage.py shell
 
-# Create GRAK users
+# Create admin users
 python src/manage.py create_grak_admin
 ```
 
@@ -275,7 +275,7 @@ python src/manage.py show_urls
 
 ### Fixes & Improvements
 - [Schema Generation Fixes](SCHEMA_FIXES.md)
-- [Create GRAK Users Guide](CREATE_GRAK_USERS.md)
+- [Create Admin Users Guide](CREATE_GRAK_USERS.md)
 
 ## 🐛 Troubleshooting
 

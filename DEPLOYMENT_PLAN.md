@@ -81,7 +81,7 @@ netlify deploy --prod
 
 ---
 
-### 4. GRAK Admin Portal (frontend-grak) - ✅ READY
+### 4. Regulator Admin Portal (frontend-regulator) - ✅ READY
 
 **Subdomain:** `admin.bematore.com`
 
@@ -95,7 +95,7 @@ netlify deploy --prod
 
 **Deploy:**
 ```bash
-cd frontend-grak
+cd frontend-regulator
 npm run build
 netlify deploy --prod
 ```
@@ -194,7 +194,7 @@ Note: Free tiers have limits. Upgrade if needed.
 4. 🔴 Operator Portal (`operator.bematore.com`)
 
 ### Phase 3: Admin (Week 2)
-5. 🔴 GRAK Admin (`admin.bematore.com`)
+5. 🔴 Regulator Admin (`admin.bematore.com`)
 
 ---
 

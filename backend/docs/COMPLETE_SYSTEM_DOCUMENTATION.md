@@ -26,9 +26,9 @@ The NSER-RG (National Self-Exclusion Register - Responsible Gaming) system is bu
 3. User gets JWT token pair (access + refresh)
 4. Frontend stores tokens and user data in Zustand store
 5. User is redirected based on role:
-   - GRAK Admin → /portals/grak
-   - Operator Admin → /portals/operator
-   - Citizen → /portals/citizen
+- Regulator Admin → /portals/regulator
+- Operator Admin → /portals/operator
+- Citizen → /portals/citizen
 
 ### 2. Login Flow
 1. User submits credentials to `/api/v1/auth/token/`
@@ -85,7 +85,7 @@ The NSER-RG (National Self-Exclusion Register - Responsible Gaming) system is bu
    - User management
    - System configuration
 
-2. GRAK Admin
+2. Regulator Admin
    - Exclusion management
    - Operator oversight
    - Compliance monitoring
@@ -206,10 +206,10 @@ interface AuthState {
 ## Integration Points
 
 1. External Systems
-   - GRAK API
-   - NACADA systems
+   - Regulator API
+   - National harm prevention systems
    - Casino management systems
-   - Financial reporting center
+   - Financial reporting systems
 
 2. Authentication Providers
    - Built-in JWT
