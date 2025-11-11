@@ -126,9 +126,10 @@ if env.bool('USE_S3', default=False):
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 # Sentry Error Tracking
-if env('SENTRY_DSN', default=''):
+sentry_dsn = env('SENTRY_DSN', default='')
+if sentry_dsn and sentry_dsn.strip():
     sentry_sdk.init(
-        dsn=env('SENTRY_DSN'),
+        dsn=sentry_dsn,
         integrations=[
             DjangoIntegration(),
             CeleryIntegration(),
