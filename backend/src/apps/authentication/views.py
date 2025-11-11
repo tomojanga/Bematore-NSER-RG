@@ -166,12 +166,22 @@ class LogoutView(TimingMixin, SuccessResponseMixin, APIView):
                 token = RefreshToken(serializer.validated_data['refresh_token'])
                 token.blacklist()
             
+            device_id = serializer.validated_data.get('device_id')
+            
             # Terminate sessions if requested
             if serializer.validated_data.get('all_devices'):
                 from apps.users.models import UserSession
                 UserSession.objects.filter(user=request.user, is_active=True).update(
                     is_active=False
                 )
+            elif device_id:
+                # Logout only this device
+                from apps.users.models import UserSession
+                UserSession.objects.filter(
+                    user=request.user,
+                    device_id=device_id,
+                    is_active=True
+                ).update(is_active=False)
             
             return self.success_response(message='Logout successful')
         except Exception as e:

@@ -106,7 +106,7 @@ export default function DashboardPage() {
     useEffect(() => {
         const fetchRiskProfile = async () => {
             try {
-                const { data } = await api.get('/screening/current-risk/')
+                const { data } = await api.get('/screening/risk/current/')
                 if (data.success && data.data) {
                     setRiskProfile(data.data)
                 }
