@@ -2,15 +2,9 @@
 
 # Production Server
 gunicorn==23.0.0
-gevent==23.9.1
 
-# Database Support - Both PostgreSQL and MySQL
-# PostgreSQL (recommended for VPS/cloud deployments)
+# Database Support - PostgreSQL
 psycopg2-binary==2.9.10
-
-# MySQL (for cPanel deployment)
-mysqlclient==2.2.1
-# Alternative: PyMySQL==1.1.1 (if mysqlclient fails to install)
 
 # Production Monitoring
 newrelic==9.4.0
