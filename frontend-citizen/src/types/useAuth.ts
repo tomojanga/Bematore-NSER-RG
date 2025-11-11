@@ -1,8 +1,8 @@
 import { UseMutateAsyncFunction } from '@tanstack/react-query'
-import { 
-  User, 
-  Device, 
-  AuthResponse, 
+import type { User as CoreUser } from '@/types/index'
+import type {
+  Device,
+  AuthResponse,
   LoginCredentials,
   RegisterData,
   TwoFactorVerificationData,
@@ -21,7 +21,7 @@ export interface Session {
 
 export interface UseAuthReturn {
   // State
-  user: User | null
+  user: CoreUser | null
   isAuthenticated: boolean
   isLoading: boolean
   isLoadingProfile: boolean
@@ -44,6 +44,7 @@ export interface UseAuthReturn {
   trustDevice: UseMutateAsyncFunction<SingleApiResponse<{ trusted: boolean }>, unknown, string, unknown>
   refetchDevices: () => Promise<void>
   refetchSessions: () => Promise<void>
+  refreshUser: () => Promise<CoreUser | null>
 
   // Password Management
   changePassword: UseMutateAsyncFunction<SingleApiResponse<{ changed: boolean }>, unknown, { current_password: string, new_password: string, new_password_confirm: string }, unknown>

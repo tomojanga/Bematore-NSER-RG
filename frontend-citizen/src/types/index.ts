@@ -61,6 +61,7 @@ export interface User {
   failed_login_attempts: number
   last_login_at?: string
   last_login_ip?: string
+  last_login?: string
   
   // 2FA
   is_2fa_enabled: boolean
@@ -88,6 +89,9 @@ export interface User {
   
   // Metadata
   metadata?: Record<string, any>
+
+  // BST Token (optional for verified users)
+  bst_token?: string
 }
 
 export interface UserProfile {
@@ -219,6 +223,7 @@ export interface SelfExclusion {
   // Dates
   effective_date: string
   expiry_date: string
+  end_date?: string
   actual_end_date?: string
   
   // Auto-Renewal

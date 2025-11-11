@@ -1247,7 +1247,20 @@ export function useAuth(): UseAuthReturn {
     
     // Refresh user data
     refreshUser: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['auth', 'profile'] })
+      try {
+        await queryClient.invalidateQueries({ queryKey: ['auth', 'profile'] })
+        await queryClient.refetchQueries({ queryKey: ['auth', 'profile'], type: 'active' })
+
+        const updatedProfile = queryClient.getQueryData<SingleApiResponse<AuthUser>>(['auth', 'profile'])
+        if (updatedProfile?.success && updatedProfile.data) {
+          const coreUser = convertAuthUserToCoreUser(updatedProfile.data)
+          setUser(coreUser)
+          return coreUser
+        }
+      } catch (error) {
+        console.error('Failed to refresh user profile:', error)
+      }
+      return null
     },
     
     // Loading states

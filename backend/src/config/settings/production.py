@@ -8,8 +8,8 @@ from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
 
-# Debug - always False in production
-DEBUG = False
+# Debug - read from environment, default to False in production
+DEBUG = env.bool('DEBUG', default=False)
 
 # Security
 SECRET_KEY = env('SECRET_KEY', default='your-secret-key-change-in-env')

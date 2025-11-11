@@ -81,9 +81,11 @@ export interface RegisterData {
   email: string
   phone_number: string
   password: string
-  confirm_password: string
+  password_confirm: string
   first_name: string
   last_name: string
+  terms_accepted?: boolean
+  privacy_policy_accepted?: boolean
   role?: string
   operator_id?: string
 }
