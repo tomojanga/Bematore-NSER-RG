@@ -461,6 +461,29 @@ export function useAuth(): UseAuthReturn {
         return
       }
 
+      // Block non-citizens from accessing citizen portal
+      if (data.user.role !== 'citizen') {
+        const portalMessages: Record<string, string> = {
+          'super_admin': 'Please use the Regulator Portal to access your account.',
+          'grak_admin': 'Please use the Regulator Portal to access your account.',
+          'operator_admin': 'Please use the Operator Portal to access your account.'
+        }
+
+        const message = portalMessages[data.user.role] || 'You do not have access to this portal.'
+        
+        showToast({
+          title: "Access Denied",
+          description: message,
+          variant: "destructive",
+          duration: 5000,
+        })
+
+        // Clear authentication
+        sessionStorage.removeItem('temp_auth')
+        logoutStore()
+        return
+      }
+
       // Redirect based on user role and verification status
       // For citizens: require phone verification only (ID is optional)
       if (data.user.role === 'citizen' && !data.user.is_phone_verified) {
@@ -468,16 +491,8 @@ export function useAuth(): UseAuthReturn {
         return
       }
 
-      // Role-based routing
-      const roleRoutes = {
-        super_admin: '/portals/grak',
-        grak_admin: '/portals/grak',
-        operator_admin: '/portals/operator',
-        citizen: '/portals/citizen'
-      }
-
-      const redirectPath = roleRoutes[data.user.role as keyof typeof roleRoutes] || '/dashboard'
-      router.push(redirectPath)
+      // Redirect citizen to dashboard
+      router.push('/dashboard')
     },
     onError: (error: ApiError) => {
       // Clear any temporary auth state on error
