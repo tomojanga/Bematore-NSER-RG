@@ -89,10 +89,9 @@ DATABASE_ROUTERS = []
 REDIS_URL = env('REDIS_URL', default=None)
 
 if REDIS_URL:
-    # Auto-switch cache to DB 1 if broker is on DB 0
-    cache_url = env('REDIS_CACHE_URL', default=None)
-    if not cache_url:
-        cache_url = REDIS_URL.replace('/0', '/1') if '/0' in REDIS_URL else REDIS_URL + '/1'
+    # Use REDIS_CACHE_URL if provided, otherwise use REDIS_URL as-is
+    # Redis Cloud free tier doesn't support multiple databases, so use DB 0
+    cache_url = env('REDIS_CACHE_URL', default=REDIS_URL)
     
     # Redis cache configuration (recommended for production)
     CACHES = {
