@@ -81,7 +81,10 @@ const convertAuthUserToCoreUser = (authUser: AuthUser): SystemUser => {
     'verified': 'verified',
     'pending': 'pending',
     'unverified': 'unverified',
-    'rejected': 'rejected'
+    'rejected': 'failed',
+    'failed': 'failed',
+    'expired': 'expired',
+    'suspended': 'suspended'
   }
 
   // Map the auth user to core user format
@@ -753,7 +756,7 @@ export function useAuth(): UseAuthReturn {
         }
       }
       
-      const { data: result } = await api.post<SingleApiResponse<{ message: string }>>('/auth/request-password-reset/', data)
+      const { data: result } = await api.post<SingleApiResponse<{ sent: boolean }>>('/auth/request-password-reset/', data)
       
       // Update rate limiting
       localStorage.setItem('last_reset_attempt', Date.now().toString())
@@ -762,11 +765,11 @@ export function useAuth(): UseAuthReturn {
     },
     onSuccess: (response) => {
       if (!response.success) {
-        throw new Error(response.message || 'Failed to send reset code')
+        throw new Error('Failed to send reset code')
       }
       toast({
         title: "Success",
-        description: response.message || 'Reset code sent',
+        description: 'Reset code sent',
       })
     },
     onError: (error: ApiError) => {
@@ -806,7 +809,7 @@ export function useAuth(): UseAuthReturn {
   // Enable 2FA mutation
   const enable2FAMutation = useMutation({
     mutationFn: async (data: { 
-      method: 'totp' | 'sms' | 'email'
+      method: '2fa' | 'sms' | 'email'
       phone_number?: string
       email?: string 
     }) => {
@@ -867,8 +870,8 @@ export function useAuth(): UseAuthReturn {
 
   // Verify 2FA mutation
   const verify2FAMutation = useMutation({
-    mutationFn: async (data: { verification_code: string }) => {
-      const { data: result } = await api.post('/auth/2fa/verify/', data)
+    mutationFn: async (data: TwoFactorVerificationData) => {
+      const { data: result } = await api.post<SingleApiResponse<AuthResponse>>('/auth/2fa/verify/', data)
       return result
     },
     onSuccess: () => {
@@ -883,6 +886,30 @@ export function useAuth(): UseAuthReturn {
       toast({
         title: "Error",
         description: error.response?.data?.message || '2FA verification failed',
+        variant: "destructive",
+        duration: 3000,
+      })
+    }
+  })
+
+  // Resend 2FA Code mutation
+  const resend2FACodeMutation = useMutation({
+    mutationFn: async (data: { method: '2fa' | 'sms' | 'email' }) => {
+      const { data: result } = await api.post<SingleApiResponse<{ sent: boolean }>>('/auth/2fa/resend/', data)
+      return result
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: '2FA code sent successfully',
+        variant: "default",
+        duration: 3000,
+      })
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.response?.data?.message || 'Failed to resend 2FA code',
         variant: "destructive",
         duration: 3000,
       })
@@ -1202,7 +1229,8 @@ export function useAuth(): UseAuthReturn {
         throw new Error('Authentication failed')
       }
 
-      setUser(response.data.user)
+      const coreUser = convertAuthUserToCoreUser(response.data.user)
+      setUser(coreUser)
       setTokens(response.data.access, response.data.refresh)
 
       toast({
@@ -1219,11 +1247,77 @@ export function useAuth(): UseAuthReturn {
     }
   })
 
+  // Biometric registration mutation
+  const registerBiometricMutation = useMutation({
+    mutationFn: async () => {
+      if (!window.PublicKeyCredential) {
+        throw new Error('WebAuthn not supported in this browser')
+      }
+
+      try {
+        // Get challenge from server
+        const { data: challengeResponse } = await api.get<SingleApiResponse<{ challenge: string }>>('/auth/biometric/register/challenge/')
+        
+        if (!challengeResponse.success || !challengeResponse.data.challenge) {
+          throw new Error('Failed to get registration challenge')
+        }
+
+        // Create credential
+        const credential = await navigator.credentials.create({
+          publicKey: {
+            challenge: new Uint8Array(Buffer.from(challengeResponse.data.challenge, 'base64')),
+            rp: {
+              name: 'NSER',
+              id: window.location.hostname
+            },
+            user: {
+              id: new Uint8Array(16),
+              name: 'user@nser',
+              displayName: 'User'
+            },
+            pubKeyCredParams: [{ alg: -7, type: 'public-key' }],
+            authenticatorSelection: {
+              authenticatorAttachment: 'platform',
+              userVerification: 'preferred'
+            }
+          }
+        })
+
+        if (!credential) {
+          throw new Error('Failed to create biometric credential')
+        }
+
+        // Register with server
+        const { data: result } = await api.post<SingleApiResponse<{ registered: boolean }>>('/auth/biometric/register/', {
+          credential,
+          device_info: getSecureDeviceInfo()
+        })
+
+        return result
+      } catch (error: any) {
+        if (error.name === 'NotAllowedError') {
+          throw new Error('Biometric registration was cancelled')
+        }
+        throw error
+      }
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: 'Biometric registration successful',
+        duration: 3000,
+      })
+    },
+    onError: (error: ApiError) => {
+      showError(error, 'Biometric registration failed')
+    }
+  })
+
   return {
     // State
     user: (profile?.success && profile.data) 
       ? convertAuthUserToCoreUser(profile.data) 
-      : isAuthUser(user) ? convertAuthUserToCoreUser(user) : user as AuthUser | null,
+      : isAuthUser(user) ? convertAuthUserToCoreUser(user) : null,
     isAuthenticated,
     isLoading: loginMutation.isPending || registerMutation.isPending,
     isLoadingProfile,
@@ -1287,10 +1381,16 @@ export function useAuth(): UseAuthReturn {
       return null
     },
     
+    // 2FA
+    resend2FACode: resend2FACodeMutation.mutateAsync,
+    registerBiometric: registerBiometricMutation.mutateAsync,
+    
     // Loading states
     isLoggingIn: loginMutation.isPending,
     isRegistering: registerMutation.isPending,
     isLoggingOut: logoutMutation.isPending,
+    isVerifying2FA: verify2FAMutation.isPending,
+    isResending2FA: resend2FACodeMutation.isPending,
     isChangingPassword: changePasswordMutation.isPending,
     isEnabling2FA: enable2FAMutation.isPending,
     isDisabling2FA: disable2FAMutation.isPending,

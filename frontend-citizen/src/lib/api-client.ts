@@ -256,6 +256,7 @@ export const api = {
 
     // User profile
     users: {
+        list: (params?: any) => api.get('/users/', { params }),
         me: () => api.get('/users/me/'),
         updateProfile: (data: any) => api.patch('/users/me/profile/', data),
         devices: () => api.get('/users/me/devices/'),
@@ -263,6 +264,7 @@ export const api = {
         verifyPhone: (data: any) => api.post('/users/verify/phone/', data),
         verifyEmail: (data: any) => api.post('/users/verify/email/', data),
         sendVerificationCode: (data: any) => api.post('/users/verify/send-code/', data),
+        statistics: () => api.get('/users/statistics/'),
     },
 
     // Self-exclusion
@@ -344,17 +346,6 @@ export const api = {
         statistics: () => api.get('/screening/statistics/'),
     },
 
-    // User endpoints
-    users: {
-        me: () => api.get('/users/me/'),
-        updateProfile: (data: any) => api.patch('/users/me/profile/', data),
-        devices: () => api.get('/users/me/devices/'),
-        sessions: () => api.get('/users/me/sessions/'),
-        verifyPhone: (data: any) => api.post('/users/verify/phone/', data),
-        verifyEmail: (data: any) => api.post('/users/verify/email/', data),
-        sendVerificationCode: (data: any) => api.post('/users/verify/send-code/', data),
-    },
-
     // Notifications
     notifications: {
         my: (params?: any) => api.get('/notifications/my-notifications/', { params }),
@@ -368,9 +359,77 @@ export const api = {
     // Analytics
     analytics: {
         dashboard: () => api.get('/analytics/dashboard/'),
+        grakDashboard: () => api.get('/analytics/grak-dashboard/'),
+        operatorDashboard: () => api.get('/analytics/operator-dashboard/'),
+        realtime: () => api.get('/analytics/realtime/'),
         userGrowth: (params?: any) => api.get('/analytics/user-growth/', { params }),
         exclusionTrends: (params?: any) => api.get('/analytics/exclusion-trends/', { params }),
         riskDistribution: () => api.get('/analytics/risk-distribution/'),
+    },
+
+    // Monitoring
+    monitoring: {
+        health: () => api.get('/monitoring/health/'),
+        detailed: () => api.get('/monitoring/health/detailed/'),
+        systemStatus: () => api.get('/monitoring/status/'),
+        metrics: () => api.get('/monitoring/metrics/'),
+        logs: (params?: any) => api.get('/monitoring/logs/', { params }),
+        apiLogs: (params?: any) => api.get('/monitoring/api-logs/', { params }),
+        alerts: (params?: any) => api.get('/monitoring/alerts/', { params }),
+        acknowledgeAlert: (id: string) => api.post(`/monitoring/alerts/${id}/acknowledge/`, {}),
+    },
+
+    // Dashboards
+    dashboards: {
+        widgets: () => api.get('/dashboards/widgets/'),
+        myDashboard: () => api.get('/dashboards/my-dashboard/'),
+        saveLayout: (data: any) => api.post('/dashboards/layouts/', data),
+    },
+
+    // Operators
+    operators: {
+        list: (params?: any) => api.get('/operators/', { params }),
+        get: (id: string) => api.get(`/operators/${id}/`),
+        register: (data: any) => api.post('/operators/register/', data),
+        activate: (id: string) => api.post(`/operators/${id}/activate/`, {}),
+        suspend: (id: string, data: any) => api.post(`/operators/${id}/suspend/`, data),
+        statistics: () => api.get('/operators/statistics/'),
+        generateApiKey: (operator_id: string, data: any) => api.post(`/operators/${operator_id}/api-keys/generate/`, data),
+        validateApiKey: (data: any) => api.post('/operators/api-keys/validate/', data),
+        setupIntegration: (operator_id: string, data: any) => api.post(`/operators/${operator_id}/integrations/setup/`, data),
+        testIntegration: (operator_id: string) => api.post(`/operators/${operator_id}/integrations/test/`, {}),
+        complianceCheck: (operator_id: string) => api.get(`/operators/${operator_id}/compliance/`),
+    },
+
+    // Settlements
+    settlements: {
+        statistics: () => api.get('/settlements/statistics/'),
+        transactions: (params?: any) => api.get('/settlements/transactions/', { params }),
+        getTransaction: (id: string) => api.get(`/settlements/transactions/${id}/`),
+        initiate: (data: any) => api.post('/settlements/transactions/initiate/', data),
+        invoices: (params?: any) => api.get('/settlements/invoices/', { params }),
+        generateInvoice: (data: any) => api.post('/settlements/invoices/generate/', data),
+        mpesaSTK: (data: any) => api.post('/settlements/mpesa/stk/', data),
+        mpesaB2B: (data: any) => api.post('/settlements/mpesa/b2b/', data),
+        reconcile: (data: any) => api.post('/settlements/reconciliations/reconcile/', data),
+    },
+
+    // BST Token Management
+    bst: {
+        tokens: (params?: any) => api.get('/bst/tokens/', { params }),
+        getToken: (id: string) => api.get(`/bst/tokens/${id}/`),
+        generate: (data: any) => api.post('/bst/tokens/generate/', data),
+        bulkGenerate: (data: any) => api.post('/bst/tokens/bulk-generate/', data),
+        validate: (token: string, operatorId?: string) => api.post('/bst/tokens/validate/', { token, operator_id: operatorId }),
+        bulkValidate: (tokens: string[], operatorId?: string) => api.post('/bst/tokens/bulk-validate/', { tokens, operator_id: operatorId }),
+        rotate: (id: string, data: any) => api.post(`/bst/tokens/${id}/rotate/`, data),
+        compromise: (id: string, data: any) => api.post(`/bst/tokens/${id}/compromise/`, data),
+        deactivate: (id: string) => api.post(`/bst/tokens/${id}/deactivate/`, {}),
+        lookup: (data: any) => api.post('/bst/tokens/lookup/', data),
+        lookupUser: (token: string) => api.post('/bst/tokens/lookup-user/', { token }),
+        fraudCheck: (data: any) => api.post('/bst/tokens/fraud-check/', data),
+        detectDuplicates: (data: any) => api.post('/bst/tokens/detect-duplicates/', data),
+        statistics: () => api.get('/bst/statistics/'),
     },
 }
 
