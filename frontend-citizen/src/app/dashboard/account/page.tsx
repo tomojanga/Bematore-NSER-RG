@@ -20,6 +20,9 @@ export default function AccountPage() {
   const [message, setMessage] = useState('')
 
   const activeExclusion = exclusions?.find(e => e.status === 'active')
+  const exclusionEndDate = activeExclusion
+    ? activeExclusion.end_date || activeExclusion.actual_end_date || activeExclusion.expiry_date
+    : null
 
   const handleChangePassword = async () => {
     if (passwords.new_password !== passwords.new_password_confirm) {
@@ -158,9 +161,11 @@ export default function AccountPage() {
               <div className="text-center p-4 bg-red-50 rounded-lg border border-red-200">
                 <p className="text-sm text-gray-600 mb-1">Exclusion Status</p>
                 <p className="text-lg font-bold text-red-600">Self-Excluded</p>
-                <p className="text-xs text-gray-600 mt-2">
-                  Until {new Date(activeExclusion.end_date).toLocaleDateString('en-GB')}
-                </p>
+                {exclusionEndDate && (
+                  <p className="text-xs text-gray-600 mt-2">
+                    Until {new Date(exclusionEndDate).toLocaleDateString('en-GB')}
+                  </p>
+                )}
               </div>
             )}
           </CardContent>

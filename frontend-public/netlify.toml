@@ -5,11 +5,8 @@
   # Build command
   command = "npm run build"
   
-  # Publish directory (Next.js build output)
-  publish = ".next"
-  
-  # Functions directory (for serverless functions if needed)
-  # functions = "netlify/functions"
+  # Publish directory (Next.js static export output)
+  publish = "out"
 
 [build.environment]
   # Node.js version
@@ -18,11 +15,11 @@
   # Next.js specific
   NEXT_TELEMETRY_DISABLED = "1"
 
-# Redirects and rewrites
+# SPA fallback for client-side routing
 [[redirects]]
   from = "/*"
-  to = "/index.html"
-  status = 200
+  to = "/404.html"
+  status = 404
 
 # Headers for security
 [[headers]]
@@ -44,6 +41,4 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-# Plugin configuration (Next.js on Netlify)
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
+# No plugins needed for static export

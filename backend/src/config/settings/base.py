@@ -28,19 +28,8 @@ if env_file.exists():
 
 # Security
 SECRET_KEY = env('SECRET_KEY', default='CHANGE-ME-IN-PRODUCTION')
-DEBUG = env('DEBUG', default=False)
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    'api-bematore.onrender.com',
-    'www.api-bematore.onrender.com',
-    'https://api-bematore.onrender.com',
-    'bematore.com',
-    'www.bematore.com',
-    'api.bematore.com',
-    '0.0.0.0',
-    '*',
-]
+# Note: DEBUG and ALLOWED_HOSTS are defined in development.py and production.py
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1'])
 
 # Application definition
 INSTALLED_APPS = [
