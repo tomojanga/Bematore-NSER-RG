@@ -179,17 +179,17 @@ export default function SelfExcludePage() {
                                         <span className="font-medium text-orange-600">Active</span>
                                     </div>
                                     <div className="flex justify-between items-center">
-                                        <span className="text-gray-600">Start Date</span>
-                                        <span className="font-medium text-gray-900">
-                                            {new Date(activeExclusion.start_date).toLocaleDateString()}
-                                        </span>
-                                    </div>
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-gray-600">End Date</span>
-                                        <span className="font-medium text-gray-900">
-                                            {new Date(activeExclusion.end_date).toLocaleDateString()}
-                                        </span>
-                                    </div>
+                                         <span className="text-gray-600">Start Date</span>
+                                         <span className="font-medium text-gray-900">
+                                             {new Date(activeExclusion.effective_date).toLocaleDateString()}
+                                         </span>
+                                     </div>
+                                     <div className="flex justify-between items-center">
+                                         <span className="text-gray-600">End Date</span>
+                                         <span className="font-medium text-gray-900">
+                                             {new Date(activeExclusion.expiry_date).toLocaleDateString()}
+                                         </span>
+                                     </div>
                                     <div className="flex justify-between items-center">
                                         <span className="text-gray-600">Days Remaining</span>
                                         <span className="font-medium text-gray-900">{daysRemaining} days</span>
