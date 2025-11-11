@@ -2,7 +2,6 @@
 
 # Development Tools
 django-extensions==3.2.3
-django-debug-toolbar==4.2.0
 ipython==8.18.1
 ipdb==0.13.13
 

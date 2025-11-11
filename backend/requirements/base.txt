@@ -133,3 +133,7 @@ qrcode==8.2
 
 # Production Server
 whitenoise==6.9.0
+
+# Debug
+django-debug-toolbar==4.2.0
+
