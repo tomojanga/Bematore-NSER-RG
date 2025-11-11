@@ -254,6 +254,26 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
                     "national_id": "Invalid national ID format."
                 })
         
+        # Check for active self-exclusion with same phone number
+        phone_number = attrs.get('phone_number')
+        if phone_number:
+            from apps.nser.models import SelfExclusionRecord
+            active_exclusion = SelfExclusionRecord.objects.filter(
+                user__phone_number=phone_number,
+                is_active=True
+            ).first()
+            
+            if active_exclusion:
+                days_remaining = (active_exclusion.expiry_date - date.today()).days
+                raise serializers.ValidationError({
+                    "phone_number": (
+                        f"This phone number has an active self-exclusion that ends on "
+                        f"{active_exclusion.expiry_date.strftime('%Y-%m-%d')} "
+                        f"({days_remaining} days remaining). "
+                        "You cannot register during an active exclusion period."
+                    )
+                })
+        
         return attrs
     
     def create(self, validated_data):
