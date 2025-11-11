@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.html import format_html
 from django.utils import timezone
 from django.contrib.auth.models import Group
-from .models import OAuthApplication, RefreshToken, TwoFactorAuth, DeviceTrust, TokenBlacklist
+from .models import OAuthApplication, RefreshToken, TwoFactorAuth
 
 
 @admin.register(OAuthApplication)
@@ -191,50 +191,5 @@ class TwoFactorAuthAdmin(admin.ModelAdmin):
         self.message_user(request, _('2FA disabled for %d users') % updated)
 
 
-@admin.register(DeviceTrust)
-class DeviceTrustAdmin(admin.ModelAdmin):
-    """Trusted device management"""
-    list_display = ('user_phone', 'device_name', 'is_trusted', 'last_seen')
-    list_filter = ('is_trusted', 'created_at')
-    search_fields = ('user__phone_number', 'device_name')
-    readonly_fields = ('created_at', 'updated_at')
-    
-    actions = ['trust_devices', 'untrust_devices', 'revoke_trust']
-    
-    def user_phone(self, obj):
-        return obj.user.phone_number
-    user_phone.short_description = _('User')
-    
-    @admin.action(description=_('Trust devices'))
-    def trust_devices(self, request, queryset):
-        updated = queryset.update(is_trusted=True)
-        self.message_user(request, _('%d devices trusted') % updated)
-    
-    @admin.action(description=_('Untrust devices'))
-    def untrust_devices(self, request, queryset):
-        updated = queryset.update(is_trusted=False)
-        self.message_user(request, _('%d devices untrusted') % updated)
-    
-    @admin.action(description=_('Revoke trust'))
-    def revoke_trust(self, request, queryset):
-        updated = queryset.update(is_trusted=False, revoked_at=timezone.now())
-        self.message_user(request, _('Trust revoked for %d devices') % updated)
-
-
-@admin.register(TokenBlacklist)
-class TokenBlacklistAdmin(admin.ModelAdmin):
-    """Token blacklist (revoked tokens)"""
-    list_display = ('user_phone', 'token_type', 'blacklisted_at')
-    list_filter = ('token_type', 'blacklisted_at')
-    search_fields = ('user__phone_number',)
-    readonly_fields = ('blacklisted_at',)
-    
-    def user_phone(self, obj):
-        return obj.user.phone_number
-    user_phone.short_description = _('User')
-    
-    def has_add_permission(self, request):
-        return False
-    
-    def has_delete_permission(self, request, obj=None):
-        return False
+# DeviceTrust and TokenBlacklist models not yet created
+# These can be added when authentication models are fully defined
