@@ -56,6 +56,7 @@ class LoginSerializer(serializers.Serializer):
 class LogoutSerializer(serializers.Serializer):
     """Logout serializer"""
     refresh_token = serializers.CharField(required=False)
+    device_id = serializers.CharField(required=False)
     all_devices = serializers.BooleanField(default=False)
 
 

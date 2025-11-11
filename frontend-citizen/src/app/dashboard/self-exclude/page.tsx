@@ -13,13 +13,18 @@ interface ExclusionDuration {
   description: string
 }
 
-const EXCLUSION_DURATIONS: ExclusionDuration[] = [
-  { label: '7 Days', days: 7, description: 'Take a break for a week' },
-  { label: '30 Days', days: 30, description: 'Think things over for a month' },
-  { label: '90 Days', days: 90, description: 'Extended 3-month break' },
-  { label: '6 Months', days: 180, description: 'Longer-term exclusion' },
-  { label: '1 Year', days: 365, description: 'Full year exclusion' },
-  { label: 'Indefinite', days: 99999, description: 'Permanent self-exclusion' }
+interface ExclusionOption {
+  label: string
+  value: string
+  description: string
+}
+
+const EXCLUSION_DURATIONS: ExclusionOption[] = [
+  { label: '6 Months', value: '6_months', description: 'Longer-term exclusion' },
+  { label: '1 Year', value: '1_year', description: 'Full year exclusion' },
+  { label: '3 Years', value: '3_years', description: 'Extended 3-year exclusion' },
+  { label: '5 Years', value: '5_years', description: 'Long-term 5-year exclusion' },
+  { label: 'Permanent', value: 'permanent', description: 'Permanent self-exclusion' }
 ]
 
 type Step = 'warning' | 'details' | 'confirmation' | 'success'
@@ -29,9 +34,10 @@ export default function SelfExcludePage() {
   const { toast } = useToast()
   const [currentStep, setCurrentStep] = useState<Step>('warning')
   const [isLoading, setIsLoading] = useState(false)
-  const [selectedDuration, setSelectedDuration] = useState<number | null>(null)
+  const [selectedDuration, setSelectedDuration] = useState<string | null>(null)
   const [reason, setReason] = useState('')
-  const [confirmChecked, setConfirmChecked] = useState(false)
+  const [termsAcknowledged, setTermsAcknowledged] = useState(false)
+  const [consequencesUnderstood, setConsequencesUnderstood] = useState(false)
   const [exclusionId, setExclusionId] = useState<string>('')
 
   const handleStartExclusion = async () => {
@@ -44,10 +50,10 @@ export default function SelfExcludePage() {
       return
     }
 
-    if (!confirmChecked) {
+    if (!termsAcknowledged || !consequencesUnderstood) {
       toast({
         title: 'Error',
-        description: 'Please confirm that you understand the implications',
+        description: 'Please acknowledge both terms and consequences',
         variant: 'destructive'
       })
       return
@@ -56,9 +62,11 @@ export default function SelfExcludePage() {
     setIsLoading(true)
     try {
       const { data } = await api.post('/nser/register/', {
-        duration: selectedDuration,
+        exclusion_period: selectedDuration,
         reason: reason || 'Self-initiated exclusion',
-        start_immediately: true
+        motivation_type: 'self_initiated',
+        terms_acknowledged: termsAcknowledged,
+        consequences_understood: consequencesUnderstood
       })
 
       if (data.success && data.data) {
@@ -71,9 +79,13 @@ export default function SelfExcludePage() {
         })
       }
     } catch (error: any) {
+      const errorMsg = error.response?.data?.error?.details || 
+                      error.response?.data?.error?.message || 
+                      error.response?.data?.message || 
+                      'Failed to register exclusion'
       toast({
         title: 'Error',
-        description: error.response?.data?.message || 'Failed to register exclusion',
+        description: errorMsg,
         variant: 'destructive'
       })
     } finally {
@@ -194,17 +206,29 @@ export default function SelfExcludePage() {
               />
             </div>
 
-            <div className="mb-8 bg-blue-50 border border-blue-200 p-4 rounded-lg">
+            <div className="mb-8 space-y-4">
               <label className="flex items-start gap-3">
                 <input
                   type="checkbox"
-                  checked={confirmChecked}
-                  onChange={(e) => setConfirmChecked(e.target.checked)}
+                  checked={termsAcknowledged}
+                  onChange={(e) => setTermsAcknowledged(e.target.checked)}
                   className="mt-1 w-4 h-4 rounded border-gray-300 text-blue-600"
                 />
                 <span className="text-sm text-gray-700">
-                  I confirm that I understand self-exclusion is binding and cannot be reversed during 
-                  the selected period. I understand my account will be completely blocked from gambling.
+                  I acknowledge the terms and conditions of self-exclusion
+                </span>
+              </label>
+              
+              <label className="flex items-start gap-3">
+                <input
+                  type="checkbox"
+                  checked={consequencesUnderstood}
+                  onChange={(e) => setConsequencesUnderstood(e.target.checked)}
+                  className="mt-1 w-4 h-4 rounded border-gray-300 text-blue-600"
+                />
+                <span className="text-sm text-gray-700">
+                  I understand that self-exclusion is binding and cannot be reversed during 
+                  the selected period. My account will be completely blocked from gambling.
                 </span>
               </label>
             </div>
@@ -218,7 +242,7 @@ export default function SelfExcludePage() {
               </button>
               <button
                 onClick={() => setCurrentStep('confirmation')}
-                disabled={!selectedDuration || !confirmChecked}
+                disabled={!selectedDuration || !termsAcknowledged || !consequencesUnderstood}
                 className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
               >
                 Review & Confirm
@@ -231,9 +255,19 @@ export default function SelfExcludePage() {
   }
 
   if (currentStep === 'confirmation') {
-    const selected = EXCLUSION_DURATIONS.find(d => d.days === selectedDuration)
+    const selected = EXCLUSION_DURATIONS.find(d => d.value === selectedDuration)
+    const getDaysFromPeriod = (period: string | null): number => {
+      switch (period) {
+        case '6_months': return 180
+        case '1_year': return 365
+        case '3_years': return 1095
+        case '5_years': return 1825
+        case 'permanent': return 99999
+        default: return 0
+      }
+    }
     const endDate = new Date()
-    endDate.setDate(endDate.getDate() + (selectedDuration || 0))
+    endDate.setDate(endDate.getDate() + getDaysFromPeriod(selectedDuration))
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
