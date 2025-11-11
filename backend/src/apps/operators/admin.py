@@ -310,7 +310,7 @@ class OperatorLicenseAdmin(admin.ModelAdmin):
     )
     list_filter = ('status', 'license_type', 'issued_date', 'expiry_date')
     search_fields = ('license_number', 'operator__name')
-    readonly_fields = ('created_at', 'updated_at', 'license_details')
+    readonly_fields = ('created_at', 'updated_at')
     
     fieldsets = (
         (_('License'), {

@@ -13,28 +13,25 @@ from .models import OAuthApplication, RefreshToken, TwoFactorAuth
 @admin.register(OAuthApplication)
 class OAuthApplicationAdmin(admin.ModelAdmin):
     """OAuth application management"""
-    list_display = ('client_id_display', 'user_phone', 'authorization_grant_type', 'is_active')
-    list_filter = ('authorization_grant_type', 'created_at', 'updated_at')
-    search_fields = ('client_id', 'user__phone_number')
+    list_display = ('name', 'client_id_display', 'is_active')
+    list_filter = ('is_active',)
+    search_fields = ('client_id', 'name')
     readonly_fields = (
         'client_id', 'created_at', 'updated_at', 'client_secret_display'
     )
     
     fieldsets = (
         (_('Application Details'), {
-            'fields': ('user', 'name', 'client_type')
+            'fields': ('name',)
         }),
         (_('OAuth Configuration'), {
             'fields': (
-                'authorization_grant_type', 'redirect_uris', 'client_id',
-                'client_secret_display'
+                'redirect_uris', 'client_id',
+                'client_secret_display', 'allowed_scopes'
             )
         }),
         (_('Settings'), {
-            'fields': ('skip_authorization', 'is_active')
-        }),
-        (_('Scopes'), {
-            'fields': ('scopes',)
+            'fields': ('is_confidential', 'is_active')
         }),
         (_('System'), {
             'fields': ('created_at', 'updated_at'),
@@ -50,10 +47,6 @@ class OAuthApplicationAdmin(admin.ModelAdmin):
             obj.client_id[:20] + '...' if len(obj.client_id) > 20 else obj.client_id
         )
     client_id_display.short_description = _('Client ID')
-    
-    def user_phone(self, obj):
-        return obj.user.phone_number if obj.user else 'N/A'
-    user_phone.short_description = _('User')
     
     def client_secret_display(self, obj):
         return format_html(
