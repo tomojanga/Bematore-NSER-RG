@@ -39,7 +39,7 @@ class SelfExclusionRecordAdmin(admin.ModelAdmin):
     )
     search_fields = (
         'exclusion_reference', 'user__phone_number', 'user__email',
-        'bst_token__token_value', 'reason'
+        'bst_token__token', 'reason'
     )
     readonly_fields = (
         'id', 'exclusion_reference', 'created_at', 'updated_at', 
