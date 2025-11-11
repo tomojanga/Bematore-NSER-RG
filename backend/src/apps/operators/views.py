@@ -128,7 +128,7 @@ class OperatorLicenseViewSet(TimingMixin, viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsGRAKStaff]
     
     def get_queryset(self):
-        return OperatorLicense.objects.select_related('operator').order_by('-issue_date')
+        return OperatorLicense.objects.select_related('operator').order_by('-issued_date')
     
     @action(detail=True, methods=['post'])
     def renew(self, request, pk=None):

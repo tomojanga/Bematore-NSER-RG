@@ -1,26 +1,52 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { DashboardHeader } from '@/components/Dashboard/DashboardHeader'
 import { Bell, Shield, Lock, Loader2, CheckCircle } from 'lucide-react'
 import { api } from '@/lib/api-client'
-import { toast } from 'react-hot-toast'
+import { useToast } from '@/components/ui/use-toast'
 
 export default function SettingsPage() {
   const { user, refreshUser } = useAuth()
+  const { toast } = useToast()
   const [activeTab, setActiveTab] = useState('notifications')
   const [loading, setLoading] = useState(false)
   const [twoFactorCode, setTwoFactorCode] = useState('')
   const [showVerifyInput, setShowVerifyInput] = useState(false)
   const [notifications, setNotifications] = useState({
-    email: user?.notification_preferences?.email ?? true,
-    sms: user?.notification_preferences?.sms ?? true,
-    exclusion_reminders: user?.notification_preferences?.exclusion_reminders ?? true
+    email: false,
+    sms: false,
+    exclusion_reminders: false
   })
   const [savingNotifications, setSavingNotifications] = useState(false)
+  const [isLoadingPrefs, setIsLoadingPrefs] = useState(true)
+
+  // Fetch notification preferences
+  useEffect(() => {
+    const fetchPreferences = async () => {
+      try {
+        setIsLoadingPrefs(true)
+        const { data } = await api.get('/users/me/notification-preferences/')
+        if (data.success && data.data) {
+          setNotifications({
+            email: data.data.email_enabled ?? true,
+            sms: data.data.sms_enabled ?? true,
+            exclusion_reminders: data.data.exclusion_reminders ?? true
+          })
+        }
+      } catch (error) {
+        console.error('Failed to fetch notification preferences:', error)
+      } finally {
+        setIsLoadingPrefs(false)
+      }
+    }
+
+    fetchPreferences()
+  }, [toast])
 
   const tabs = [
     { id: 'notifications', label: 'Notifications', icon: Bell },
@@ -36,9 +62,16 @@ export default function SettingsPage() {
         phone_number: user?.phone_number 
       })
       setShowVerifyInput(true)
-      toast.success('Verification code sent to your phone!')
+      toast({
+        title: 'Success',
+        description: 'Verification code sent to your phone!'
+      })
     } catch (error: any) {
-      toast.error(error.response?.data?.error?.message || 'Failed to enable 2FA')
+      toast({
+        title: 'Error',
+        description: error.response?.data?.message || 'Failed to enable 2FA',
+        variant: 'destructive'
+      })
     } finally {
       setLoading(false)
     }
@@ -46,19 +79,30 @@ export default function SettingsPage() {
 
   const verify2FA = async () => {
     if (!twoFactorCode || twoFactorCode.length !== 6) {
-      toast.error('Please enter a valid 6-digit code')
+      toast({
+        title: 'Error',
+        description: 'Please enter a valid 6-digit code',
+        variant: 'destructive'
+      })
       return
     }
     
     setLoading(true)
     try {
       await api.post('/auth/2fa/verify/', { code: twoFactorCode })
-      toast.success('2FA enabled successfully!')
+      toast({
+        title: 'Success',
+        description: '2FA enabled successfully!'
+      })
       setShowVerifyInput(false)
       setTwoFactorCode('')
       await refreshUser()
     } catch (error: any) {
-      toast.error(error.response?.data?.error?.code?.[0] || 'Invalid verification code')
+      toast({
+        title: 'Error',
+        description: error.response?.data?.message || 'Invalid verification code',
+        variant: 'destructive'
+      })
     } finally {
       setLoading(false)
     }
@@ -70,21 +114,28 @@ export default function SettingsPage() {
     setLoading(true)
     try {
       await api.post('/auth/2fa/disable/')
-      toast.success('2FA disabled successfully')
+      toast({
+        title: 'Success',
+        description: '2FA disabled successfully'
+      })
       await refreshUser()
     } catch (error: any) {
-      toast.error(error.response?.data?.error?.message || 'Failed to disable 2FA')
+      toast({
+        title: 'Error',
+        description: error.response?.data?.message || 'Failed to disable 2FA',
+        variant: 'destructive'
+      })
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-        <p className="text-gray-600 mt-1">Manage your preferences and security</p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+      <DashboardHeader title="Settings" subtitle="Manage your preferences and security" />
+
+      <main className="max-w-4xl mx-auto px-6 py-8">
+      <div className="space-y-6">
 
       <div className="flex gap-4 border-b border-gray-200">
         {tabs.map((tab) => (
@@ -109,81 +160,102 @@ export default function SettingsPage() {
             <CardTitle>Notification Preferences</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                <div>
-                  <h3 className="font-medium text-gray-900">Email Notifications</h3>
-                  <p className="text-sm text-gray-600">Receive updates via email</p>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input 
-                    type="checkbox" 
-                    className="sr-only peer" 
-                    checked={notifications.email}
-                    onChange={(e) => setNotifications({...notifications, email: e.target.checked})}
-                  />
-                  <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                </label>
+            {isLoadingPrefs ? (
+              <div className="space-y-4">
+                {[1, 2, 3].map(i => (
+                  <div key={i} className="h-16 bg-gray-100 rounded animate-pulse" />
+                ))}
               </div>
-              
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                <div>
-                  <h3 className="font-medium text-gray-900">SMS Notifications</h3>
-                  <p className="text-sm text-gray-600">Receive updates via SMS</p>
+            ) : (
+              <>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div>
+                      <h3 className="font-medium text-gray-900">Email Notifications</h3>
+                      <p className="text-sm text-gray-600">Receive updates via email</p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input 
+                        type="checkbox" 
+                        className="sr-only peer" 
+                        checked={notifications.email}
+                        onChange={(e) => setNotifications({...notifications, email: e.target.checked})}
+                      />
+                      <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    </label>
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div>
+                      <h3 className="font-medium text-gray-900">SMS Notifications</h3>
+                      <p className="text-sm text-gray-600">Receive updates via SMS</p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input 
+                        type="checkbox" 
+                        className="sr-only peer" 
+                        checked={notifications.sms}
+                        onChange={(e) => setNotifications({...notifications, sms: e.target.checked})}
+                      />
+                      <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    </label>
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div>
+                      <h3 className="font-medium text-gray-900">Exclusion Reminders</h3>
+                      <p className="text-sm text-gray-600">Get reminders about your exclusion status</p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input 
+                        type="checkbox" 
+                        className="sr-only peer" 
+                        checked={notifications.exclusion_reminders}
+                        onChange={(e) => setNotifications({...notifications, exclusion_reminders: e.target.checked})}
+                      />
+                      <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    </label>
+                  </div>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input 
-                    type="checkbox" 
-                    className="sr-only peer" 
-                    checked={notifications.sms}
-                    onChange={(e) => setNotifications({...notifications, sms: e.target.checked})}
-                  />
-                  <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                </label>
-              </div>
-              
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                <div>
-                  <h3 className="font-medium text-gray-900">Exclusion Reminders</h3>
-                  <p className="text-sm text-gray-600">Get reminders about your exclusion status</p>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input 
-                    type="checkbox" 
-                    className="sr-only peer" 
-                    checked={notifications.exclusion_reminders}
-                    onChange={(e) => setNotifications({...notifications, exclusion_reminders: e.target.checked})}
-                  />
-                  <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                </label>
-              </div>
-            </div>
-            
-            <Button 
-              className="w-full" 
-              onClick={async () => {
-                setSavingNotifications(true)
-                try {
-                  await api.patch('/users/me/', { notification_preferences: notifications })
-                  toast.success('Notification preferences saved')
-                  await refreshUser()
-                } catch (error: any) {
-                  toast.error('Failed to save preferences')
-                } finally {
-                  setSavingNotifications(false)
-                }
-              }}
-              disabled={savingNotifications}
-            >
-              {savingNotifications ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  Saving...
-                </>
-              ) : (
-                'Save Preferences'
-              )}
-            </Button>
+                
+                <Button 
+                  className="w-full" 
+                  onClick={async () => {
+                    setSavingNotifications(true)
+                    try {
+                      await api.put('/users/me/notification-preferences/', {
+                        email_enabled: notifications.email,
+                        sms_enabled: notifications.sms,
+                        exclusion_reminders: notifications.exclusion_reminders
+                      })
+                      toast({
+                        title: 'Success',
+                        description: 'Notification preferences saved'
+                      })
+                      await refreshUser()
+                    } catch (error: any) {
+                      toast({
+                        title: 'Error',
+                        description: 'Failed to save preferences',
+                        variant: 'destructive'
+                      })
+                    } finally {
+                      setSavingNotifications(false)
+                    }
+                  }}
+                  disabled={savingNotifications}
+                >
+                  {savingNotifications ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      Saving...
+                    </>
+                  ) : (
+                    'Save Preferences'
+                  )}
+                </Button>
+              </>
+            )}
           </CardContent>
         </Card>
       )}
@@ -367,9 +439,16 @@ export default function SettingsPage() {
                     a.href = url
                     a.download = `my-data-${new Date().toISOString().split('T')[0]}.json`
                     a.click()
-                    toast.success('Data exported successfully')
+                    toast({
+                      title: 'Success',
+                      description: 'Data exported successfully'
+                    })
                   } catch (error) {
-                    toast.error('Failed to export data')
+                    toast({
+                      title: 'Error',
+                      description: 'Failed to export data',
+                      variant: 'destructive'
+                    })
                   }
                 }}
               >
@@ -381,7 +460,10 @@ export default function SettingsPage() {
                 className="w-full"
                 onClick={() => {
                   if (confirm('Are you sure you want to delete your account? This action cannot be undone and you may not be able to register again.')) {
-                    toast.error('Account deletion requires contacting NSER support')
+                    toast({
+                      title: 'Notice',
+                      description: 'Account deletion requires contacting NSER support'
+                    })
                   }
                 }}
               >
@@ -395,6 +477,8 @@ export default function SettingsPage() {
           </Card>
         </div>
       )}
+    </div>
+      </main>
     </div>
   )
 }

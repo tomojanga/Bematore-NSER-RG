@@ -8,8 +8,8 @@ import { Play, Copy, CheckCircle, XCircle, Clock } from 'lucide-react'
 export default function SimulatorPage() {
   const [loading, setLoading] = useState(false)
   const [testData, setTestData] = useState({
-    phone_number: '+254712345678',
-    national_id: '12345678',
+    phone_number: '',
+    national_id: '',
     bst_token: '',
   })
   const [response, setResponse] = useState<any>(null)

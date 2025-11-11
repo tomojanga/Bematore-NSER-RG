@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils'
 
-interface ProgressBarProps {
+export interface ProgressBarProps {
   value: number
   max?: number
   color?: 'blue' | 'green' | 'red' | 'yellow' | 'purple'
