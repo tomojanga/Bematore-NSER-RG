@@ -3,6 +3,8 @@ export interface User {
   id: string
   email: string
   phone_number: string
+  first_name?: string
+  last_name?: string
   role: 'super_admin' | 'grak_admin' | 'operator_admin' | 'citizen'
   is_active: boolean
   is_verified: boolean

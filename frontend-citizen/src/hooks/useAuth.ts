@@ -91,9 +91,9 @@ const convertAuthUserToCoreUser = (authUser: AuthUser): SystemUser => {
     email: authUser.email || '',
     phone_number: authUser.phone_number,
     role: roleMap[authUser.role],
-    first_name: '',  // Will be set from profile
-    last_name: '',   // Will be set from profile
-    full_name: '',   // Will be computed after setting first/last name
+    first_name: authUser.first_name || '',
+    last_name: authUser.last_name || '',
+    full_name: authUser.first_name && authUser.last_name ? `${authUser.first_name} ${authUser.last_name}` : '',
     middle_name: '', // Optional field
     status: 'active' as Status,
     gender: 'N',     // Default to 'Not specified'

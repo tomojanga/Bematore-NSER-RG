@@ -55,9 +55,9 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
               <p className="text-sm font-medium text-gray-900">
                 {user?.first_name && user?.last_name 
                   ? `${user.first_name} ${user.last_name}` 
-                  : user?.phone_number}
+                  : 'User'}
               </p>
-              <p className="text-xs text-gray-500">{user?.role}</p>
+              <p className="text-xs text-gray-500">{user?.phone_number}</p>
             </div>
 
             <div className="h-10 w-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold">
