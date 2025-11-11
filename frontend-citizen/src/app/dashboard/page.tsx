@@ -17,7 +17,8 @@ import {
     Calendar,
     User,
     Zap,
-    Loader2
+    Loader2,
+    ChevronRight
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -40,9 +41,10 @@ interface Exclusion {
 }
 
 interface RiskProfile {
-    current_risk_level: 'low' | 'medium' | 'high' | 'severe'
-    score: number
-    last_assessment: string
+    risk_level: 'none' | 'low' | 'mild' | 'moderate' | 'high' | 'severe' | 'critical'
+    risk_score: number
+    score_date: string
+    days_ago?: number
 }
 
 interface VerificationStatus {
@@ -59,6 +61,13 @@ export default function DashboardPage() {
     const [exclusions, setExclusions] = useState<Exclusion[]>([])
     const [riskProfile, setRiskProfile] = useState<RiskProfile | null>(null)
     const [isLoading, setIsLoading] = useState(true)
+    const [isLoadingExclusions, setIsLoadingExclusions] = useState(false)
+    const [isLoadingRisk, setIsLoadingRisk] = useState(false)
+    const [isLoadingVerification, setIsLoadingVerification] = useState(false)
+    const [isExtending, setIsExtending] = useState<string | null>(null)
+    const [showExtendModal, setShowExtendModal] = useState<string | null>(null)
+    const [extendPeriod, setExtendPeriod] = useState<string>('3_months')
+    const [extendReason, setExtendReason] = useState('')
     const [verificationStatus, setVerificationStatus] = useState<VerificationStatus>({
         is_email_verified: false,
         is_phone_verified: false,
@@ -74,20 +83,37 @@ export default function DashboardPage() {
     // Fetch exclusions
     useEffect(() => {
         const fetchExclusions = async () => {
+            setIsLoadingExclusions(true)
             try {
-                const { data } = await api.get('/nser/my-exclusions/')
-                if (data.success && data.data?.items) {
-                    const mappedExclusions: Exclusion[] = data.data.items.map((e: any) => ({
-                    id: e.id,
-                    status: e.status,
-                    type: e.exclusion_type || 'self',
-                    startDate: e.effective_date || e.start_date,
-                    endDate: e.expiry_date || e.end_date,
-                    daysRemaining: Math.max(0, Math.ceil((new Date(e.expiry_date || e.end_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24))),
-                    reason: e.reason,
-                    duration: Math.ceil((new Date(e.expiry_date || e.end_date).getTime() - new Date(e.effective_date || e.start_date).getTime()) / (1000 * 60 * 60 * 24))
-                    }))
-                    setExclusions(mappedExclusions)
+                const { data } = await api.nser.myExclusions()
+                // API returns paginated response with 'results' key
+                const exclusionsList = data.results || data.data?.results || data.data?.items || data || []
+                if (exclusionsList && Array.isArray(exclusionsList)) {
+                    const mappedExclusions: Exclusion[] = exclusionsList
+                        .filter((e: any) => e.status !== 'pending') // Exclude pending exclusions
+                        .map((e: any) => {
+                            const startDate = e.effective_date || e.start_date
+                            const endDate = e.expiry_date || e.end_date
+                            const isActive = e.is_active || (endDate && new Date(endDate) > new Date())
+
+                            return {
+                                id: e.id,
+                                status: isActive ? 'active' : (endDate && new Date(endDate) <= new Date() ? 'expired' : 'pending'),
+                                type: 'self', // From backend, all are self-exclusions via citizen dashboard
+                                startDate: startDate,
+                                endDate: endDate,
+                                daysRemaining: endDate ? Math.max(0, Math.ceil((new Date(endDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24))) : 0,
+                                reason: e.reason || 'Self-exclusion',
+                                duration: endDate && startDate ? Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24)) : 0
+                            }
+                        })
+
+                    // Sort: active first, then expired
+                    const sorted = [
+                        ...mappedExclusions.filter(e => e.status === 'active'),
+                        ...mappedExclusions.filter(e => e.status === 'expired')
+                    ]
+                    setExclusions(sorted)
                 }
             } catch (error) {
                 console.error('Failed to fetch exclusions:', error)
@@ -96,6 +122,8 @@ export default function DashboardPage() {
                     description: 'Failed to load exclusions',
                     variant: 'destructive'
                 })
+            } finally {
+                setIsLoadingExclusions(false)
             }
         }
 
@@ -105,13 +133,29 @@ export default function DashboardPage() {
     // Fetch risk profile
     useEffect(() => {
         const fetchRiskProfile = async () => {
+            setIsLoadingRisk(true)
             try {
-                const { data } = await api.get('/screening/risk/current/')
-                if (data.success && data.data) {
-                    setRiskProfile(data.data)
+                const { data } = await api.screening.currentRisk()
+                // API returns RiskScoreSerializer response
+                const riskData = data.data || data.results?.[0] || data
+                if (riskData && riskData.risk_level) {
+                    setRiskProfile({
+                        risk_level: riskData.risk_level || 'low',
+                        risk_score: riskData.risk_score || 0,
+                        score_date: riskData.score_date || new Date().toISOString(),
+                        days_ago: riskData.days_ago
+                    })
                 }
             } catch (error) {
                 console.error('Failed to fetch risk profile:', error)
+                // Set default if endpoint fails
+                setRiskProfile({
+                    risk_level: 'none',
+                    risk_score: 0,
+                    score_date: new Date().toISOString()
+                })
+            } finally {
+                setIsLoadingRisk(false)
             }
         }
 
@@ -121,17 +165,21 @@ export default function DashboardPage() {
     // Fetch verification status
     useEffect(() => {
         const fetchVerificationStatus = async () => {
+            setIsLoadingVerification(true)
             try {
-                const { data } = await api.get('/users/me/profile/')
-                if (data.success && data.data) {
+                const { data } = await api.users.me()
+                const userData = data.data || data
+                if (userData) {
                     setVerificationStatus({
-                        is_email_verified: data.data.is_email_verified || false,
-                        is_phone_verified: data.data.is_phone_verified || false,
-                        is_id_verified: data.data.is_id_verified || false
+                        is_email_verified: userData.is_email_verified || false,
+                        is_phone_verified: userData.is_phone_verified || false,
+                        is_id_verified: userData.is_id_verified || false
                     })
                 }
             } catch (error) {
                 console.error('Failed to fetch verification status:', error)
+            } finally {
+                setIsLoadingVerification(false)
             }
         }
 
@@ -142,15 +190,90 @@ export default function DashboardPage() {
     useEffect(() => {
         if (exclusions && exclusions.length > 0) {
             const active = exclusions.filter(e => e.status === 'active')
+            const riskLevel = riskProfile?.risk_level || 'low'
+            // Map backend risk levels to component risk levels
+            const mappedRiskLevel = riskLevel === 'none' ? 'low' :
+                riskLevel === 'mild' ? 'medium' :
+                    riskLevel === 'moderate' ? 'medium' :
+                        riskLevel as 'low' | 'medium' | 'high' | 'severe'
+
             setStats({
                 activeExclusions: active.length,
                 totalDuration: active.reduce((sum, e) => sum + e.duration, 0),
                 daysRemaining: active.reduce((sum, e) => sum + e.daysRemaining, 0),
-                riskLevel: riskProfile?.current_risk_level || 'low'
+                riskLevel: mappedRiskLevel
             })
         }
         setIsLoading(false)
     }, [exclusions, riskProfile])
+
+    const handleExtendExclusion = async (exclusionId: string) => {
+        if (!extendPeriod) {
+            toast({
+                title: 'Error',
+                description: 'Please select an extension period',
+                variant: 'destructive'
+            })
+            return
+        }
+
+        setIsExtending(exclusionId)
+        try {
+            await api.nser.extend(exclusionId, {
+                new_period: extendPeriod,
+                reason: extendReason || 'User requested extension'
+            })
+
+            toast({
+                title: 'Success',
+                description: 'Exclusion extended successfully',
+                variant: 'default'
+            })
+
+            // Refresh exclusions
+            const { data } = await api.nser.myExclusions()
+            const exclusionsList = data.results || data.data?.results || data.data?.items || data || []
+            if (exclusionsList && Array.isArray(exclusionsList)) {
+                const mappedExclusions: Exclusion[] = exclusionsList
+                    .filter((e: any) => e.status !== 'pending')
+                    .map((e: any) => {
+                        const startDate = e.effective_date || e.start_date
+                        const endDate = e.expiry_date || e.end_date
+                        const isActive = e.is_active || (endDate && new Date(endDate) > new Date())
+
+                        return {
+                            id: e.id,
+                            status: isActive ? 'active' : (endDate && new Date(endDate) <= new Date() ? 'expired' : 'pending'),
+                            type: 'self',
+                            startDate: startDate,
+                            endDate: endDate,
+                            daysRemaining: endDate ? Math.max(0, Math.ceil((new Date(endDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24))) : 0,
+                            reason: e.reason || 'Self-exclusion',
+                            duration: endDate && startDate ? Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24)) : 0
+                        }
+                    })
+
+                const sorted = [
+                    ...mappedExclusions.filter(e => e.status === 'active'),
+                    ...mappedExclusions.filter(e => e.status === 'expired')
+                ]
+                setExclusions(sorted)
+            }
+
+            setShowExtendModal(null)
+            setExtendPeriod('3_months')
+            setExtendReason('')
+        } catch (error: any) {
+            console.error('Failed to extend exclusion:', error)
+            toast({
+                title: 'Error',
+                description: error.response?.data?.message || 'Failed to extend exclusion',
+                variant: 'destructive'
+            })
+        } finally {
+            setIsExtending(null)
+        }
+    }
 
     const recentExclusions = exclusions?.slice(0, 3) || []
     const activeExclusion = exclusions?.find(e => e.status === 'active')
@@ -268,11 +391,10 @@ export default function DashboardPage() {
                                 </Link>
                             </div>
 
-                            {isLoading ? (
-                                <div className="space-y-4">
-                                    {[1, 2, 3].map(i => (
-                                        <div key={i} className="h-24 bg-gray-100 rounded-lg animate-pulse" />
-                                    ))}
+                            {isLoadingExclusions ? (
+                                <div className="flex flex-col items-center justify-center py-12">
+                                    <Loader2 className="h-8 w-8 animate-spin text-blue-600 mb-3" />
+                                    <p className="text-gray-600 text-sm">Loading exclusions...</p>
                                 </div>
                             ) : recentExclusions.length > 0 ? (
                                 <div className="space-y-4">
@@ -280,6 +402,8 @@ export default function DashboardPage() {
                                         <ExclusionCard
                                             key={exclusion.id}
                                             exclusion={exclusion}
+                                            onExtend={() => setShowExtendModal(exclusion.id)}
+                                            onGetSupport={() => router.push('/dashboard/help')}
                                         />
                                     ))}
                                 </div>
@@ -439,6 +563,81 @@ export default function DashboardPage() {
                     </div>
                 </div>
             </main>
+
+            {/* Extend Modal */}
+            {showExtendModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-xl shadow-lg max-w-md w-full p-6">
+                        <h2 className="text-xl font-bold text-gray-900 mb-4">Extend Exclusion Period</h2>
+
+                        <div className="mb-4">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Select New Period
+                            </label>
+                            <select
+                                value={extendPeriod}
+                                onChange={(e) => setExtendPeriod(e.target.value)}
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                                <option value="3_months">3 Months</option>
+                                <option value="6_months">6 Months</option>
+                                <option value="1_year">1 Year</option>
+                                <option value="3_years">3 Years</option>
+                                <option value="5_years">5 Years</option>
+                                <option value="permanent">Permanent</option>
+                            </select>
+                        </div>
+
+                        <div className="mb-6">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Reason (Optional)
+                            </label>
+                            <textarea
+                                value={extendReason}
+                                onChange={(e) => setExtendReason(e.target.value)}
+                                placeholder="Why are you extending your exclusion?"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                                rows={3}
+                            />
+                        </div>
+
+                        <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg mb-6">
+                            <p className="text-sm text-blue-800">
+                                <strong>Important:</strong> Extending your exclusion will add the selected period to your current exclusion end date.
+                            </p>
+                        </div>
+
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => {
+                                    setShowExtendModal(null)
+                                    setExtendPeriod('3_months')
+                                    setExtendReason('')
+                                }}
+                                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={() => handleExtendExclusion(showExtendModal)}
+                                disabled={isExtending === showExtendModal}
+                                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                            >
+                                {isExtending === showExtendModal ? (
+                                    <>
+                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                        Extending...
+                                    </>
+                                ) : (
+                                    <>
+                                        Extend <ChevronRight className="h-4 w-4" />
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
