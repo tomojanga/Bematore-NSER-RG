@@ -6,6 +6,10 @@ export interface User {
   role: 'super_admin' | 'grak_admin' | 'operator_admin' | 'citizen'
   is_active: boolean
   is_verified: boolean
+  is_phone_verified?: boolean
+  is_email_verified?: boolean
+  is_id_verified?: boolean
+  verification_status?: 'verified' | 'pending' | 'unverified' | 'rejected'
   has_2fa: boolean
   preferred_2fa_method?: '2fa' | 'sms' | 'email'
   created_at: string

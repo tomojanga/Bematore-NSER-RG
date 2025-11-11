@@ -51,12 +51,16 @@ def custom_exception_handler(exc, context):
                 custom_response_data['error']['details'] = exc.detail
         
         response.data = custom_response_data
-        # Ensure we have a renderer set
-        if not response.accepted_renderer:
+        # Ensure we have a renderer set - check if attribute exists first
+        if hasattr(response, 'accepted_renderer') and not response.accepted_renderer:
             response.accepted_renderer = response.renderer_context.get('renderer', None)
             if not response.accepted_renderer:
                 from rest_framework.renderers import JSONRenderer
                 response.accepted_renderer = JSONRenderer()
                 response.renderer_context['response'] = response
+        elif not hasattr(response, 'accepted_renderer'):
+            from rest_framework.renderers import JSONRenderer
+            response.accepted_renderer = JSONRenderer()
+            response.renderer_context['response'] = response
     
     return response

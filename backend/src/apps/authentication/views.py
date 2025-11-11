@@ -128,8 +128,13 @@ class LoginView(TimingMixin, SuccessResponseMixin, APIView):
                 'user': {
                     'id': str(user.id),
                     'phone_number': str(user.phone_number),
+                    'email': user.email,
                     'role': user.role,
-                    'is_verified': user.is_verified
+                    'is_verified': user.is_verified,
+                    'is_phone_verified': user.is_phone_verified,
+                    'is_email_verified': user.is_email_verified,
+                    'is_id_verified': user.is_id_verified,
+                    'verification_status': user.verification_status
                 }
             },
             message='Login successful'

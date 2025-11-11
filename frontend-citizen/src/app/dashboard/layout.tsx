@@ -9,134 +9,146 @@ import { cn } from '@/lib/utils'
 import { useEffect } from 'react'
 
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: Home },
-  { name: 'Self-Exclude', href: '/dashboard/self-exclude', icon: Shield },
-  { name: 'Assessments', href: '/dashboard/assessments', icon: FileText },
-  { name: 'History', href: '/dashboard/history', icon: History },
-  { name: 'Account', href: '/dashboard/account', icon: User },
-  { name: 'Settings', href: '/dashboard/settings', icon: Settings },
+    { name: 'Dashboard', href: '/dashboard', icon: Home },
+    { name: 'Self-Exclude', href: '/dashboard/self-exclude', icon: Shield },
+    { name: 'Assessments', href: '/dashboard/assessments', icon: FileText },
+    { name: 'History', href: '/dashboard/history', icon: History },
+    { name: 'Account', href: '/dashboard/account', icon: User },
+    { name: 'Settings', href: '/dashboard/settings', icon: Settings },
 ]
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const { user, logout, isAuthenticated, isLoadingProfile } = useAuth()
-  const { exclusions, isLoading: isLoadingExclusions } = useExclusions()
-  const pathname = usePathname()
-  const router = useRouter()
-  
-  const activeExclusion = exclusions?.find(e => e.status === 'active')
+    const { user, logout, isAuthenticated, isLoadingProfile } = useAuth()
+    const { exclusions, isLoading: isLoadingExclusions } = useExclusions()
+    const pathname = usePathname()
+    const router = useRouter()
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/auth/login')
+    const activeExclusion = exclusions?.find(e => e.status === 'active')
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            router.push('/auth/login')
+        }
+    }, [isAuthenticated, router])
+
+    if (!user) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+            </div>
+        )
     }
-  }, [isAuthenticated, router])
 
-  if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-      </div>
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex">
+            {/* Modern Sidebar */}
+            <div className="w-72 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white flex flex-col shadow-2xl">
+                {/* Header */}
+                <div className="p-8 border-b border-slate-700/50">
+                    <div className="flex items-center gap-4">
+                        <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-3 rounded-xl shadow-lg">
+                            <Shield className="h-6 w-6" />
+                        </div>
+                        <div>
+                            <h1 className="text-xl font-bold tracking-tight">NSER Portal</h1>
+                            <p className="text-slate-400 text-xs uppercase tracking-widest font-medium">Self-Exclusion</p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Navigation */}
+                <nav className="flex-1 px-4 py-8 space-y-2 overflow-y-auto">
+                    {navigation.map((item) => {
+                        const isActive = pathname === item.href
+                        return (
+                            <Link
+                                key={item.name}
+                                href={item.href}
+                                className={cn(
+                                    'flex items-center gap-3 px-4 py-3.5 rounded-lg transition-all duration-200 text-sm font-medium group relative',
+                                    isActive
+                                        ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg'
+                                        : 'text-slate-300 hover:text-white hover:bg-slate-700/50'
+                                )}
+                            >
+                                <item.icon className={cn(
+                                    'h-5 w-5 transition-transform duration-200',
+                                    isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'
+                                )} />
+                                <span>{item.name}</span>
+                                {isActive && (
+                                    <div className="ml-auto h-2 w-2 rounded-full bg-white"></div>
+                                )}
+                            </Link>
+                        )
+                    })}
+                </nav>
+
+                {/* User Card */}
+                <div className="p-4 border-t border-slate-700/50 space-y-4">
+                    <div className="bg-gradient-to-br from-slate-700/50 to-slate-800/50 rounded-xl p-4 backdrop-blur-sm border border-slate-600/50">
+                        {/* User Info */}
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="h-14 w-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg ring-2 ring-slate-600/50">
+                                <span className="text-white font-bold text-lg">
+                                    {user.first_name?.[0] || user.phone_number?.[0] || 'U'}{user.last_name?.[0] || user.phone_number?.[1] || 'S'}
+                                </span>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <p className="font-semibold text-white truncate text-sm">
+                                    {user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : 'User'}
+                                </p>
+                                <p className="text-slate-400 text-xs truncate">{user.phone_number}</p>
+                            </div>
+                        </div>
+
+                        {/* Status Badges */}
+                        <div className="space-y-2">
+                            {activeExclusion ? (
+                                <div className="flex items-center gap-2 text-xs bg-gradient-to-r from-red-500/20 to-red-600/20 text-red-200 px-3 py-2.5 rounded-lg border border-red-500/30 font-medium">
+                                    <AlertCircle className="h-3.5 w-3.5" />
+                                    <span>Self-Excluded</span>
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-2 text-xs bg-gradient-to-r from-emerald-500/20 to-emerald-600/20 text-emerald-200 px-3 py-2.5 rounded-lg border border-emerald-500/30 font-medium">
+                                    <CheckCircle className="h-3.5 w-3.5" />
+                                    <span>Account Active</span>
+                                </div>
+                            )}
+
+                            {user.is_phone_verified ? (
+                                <div className="flex items-center gap-2 text-xs bg-gradient-to-r from-emerald-500/20 to-emerald-600/20 text-emerald-200 px-3 py-2.5 rounded-lg border border-emerald-500/30">
+                                    <CheckCircle className="h-3 w-3" />
+                                    <span>Phone Verified</span>
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-2 text-xs bg-gradient-to-r from-amber-500/20 to-amber-600/20 text-amber-200 px-3 py-2.5 rounded-lg border border-amber-500/30">
+                                    <AlertCircle className="h-3 w-3" />
+                                    <span>Phone Unverified</span>
+                                </div>
+                            )}
+
+                            {user.is_2fa_enabled && (
+                                <div className="flex items-center gap-2 text-xs bg-gradient-to-r from-blue-500/20 to-indigo-600/20 text-blue-200 px-3 py-2.5 rounded-lg border border-blue-500/30">
+                                    <Shield className="h-3 w-3" />
+                                    <span>2FA Enabled</span>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    <button
+                        onClick={() => logout(false)}
+                        className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
+                    >
+                        <LogOut className="h-4 w-4" />
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+
+            {/* Main Content */}
+            <main className="flex-1 p-8 overflow-y-auto">{children}</main>
+        </div>
     )
-  }
-
-  return (
-    <div className="min-h-screen bg-gray-50 flex">
-      <div className="w-72 bg-gradient-to-b from-blue-600 to-blue-700 text-white flex flex-col">
-        <div className="p-6 border-b border-blue-500">
-          <div className="flex items-center gap-3">
-            <div className="bg-white p-3 rounded-lg">
-              <Shield className="h-8 w-8 text-blue-600" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold">My Portal</h1>
-              <p className="text-blue-100 text-sm">Self-Exclusion</p>
-            </div>
-          </div>
-        </div>
-
-        <nav className="flex-1 p-6">
-          <ul className="space-y-2">
-            {navigation.map((item) => {
-              const isActive = pathname === item.href
-              return (
-                <li key={item.name}>
-                  <Link
-                    href={item.href}
-                    className={cn(
-                      'flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-sm font-medium',
-                      isActive ? 'bg-white text-blue-700 shadow-lg' : 'text-blue-100 hover:bg-blue-500'
-                    )}
-                  >
-                    <item.icon className="h-5 w-5" />
-                    {item.name}
-                  </Link>
-                </li>
-              )
-            })}
-          </ul>
-        </nav>
-
-        <div className="p-6 border-t border-blue-500 space-y-4">
-          <div className="bg-blue-500 rounded-lg p-4">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="h-12 w-12 bg-white rounded-full flex items-center justify-center">
-                <span className="text-blue-600 font-bold text-lg">
-                  {user.first_name?.[0] || user.phone_number?.[0] || 'U'}{user.last_name?.[0] || user.phone_number?.[1] || 'S'}
-                </span>
-              </div>
-              <div className="flex-1">
-                <p className="font-semibold text-white">
-                  {user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : user.phone_number}
-                </p>
-                <p className="text-blue-100 text-xs">{user.phone_number}</p>
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              {activeExclusion ? (
-                <div className="flex items-center gap-2 text-xs bg-red-500 text-white px-3 py-2 rounded">
-                  <AlertCircle className="h-3 w-3" />
-                  <span className="font-medium">Self-Excluded</span>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 text-xs bg-green-500 text-white px-3 py-2 rounded">
-                  <CheckCircle className="h-3 w-3" />
-                  <span className="font-medium">Active Account</span>
-                </div>
-              )}
-              
-              <div className="flex items-center gap-2 text-xs">
-                {user.is_phone_verified ? (
-                  <span className="flex items-center gap-1 text-green-300">
-                    <CheckCircle className="h-3 w-3" /> Phone Verified
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-1 text-amber-300">
-                    <AlertCircle className="h-3 w-3" /> Phone Unverified
-                  </span>
-                )}
-              </div>
-              
-              {user.is_2fa_enabled && (
-                <div className="flex items-center gap-2 text-xs text-blue-100">
-                  <Shield className="h-3 w-3" />
-                  <span>2FA Enabled</span>
-                </div>
-              )}
-            </div>
-          </div>
-          
-          <button
-            onClick={() => logout(false)}
-            className="w-full flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-400 text-white py-2.5 px-4 rounded-lg text-sm font-medium transition-colors"
-          >
-            <LogOut className="h-4 w-4" />
-            Sign Out
-          </button>
-        </div>
-      </div>
-
-      <main className="flex-1 p-8">{children}</main>
-    </div>
-  )
 }

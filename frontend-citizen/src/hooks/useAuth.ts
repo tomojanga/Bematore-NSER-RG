@@ -76,6 +76,14 @@ const convertAuthUserToCoreUser = (authUser: AuthUser): SystemUser => {
     throw new Error(`Invalid role: ${authUser.role}`)
   }
 
+  // Map verification status from backend
+  const verificationStatusMap: Record<string, VerificationStatus> = {
+    'verified': 'verified',
+    'pending': 'pending',
+    'unverified': 'unverified',
+    'rejected': 'rejected'
+  }
+
   // Map the auth user to core user format
   const coreUser: SystemUser = {
     // Basic info
@@ -90,13 +98,13 @@ const convertAuthUserToCoreUser = (authUser: AuthUser): SystemUser => {
     status: 'active' as Status,
     gender: 'N',     // Default to 'Not specified'
     
-    // Verification
+    // Verification - Use actual data from API
     is_active: authUser.is_active,
     is_verified: authUser.is_verified,
-    is_phone_verified: false,  // Will be set from profile
-    is_email_verified: false,  // Will be set from profile
-    is_id_verified: false,     // Will be set from profile
-    verification_status: 'pending' as VerificationStatus,
+    is_phone_verified: authUser.is_phone_verified || false,
+    is_email_verified: authUser.is_email_verified || false,
+    is_id_verified: authUser.is_id_verified || false,
+    verification_status: (authUser.verification_status && verificationStatusMap[authUser.verification_status]) || 'unverified' as VerificationStatus,
     
     // Security
     is_staff: authUser.role === 'super_admin',  // Staff for super_admin role
@@ -454,7 +462,8 @@ export function useAuth(): UseAuthReturn {
       }
 
       // Redirect based on user role and verification status
-      if (!data.user.is_verified) {
+      // For citizens: require phone verification only (ID is optional)
+      if (data.user.role === 'citizen' && !data.user.is_phone_verified) {
         router.push('/auth/verify')
         return
       }
