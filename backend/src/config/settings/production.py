@@ -13,16 +13,6 @@ DEBUG = False
 
 # Security
 SECRET_KEY = env('SECRET_KEY', default='your-secret-key-change-in-env')
-ALLOWED_HOSTS = [
-    'api-bematore.onrender.com',
-    'bematore.com',
-    'www.bematore.com',
-    'api.bematore.com',
-    'localhost',
-    '127.0.0.1',
-    '0.0.0.0',
-    '*',  # Allow all for now - restrict later
-]
 
 # CORS settings for production
 CORS_ALLOW_ALL_ORIGINS = False
@@ -51,6 +41,9 @@ CORS_ALLOW_HEADERS = [
     'x-device-id',
     'http_x_device_id',
 ]
+
+# Disable ALLOWED_HOSTS check
+ALLOWED_HOST_ENFORCEMENT = False
 
 # HTTPS/SSL
 SECURE_SSL_REDIRECT = True
