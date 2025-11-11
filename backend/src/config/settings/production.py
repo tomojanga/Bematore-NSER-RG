@@ -89,11 +89,16 @@ DATABASE_ROUTERS = []
 REDIS_URL = env('REDIS_URL', default=None)
 
 if REDIS_URL:
+    # Auto-switch cache to DB 1 if broker is on DB 0
+    cache_url = env('REDIS_CACHE_URL', default=None)
+    if not cache_url:
+        cache_url = REDIS_URL.replace('/0', '/1') if '/0' in REDIS_URL else REDIS_URL + '/1'
+    
     # Redis cache configuration (recommended for production)
     CACHES = {
         'default': {
             'BACKEND': 'django_redis.cache.RedisCache',
-            'LOCATION': env('REDIS_CACHE_URL', default=REDIS_URL.replace('/0', '/1')),  # Use DB 1 for cache
+            'LOCATION': cache_url,
             'OPTIONS': {
                 'CLIENT_CLASS': 'django_redis.client.DefaultClient',
                 'PARSER_CLASS': 'redis.connection.HiredisParser',
