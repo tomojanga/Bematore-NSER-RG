@@ -13,18 +13,18 @@ from .models import BSTToken, BSTAuditLog
 class BSTTokenAdmin(admin.ModelAdmin):
     """BST token management for cross-operator player tracking"""
     list_display = (
-        'token_value_display', 'user_phone', 'status_badge',
+        'token_display', 'user_phone', 'status_badge',
         'created_at', 'is_active_display'
     )
     list_filter = ('status', 'is_active', 'created_at')
-    search_fields = ('token_value', 'user__phone_number', 'user__email')
+    search_fields = ('token', 'user__phone_number', 'user__email')
     readonly_fields = (
         'created_at', 'updated_at', 'token_summary'
     )
     
     fieldsets = (
         (_('Token'), {
-            'fields': ('token_value', 'user')
+            'fields': ('token', 'user')
         }),
         (_('Status'), {
             'fields': ('status', 'is_active')
@@ -43,9 +43,9 @@ class BSTTokenAdmin(admin.ModelAdmin):
         }),
     )
     
-    def token_value_display(self, obj):
-        return format_html('<code>...{}</code>', obj.token_value[-8:])
-    token_value_display.short_description = _('Token')
+    def token_display(self, obj):
+        return format_html('<code>...{}</code>', obj.token[-8:])
+    token_display.short_description = _('Token')
     
     def user_phone(self, obj):
         return obj.user.phone_number if obj.user else 'N/A'

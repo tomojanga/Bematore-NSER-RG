@@ -34,7 +34,7 @@ class AssessmentSessionAdmin(admin.ModelAdmin):
     )
     search_fields = (
         'session_reference', 'user__phone_number', 'user__email',
-        'bst_token__token_value'
+        'bst_token__token'
     )
     readonly_fields = (
         'id', 'session_reference', 'started_at', 'completed_at',
@@ -298,7 +298,7 @@ class RiskScoreAdmin(admin.ModelAdmin):
     )
     search_fields = (
         'user__phone_number', 'user__email', 'score_source',
-        'bst_token__token_value'
+        'bst_token__token'
     )
     readonly_fields = ('score_date',)
     
