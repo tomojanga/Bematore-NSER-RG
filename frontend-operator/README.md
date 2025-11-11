@@ -96,7 +96,7 @@ See `/docs/integration` for complete API integration guide.
 
 ## 📞 Support
 
-Contact GRAK support for operator onboarding assistance.
+Contact NSER support for operator onboarding assistance.
 
 ## License
 

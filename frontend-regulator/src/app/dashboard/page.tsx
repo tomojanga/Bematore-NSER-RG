@@ -85,8 +85,8 @@ export default function DashboardPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">GRAK Dashboard</h1>
-          <p className="text-gray-600 mt-1">National Self-Exclusion Register & Responsible Gambling System</p>
+        <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+        <p className="text-gray-600 mt-1">National Self-Exclusion Register & Responsible Gambling System</p>
         </div>
         <div className="text-right">
           <div className="text-sm text-gray-500">Last updated: {new Date().toLocaleTimeString()}</div>
@@ -245,7 +245,7 @@ export default function DashboardPage() {
             {dashboard?.geographic_distribution && Object.entries(dashboard.geographic_distribution)
               .slice(0, 5)
               .map(([county, count]: [string, any]) => {
-                const maxCount = Math.max(...Object.values(dashboard.geographic_distribution))
+                const maxCount = Math.max(...Object.values(dashboard.geographic_distribution).map(v => Number(v)))
                 return (
                   <div key={county} className="flex items-center justify-between">
                     <span className="text-sm text-gray-600">{county}</span>

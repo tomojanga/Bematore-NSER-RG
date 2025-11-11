@@ -27,7 +27,7 @@ export default function Header() {
             </div>
             <div>
               <div className="text-xl font-bold text-gray-900">NSER</div>
-              <div className="text-xs text-gray-600">GRAK Kenya</div>
+              <div className="text-xs text-gray-600">National Self-Exclusion Register</div>
             </div>
           </Link>
 

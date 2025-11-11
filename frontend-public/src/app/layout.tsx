@@ -7,8 +7,8 @@ import Footer from '@/components/Footer'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'NSER - National Self-Exclusion Register | GRAK Kenya',
-  description: 'Official National Self-Exclusion Register for responsible gambling in Kenya. Managed by the Gambling Regulatory Authority of Kenya (GRAK).',
+  title: 'NSER - National Self-Exclusion Register',
+  description: 'Official National Self-Exclusion Register for responsible gambling. Protect yourself and your loved ones.',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

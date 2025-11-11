@@ -322,7 +322,7 @@ export default function SettingsPage() {
             <CardContent className="space-y-4">
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <p className="text-sm text-blue-900">
-                  Your data is protected under the Kenya Data Protection Act 2019. We only share necessary information with licensed gambling operators for self-exclusion enforcement.
+                  Your data is protected under applicable data protection laws. We only share necessary information with licensed gambling operators for self-exclusion enforcement.
                 </p>
               </div>
               
@@ -381,7 +381,7 @@ export default function SettingsPage() {
                 className="w-full"
                 onClick={() => {
                   if (confirm('Are you sure you want to delete your account? This action cannot be undone and you may not be able to register again.')) {
-                    toast.error('Account deletion requires contacting GRAK support')
+                    toast.error('Account deletion requires contacting NSER support')
                   }
                 }}
               >
@@ -389,7 +389,7 @@ export default function SettingsPage() {
               </Button>
               
               <p className="text-xs text-gray-500 text-center">
-                Account deletion requests are processed by GRAK within 30 days
+                Account deletion requests are processed within 30 days
               </p>
             </CardContent>
           </Card>

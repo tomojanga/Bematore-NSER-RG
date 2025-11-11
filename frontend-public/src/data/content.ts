@@ -9,15 +9,15 @@ export const portalLinks = {
 export const aboutData = {
   title: "About NSER",
   subtitle: "National Self-Exclusion Register",
-  mission: "To protect Kenyan citizens from gambling-related harm through a comprehensive, technology-driven self-exclusion system.",
+  mission: "To protect citizens from gambling-related harm through a comprehensive, technology-driven self-exclusion system.",
   sections: [
     {
       title: "What is NSER?",
-      content: "The National Self-Exclusion Register (NSER) is Kenya's official platform for responsible gambling. Managed by GRAK (Gambling Regulatory Authority of Kenya), it allows individuals to voluntarily exclude themselves from all licensed gambling operators nationwide."
+      content: "The National Self-Exclusion Register (NSER) is the official platform for responsible gambling. It allows individuals to voluntarily exclude themselves from all licensed gambling operators nationwide."
     },
     {
       title: "How It Works",
-      content: "When you register for self-exclusion, your details are securely stored and shared with all licensed gambling operators in Kenya. This prevents you from accessing gambling services across all platforms for your chosen period."
+      content: "When you register for self-exclusion, your details are securely stored and shared with all licensed gambling operators. This prevents you from accessing gambling services across all platforms for your chosen period."
     },
     {
       title: "Our Technology",
@@ -35,7 +35,7 @@ export const aboutData = {
 export const selfExcludeData = {
   title: "Self-Exclusion Information",
   subtitle: "Take control of your gambling habits",
-  intro: "Self-exclusion is a voluntary program that allows you to restrict your access to gambling services. Once registered, you will be blocked from all licensed gambling operators in Kenya.",
+  intro: "Self-exclusion is a voluntary program that allows you to restrict your access to gambling services. Once registered, you will be blocked from all licensed gambling operators.",
   periods: [
     { duration: "6 Months", description: "Short-term break from gambling", value: "6_months" },
     { duration: "1 Year", description: "Medium-term exclusion period", value: "1_year" },
@@ -61,9 +61,9 @@ export const resourcesData = {
   title: "Support Resources",
   subtitle: "Help is available",
   helplines: [
-    { name: "GRAK Helpline", phone: "0800-123-456", hours: "24/7", description: "Gambling support and information" },
-    { name: "Mental Health Kenya", phone: "0800-789-012", hours: "Mon-Fri 8AM-6PM", description: "Mental health counseling" },
-    { name: "Gamblers Anonymous Kenya", phone: "0722-345-678", hours: "Daily 9AM-9PM", description: "Peer support groups" }
+    { name: "NSER Helpline", phone: "0800-123-456", hours: "24/7", description: "Gambling support and information" },
+    { name: "Mental Health Support", phone: "0800-789-012", hours: "Mon-Fri 8AM-6PM", description: "Mental health counseling" },
+    { name: "Gamblers Support Group", phone: "0722-345-678", hours: "Daily 9AM-9PM", description: "Peer support groups" }
   ],
   counseling: [
     { name: "Nairobi Counseling Center", location: "Nairobi CBD", contact: "020-123-4567" },
@@ -91,11 +91,11 @@ export const faqData = {
       questions: [
         {
           q: "What is self-exclusion?",
-          a: "Self-exclusion is a voluntary program that allows you to ban yourself from all licensed gambling operators in Kenya for a chosen period."
+          a: "Self-exclusion is a voluntary program that allows you to ban yourself from all licensed gambling operators for a chosen period."
         },
         {
           q: "Is self-exclusion confidential?",
-          a: "Yes, your information is protected under Kenya's Data Protection Act 2019. Only authorized gambling operators receive your exclusion status."
+          a: "Yes, your information is protected by applicable data protection laws. Only authorized gambling operators receive your exclusion status."
         },
         {
           q: "How long does it take to activate?",
@@ -103,7 +103,7 @@ export const faqData = {
         },
         {
           q: "Is there a cost?",
-          a: "No, self-exclusion is completely free for all Kenyan citizens."
+          a: "No, self-exclusion is completely free for all citizens."
         }
       ]
     },
@@ -112,7 +112,7 @@ export const faqData = {
       questions: [
         {
           q: "What do I need to register?",
-          a: "You need a valid Kenyan phone number, National ID, and date of birth for verification."
+          a: "You need a valid phone number, government ID, and date of birth for verification."
         },
         {
           q: "Can I register for someone else?",
@@ -120,7 +120,7 @@ export const faqData = {
         },
         {
           q: "What if I don't have a smartphone?",
-          a: "You can register via USSD code *483# or visit any GRAK office for assistance."
+          a: "You can contact our helpline for assistance with registration or visit a local office."
         }
       ]
     },
@@ -150,7 +150,7 @@ export const faqData = {
         },
         {
           q: "What if an operator lets me gamble?",
-          a: "Report violations immediately to GRAK. Operators face penalties for non-compliance."
+          a: "Report violations immediately to us. Operators face penalties for non-compliance."
         },
         {
           q: "Is my data secure?",
@@ -163,27 +163,27 @@ export const faqData = {
 
 export const contactData = {
   title: "Contact Us",
-  subtitle: "Get in touch with GRAK",
+  subtitle: "Get in touch with NSER",
   offices: [
     {
-      name: "GRAK Headquarters",
-      address: "Anniversary Towers, 15th Floor\nUniversity Way, Nairobi",
+      name: "NSER Headquarters",
+      address: "National Self-Exclusion Register\nRegional Office",
       phone: "020-123-4567",
-      email: "info@grak.go.ke",
+      email: "info@nser.go.ke",
       hours: "Mon-Fri: 8:00 AM - 5:00 PM"
     },
     {
-      name: "Mombasa Regional Office",
-      address: "Nkrumah Road\nMombasa",
+      name: "Regional Office 1",
+      address: "Regional Office Location\nCity",
       phone: "041-234-5678",
-      email: "mombasa@grak.go.ke",
+      email: "region1@nser.go.ke",
       hours: "Mon-Fri: 8:00 AM - 5:00 PM"
     },
     {
-      name: "Kisumu Regional Office",
-      address: "Oginga Odinga Street\nKisumu",
+      name: "Regional Office 2",
+      address: "Regional Office Location\nCity",
       phone: "057-345-6789",
-      email: "kisumu@grak.go.ke",
+      email: "region2@nser.go.ke",
       hours: "Mon-Fri: 8:00 AM - 5:00 PM"
     }
   ],
@@ -193,14 +193,14 @@ export const contactData = {
     { type: "WhatsApp Support", contact: "+254-700-123-456" }
   ],
   socialMedia: [
-    { platform: "Twitter", handle: "@GRAKKenya", url: "#" },
-    { platform: "Facebook", handle: "GRAKKenya", url: "#" },
-    { platform: "LinkedIn", handle: "GRAK Kenya", url: "#" }
+    { platform: "Twitter", handle: "@NSER", url: "#" },
+    { platform: "Facebook", handle: "NSER", url: "#" },
+    { platform: "LinkedIn", handle: "National Self-Exclusion Register", url: "#" }
   ],
   departments: [
-    { name: "Licensing & Compliance", email: "licensing@grak.go.ke" },
-    { name: "Technical Support", email: "support@grak.go.ke" },
-    { name: "Media Inquiries", email: "media@grak.go.ke" },
-    { name: "Legal Affairs", email: "legal@grak.go.ke" }
+    { name: "Licensing & Compliance", email: "licensing@nser.go.ke" },
+    { name: "Technical Support", email: "support@nser.go.ke" },
+    { name: "Media Inquiries", email: "media@nser.go.ke" },
+    { name: "Legal Affairs", email: "legal@nser.go.ke" }
   ]
 }

@@ -1,5 +1,5 @@
 # NSER Citizen Portal
-**Self-Exclusion Registration Portal for Kenyan Citizens**
+**Self-Exclusion Registration Portal**
 
 ## 🌐 Deployment
 
