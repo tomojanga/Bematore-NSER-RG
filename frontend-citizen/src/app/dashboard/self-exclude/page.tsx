@@ -179,10 +179,10 @@ export default function SelfExcludePage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
               {EXCLUSION_DURATIONS.map((duration) => (
                 <button
-                  key={duration.days}
-                  onClick={() => setSelectedDuration(duration.days)}
+                  key={duration.value}
+                  onClick={() => setSelectedDuration(duration.value)}
                   className={`p-4 rounded-lg border-2 transition-all text-left ${
-                    selectedDuration === duration.days
+                    selectedDuration === duration.value
                       ? 'border-blue-500 bg-blue-50'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
