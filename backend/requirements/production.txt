@@ -7,8 +7,8 @@ gunicorn==23.0.0
 psycopg2-binary==2.9.10
 
 # Production Monitoring
-newrelic==9.4.0
-datadog==0.48.1
+newrelic==10.0.0
+datadog==0.52.1
 
 # Security
 django-defender==0.9.7
