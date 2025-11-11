@@ -7,7 +7,7 @@ graph TB
     subgraph Actors
         Citizen[👤 Citizen/Gambler]
         Operator[🎰 Gambling Operator]
-        GRAK_User[👨‍💼 GRAK Officer]
+        Regulator[👨‍💼 Regulator Officer]
         Admin[👨‍💻 System Admin]
         Counselor[👨‍⚕️ Counselor]
     end
@@ -49,7 +49,7 @@ graph TB
     end
     
     subgraph "Dashboard & Reporting Use Cases"
-        UC25[View GRAK Dashboard]
+        UC25[View Regulator Dashboard]
         UC26[View Operator Dashboard]
         UC27[Generate Compliance Report]
         UC28[View Real-time Analytics]
@@ -106,15 +106,15 @@ graph TB
     Operator --> UC35
     Operator --> UC36
     
-    GRAK_User --> UC2
-    GRAK_User --> UC3
-    GRAK_User --> UC5
-    GRAK_User --> UC25
-    GRAK_User --> UC27
-    GRAK_User --> UC28
-    GRAK_User --> UC29
-    GRAK_User --> UC30
-    GRAK_User --> UC16
+    Regulator --> UC2
+    Regulator --> UC3
+    Regulator --> UC5
+    Regulator --> UC25
+    Regulator --> UC27
+    Regulator --> UC28
+    Regulator --> UC29
+    Regulator --> UC30
+    Regulator --> UC16
     
     Admin --> UC40
     Admin --> UC41
@@ -294,11 +294,11 @@ sequenceDiagram
 
 ---
 
-### 3. GRAK Compliance Monitoring Flow
+### 3. Regulator Compliance Monitoring Flow
 
 ```mermaid
 graph TD
-    Start[GRAK Officer Login] --> Dashboard[Access GRAK Dashboard]
+    Start[Regulator Officer Login] --> Dashboard[Access Regulator Dashboard]
     
     Dashboard --> View1[View National Statistics]
     Dashboard --> View2[Monitor Operator Compliance]
@@ -432,17 +432,17 @@ sequenceDiagram
     participant API as Settlement API
     participant Ledger as Double-Entry Ledger
     participant Invoice as Invoice Engine
-    participant MPesa as M-Pesa B2B
+    participant Wallet as Payment Wallet
     participant Recon as Reconciliation Engine
-    participant GRAK as GRAK Dashboard
+    participant Regulator as Regulator Dashboard
     
-    Note over Operator,GRAK: Monthly Settlement Cycle
+    Note over Operator,Regulator: Monthly Settlement Cycle
     
     Operator->>API: API Usage (Lookups, Screenings)
     API->>Ledger: Record Transaction
     Ledger->>Ledger: Debit: Operator Account<br/>Credit: Revenue Account
     
-    Note over Operator,GRAK: End of Month
+    Note over Operator,Regulator: End of Month
     
     Invoice->>Ledger: Fetch Monthly Transactions
     Ledger->>Invoice: Transaction Summary
@@ -453,8 +453,8 @@ sequenceDiagram
     Invoice->>Operator: Email Invoice
     Invoice->>API: Store Invoice Record
     
-    Operator->>MPesa: Initiate B2B Payment
-    MPesa->>API: Webhook: Payment Received
+    Operator->>Wallet: Initiate B2B Payment
+    Wallet->>API: Webhook: Payment Received
     API->>Ledger: Record Payment
     Ledger->>Ledger: Debit: Bank Account<br/>Credit: Operator Account
     
@@ -469,13 +469,13 @@ sequenceDiagram
         Recon->>Admin: Alert: Manual Review Required
     end
     
-    Recon->>GRAK: Update Financial Dashboard
-    GRAK->>GRAK: Display Revenue Metrics
+    Recon->>Regulator: Update Financial Dashboard
+    Regulator->>Regulator: Display Revenue Metrics
     
-    Note over Operator,GRAK: Quarterly Tax Reporting
+    Note over Operator,Regulator: Quarterly Tax Reporting
     
     Invoice->>Invoice: Generate Tax Report
-    Invoice->>GRAK: Submit to KRA Portal
+    Invoice->>Regulator: Submit Tax Report
 ```
 
 ---
@@ -583,11 +583,11 @@ graph TB
 | **P0** | Validate BST Token | System | Real-time | Low |
 | **P1** | Complete Lie/Bet Assessment | Citizen | Weekly | Low |
 | **P1** | Receive Webhook Notifications | Operator | Real-time | Medium |
-| **P1** | View GRAK Dashboard | GRAK Officer | Daily | Medium |
+| **P1** | View Regulator Dashboard | Regulator Officer | Daily | Medium |
 | **P2** | Complete PGSI Assessment | Citizen | Monthly | Medium |
-| **P2** | Generate Compliance Report | GRAK Officer | Monthly | High |
+| **P2** | Generate Compliance Report | Regulator Officer | Monthly | High |
 | **P2** | Process Operator Payment | System | Monthly | High |
-| **P3** | Export Statistical Data | GRAK Officer | Quarterly | Medium |
+| **P3** | Export Statistical Data | Regulator Officer | Quarterly | Medium |
 | **P3** | Rotate Compromised Token | Admin | As needed | Medium |
 | **P3** | Handle Data Breach | Admin | Rare | High |
 
@@ -615,7 +615,7 @@ graph TD
     Data --> UC_Data5[Data Backup & Recovery]
     
     Compliance --> UC_Comp1[Audit Trail Logging]
-    Compliance --> UC_Comp2[DPA 2019 Compliance]
+    Compliance --> UC_Comp2[Data Protection Compliance]
     Compliance --> UC_Comp3[Data Retention Policy]
     Compliance --> UC_Comp4[Right to be Forgotten]
     Compliance --> UC_Comp5[Data Export Request]

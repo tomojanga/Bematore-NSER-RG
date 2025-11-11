@@ -7,10 +7,10 @@ graph TB
     subgraph External["EXTERNAL INTERFACES"]
         Citizens[Citizens]
         Operators[Operators]
-        GRAK[GRAK]
-        NACADA[NACADA]
-        Casinos[Land Casinos]
-        FRC[FRC]
+        Regulator[Regulator]
+        HarmPrevention[Harm Prevention Agencies]
+        Casinos[Licensed Operators]
+        FinancialReporting[Financial Reporting]
     end
     
     subgraph Gateway["API GATEWAY LAYER"]
@@ -45,10 +45,10 @@ graph TB
     
     Citizens --> API
     Operators --> API
-    GRAK --> API
-    NACADA --> API
+    Regulator --> API
+    HarmPrevention --> API
     Casinos --> API
-    FRC --> API
+    FinancialReporting --> API
     
     API --> NSER
     API --> BST
@@ -309,15 +309,15 @@ Content-Type: application/json
 
 **Dashboard Types**:
 
-#### A. GRAK Dashboard
+#### A. Regulator Dashboard
 - **Users**: Regulatory authority staff
 - **Features**:
-  - National statistics (exclusions, risk distribution)
-  - Operator compliance scorecard
-  - Real-time alerts and anomalies
-  - Policy impact analysis
-  - Geographic heat maps
-  - Trend analysis and forecasting
+- National statistics (exclusions, risk distribution)
+- Operator compliance scorecard
+- Real-time alerts and anomalies
+- Policy impact analysis
+- Geographic heat maps
+- Trend analysis and forecasting
 
 #### B. Operator Dashboard
 - **Users**: Licensed operators
@@ -344,7 +344,7 @@ Content-Type: application/json
 - `Report` - Generated reports
 
 **APIs Exposed**:
-- `GET /api/v1/dashboards/grak/overview` - GRAK overview
+- `GET /api/v1/dashboards/regulator/overview` - Regulator overview
 - `GET /api/v1/dashboards/operator/{id}` - Operator metrics
 - `GET /api/v1/dashboards/hq/financial` - Financial metrics
 - `WebSocket /ws/dashboards/realtime` - Real-time updates
@@ -355,7 +355,7 @@ Content-Type: application/json
 **Responsibility**: Automated financial reconciliation and invoicing
 
 **Components**:
-- M-Pesa B2B Integration
+- Payment Gateway B2B Integration
 - Double-Entry Ledger System
 - Automated Invoicing Engine
 - Reconciliation Automaton
@@ -364,7 +364,7 @@ Content-Type: application/json
 
 **Financial Flow**:
 ```
-Operator Account ΓåÆ Bematore Wallet ΓåÆ Auto-Reconciliation ΓåÆ GRAK Dashboard
+Operator Account ΓåÆ Platform Wallet ΓåÆ Auto-Reconciliation ΓåÆ Regulator Dashboard
                      Γåô
               [Transaction Log]
                      Γåô
@@ -413,9 +413,9 @@ Exclusion Propagation Engine
 [Operator 1] [Operator 2] ... [Operator N]
     Γåô
 Webhook Notifications
-    Γåô
-GRAK Dashboard Update
-    Γåô
+Γåô
+Regulator Dashboard Update
+Γåô
 SMS Confirmation to User
 ```
 
@@ -565,7 +565,7 @@ For Each User:
     "scope": ["nser:read", "screening:write"],
     "exp": 1730710800,
     "iat": 1730710000,
-    "iss": "nser-rg.grak.ke"
+    "iss": "nser.bematore.com"
   }
   ```
 - **MFA**: TOTP (Google Authenticator), SMS backup
@@ -647,18 +647,18 @@ For Each User:
 - **Testing**: Monthly DR drills
 
 ### High Availability
-- **Multi-Region**: Primary (Kenya), Secondary (South Africa)
+- **Multi-Region**: Primary and Secondary regions
 - **Database Replication**: Synchronous to standby
-- **Active-Passive**: Automatic failover with Route53
+- **Active-Passive**: Automatic failover with DNS routing
 
 ---
 
 ## Compliance & Audit
 
 ### Regulatory Compliance
-- **Data Protection Act 2019**: GDPR-equivalent for Kenya
-- **POCAMLA**: Anti-money laundering compliance
-- **Cybercrimes Act 2018**: Security controls
+- **Data Protection Standards**: GDPR-equivalent frameworks
+- **AML/CFT Compliance**: Anti-money laundering and counter-terrorism
+- **Cybersecurity Standards**: Information security controls
 - **ISO 27001**: Information security management
 - **SOC 2 Type II**: Service organization controls
 

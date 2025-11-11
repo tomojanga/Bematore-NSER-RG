@@ -1,4 +1,4 @@
-﻿# Data Flow Diagrams & Sequence Diagrams
+# Data Flow Diagrams & Sequence Diagrams
 
 ## 1. Complete User Self-Exclusion Registration Flow
 
@@ -12,7 +12,7 @@ sequenceDiagram
     participant NSER as NSER Core
     participant Queue as Message Queue
     participant Ops as Operators (All)
-    participant GRAK as GRAK Dashboard
+    participant Regulator as Regulator Dashboard
     participant SMS as SMS Gateway
     
     User->>Portal: Access self-exclusion form
@@ -45,9 +45,9 @@ sequenceDiagram
     Ops->>Ops: Update local blacklist
     Ops-->>Queue: Acknowledge receipt
     
-    Queue->>GRAK: Update dashboard
-    GRAK->>GRAK: Increment exclusion counter
-    GRAK->>GRAK: Update risk distribution
+    Queue->>Regulator: Update dashboard
+    Regulator->>Regulator: Increment exclusion counter
+    Regulator->>Regulator: Update risk distribution
     
     NSER->>SMS: Send confirmation SMS
     SMS-->>User: "Self-exclusion activated for 1 year"
@@ -174,8 +174,8 @@ sequenceDiagram
         Screen->>BST: Get BST tokens
         BST-->>Screen: Return BST list
         
-        Screen->>SMS: Send screening invitations (Swahili/English)
-        SMS-->>User: "Complete your quarterly assessment: https://nser.grak.ke/screen/abc123"
+        Screen->>SMS: Send screening invitations
+        SMS-->>User: "Complete your quarterly assessment: [assessment link]"
         
         Screen->>Email: Send email invitations
         Email-->>User: Assessment email with link
@@ -242,13 +242,13 @@ sequenceDiagram
     participant Ledger as Double-Entry Ledger
     participant Invoice as Invoice Service
     participant Recon as Reconciliation Engine
-    participant GRAK as GRAK Dashboard
+    participant Regulator as Regulator Dashboard
     participant Email as Email Service
     
     Note over Op: Monthly settlement cycle
     
     API->>API: Calculate operator charges
-    Note over API: Per screening fee + monthly license
+    Note over API: Usage-based fees + monthly license
     
     API->>Invoice: Generate invoice
     Invoice->>Ledger: Create ledger entries
@@ -257,10 +257,10 @@ sequenceDiagram
     Invoice->>Email: Send invoice to operator
     Email-->>Op: Invoice email with payment details
     
-    Op->>MPesa: Initiate B2B payment
-    Note over Op,MPesa: Amount: KES 150,000
-    MPesa->>Wallet: Transfer funds
-    MPesa-->>Op: Payment confirmation
+    Op->>Wallet: Initiate B2B payment
+    Note over Op,Wallet: Amount: [Currency specific]
+    Wallet->>Wallet: Transfer funds
+    Wallet-->>Op: Payment confirmation
     
     MPesa->>API: Payment callback (webhook)
     API->>API: Validate callback signature
@@ -279,9 +279,9 @@ sequenceDiagram
         Recon->>Email: Alert finance team
     end
     
-    Recon->>GRAK: Update settlement dashboard
-    GRAK->>GRAK: Display payment status
-    Note over GRAK: Real-time financial overview
+    Recon->>Regulator: Update settlement dashboard
+    Regulator->>Regulator: Display payment status
+    Note over Regulator: Real-time financial overview
 ```
 
 ---
@@ -488,9 +488,14 @@ total_time = ~8.5 minutes
 After max retries:
 - Log failure to database
 - Alert compliance team
-- Display in GRAK dashboard (operator non-compliance)
+- Display in Regulator dashboard (operator non-compliance)
 - Escalate to manual intervention
-```
+
+**Propagation Status Tracking**:
+- Real-time webhook delivery status in operator dashboard
+- Audit trail of all failed propagations
+- Manual retry capability for compliance team
+- Notifications to operator support for troubleshooting
 
 **Propagation Metrics**:
 - Target: <5 seconds to all operators
@@ -552,7 +557,7 @@ sequenceDiagram
 
 ```mermaid
 graph TD
-    A[Operator Applies] --> B[GRAK Reviews Application]
+    A[Operator Applies] --> B[Regulator Reviews Application]
     B --> C{Approved?}
     
     C -->|No| D[Rejection Notice]
@@ -587,7 +592,7 @@ graph TD
     
     U --> V{Resolved?}
     V -->|Yes| R
-    V -->|No| W[Suspend License]
+    V -->|No| W[Revoke License]
     
     style A fill:#e3f2fd
     style M fill:#e8f5e9
@@ -668,7 +673,7 @@ graph TD
     S -->|Yes| T[Notify Data Protection Commissioner]
     S -->|No| U[Internal Report Only]
     
-    T --> V[User Notification within 72hrs]
+    T --> V[User Notification Within 72 Hours]
     V --> W[Public Disclosure if Required]
     
     style A fill:#ffebee
