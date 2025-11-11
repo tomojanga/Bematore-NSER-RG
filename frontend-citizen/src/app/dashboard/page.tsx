@@ -204,22 +204,48 @@ export default function DashboardPage() {
                         <div className="flex items-start gap-4">
                             <AlertCircle className="h-6 w-6 text-red-600 flex-shrink-0 mt-0.5" />
                             <div className="flex-1">
-                                <h3 className="font-bold text-red-900 mb-2">Self-Exclusion Active</h3>
-                                <p className="text-red-800 mb-4">
-                                    You currently have an active self-exclusion. This means you are excluded from all licensed gambling operators during this period.
+                                <h3 className="font-bold text-red-900 mb-2">⚠️ Self-Exclusion Active</h3>
+                                <p className="text-red-800 mb-3 text-sm">
+                                    You currently have an active self-exclusion. You are excluded from all licensed gambling operators during this period.
                                 </p>
-                                <div className="flex gap-2">
+                                <div className="bg-white rounded p-3 mb-4 border border-red-200">
+                                    <div className="grid grid-cols-2 gap-4 text-sm">
+                                        <div>
+                                            <span className="text-red-700 font-medium">Start Date:</span>
+                                            <p className="text-red-900">{new Date(activeExclusion.startDate).toLocaleDateString()}</p>
+                                        </div>
+                                        <div>
+                                            <span className="text-red-700 font-medium">End Date:</span>
+                                            <p className="text-red-900">{new Date(activeExclusion.endDate).toLocaleDateString()}</p>
+                                        </div>
+                                        <div>
+                                            <span className="text-red-700 font-medium">Days Remaining:</span>
+                                            <p className="text-red-900 font-bold">{activeExclusion.daysRemaining} days</p>
+                                        </div>
+                                        <div>
+                                            <span className="text-red-700 font-medium">Duration:</span>
+                                            <p className="text-red-900">{activeExclusion.duration} days</p>
+                                        </div>
+                                    </div>
+                                    {activeExclusion.reason && (
+                                        <div className="mt-3 pt-3 border-t border-red-200">
+                                            <span className="text-red-700 font-medium text-sm">Reason:</span>
+                                            <p className="text-red-900 text-sm mt-1">{activeExclusion.reason}</p>
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="flex gap-2 flex-wrap">
                                     <Link
                                         href="/dashboard/help"
-                                        className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
+                                        className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium text-sm"
                                     >
                                         Get Support
                                     </Link>
                                     <Link
-                                        href="/dashboard/self-exclude"
-                                        className="px-4 py-2 bg-white text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors font-medium"
+                                        href="/dashboard/history"
+                                        className="px-4 py-2 bg-white text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors font-medium text-sm"
                                     >
-                                        Manage Exclusion
+                                        View Details
                                     </Link>
                                 </div>
                             </div>
@@ -276,18 +302,33 @@ export default function DashboardPage() {
                         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                             <h2 className="text-xl font-bold text-gray-900 mb-6">Quick Actions</h2>
                             <div className="grid grid-cols-2 gap-4">
-                                <Link
-                                    href="/dashboard/self-exclude"
-                                    className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-all group"
-                                >
-                                    <div className="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors">
-                                        <Shield className="h-5 w-5 text-blue-600" />
+                                {activeExclusion ? (
+                                    <div
+                                        className="flex items-center gap-4 p-4 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed opacity-50"
+                                        title="Cannot register new exclusion while one is active"
+                                    >
+                                        <div className="p-3 bg-gray-200 rounded-lg">
+                                            <Shield className="h-5 w-5 text-gray-400" />
+                                        </div>
+                                        <div>
+                                            <p className="font-medium text-gray-600">Self-Exclude</p>
+                                            <p className="text-xs text-gray-400">Already excluded</p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <p className="font-medium text-gray-900">Self-Exclude</p>
-                                        <p className="text-xs text-gray-500">Register new exclusion</p>
-                                    </div>
-                                </Link>
+                                ) : (
+                                    <Link
+                                        href="/dashboard/self-exclude"
+                                        className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-all group"
+                                    >
+                                        <div className="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors">
+                                            <Shield className="h-5 w-5 text-blue-600" />
+                                        </div>
+                                        <div>
+                                            <p className="font-medium text-gray-900">Self-Exclude</p>
+                                            <p className="text-xs text-gray-500">Register new exclusion</p>
+                                        </div>
+                                    </Link>
+                                )}
 
                                 <Link
                                     href="/dashboard/assessments"

@@ -1,11 +1,12 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Shield, CheckCircle, AlertCircle, Loader2, ChevronRight } from 'lucide-react'
+import { Shield, CheckCircle, AlertCircle, Loader2, ChevronRight, XCircle } from 'lucide-react'
 import { api } from '@/lib/api-client'
 import { useToast } from '@/components/ui/use-toast'
 import { DashboardHeader } from '@/components/Dashboard/DashboardHeader'
+import { useCanSelfExclude } from '@/hooks/useExclusions'
 
 interface ExclusionDuration {
     label: string
@@ -27,7 +28,7 @@ const EXCLUSION_DURATIONS: ExclusionOption[] = [
     { label: 'Permanent', value: 'permanent', description: 'Permanent self-exclusion' }
 ]
 
-type Step = 'warning' | 'details' | 'confirmation' | 'success'
+type Step = 'warning' | 'details' | 'confirmation' | 'success' | 'blocked'
 
 export default function SelfExcludePage() {
     const router = useRouter()
@@ -39,6 +40,17 @@ export default function SelfExcludePage() {
     const [termsAcknowledged, setTermsAcknowledged] = useState(false)
     const [consequencesUnderstood, setConsequencesUnderstood] = useState(false)
     const [exclusionId, setExclusionId] = useState<string>('')
+    const [isCheckingStatus, setIsCheckingStatus] = useState(true)
+
+    const { canSelfExclude, reason: blockedReason, activeExclusion } = useCanSelfExclude()
+
+    // Check if user can self-exclude on mount
+    useEffect(() => {
+        setIsCheckingStatus(false)
+        if (!canSelfExclude) {
+            setCurrentStep('blocked')
+        }
+    }, [canSelfExclude])
 
     const handleStartExclusion = async () => {
         if (!selectedDuration) {
@@ -71,11 +83,11 @@ export default function SelfExcludePage() {
         setIsLoading(true)
         try {
             const { data } = await api.post('/nser/register/', {
-            exclusion_period: selectedDuration,
-            reason: reason.trim(),
-            motivation_type: 'other',
-            terms_acknowledged: termsAcknowledged,
-            consequences_understood: consequencesUnderstood
+                exclusion_period: selectedDuration,
+                reason: reason.trim(),
+                motivation_type: 'other',
+                terms_acknowledged: termsAcknowledged,
+                consequences_understood: consequencesUnderstood
             })
 
             if (data.success && data.data) {
@@ -129,6 +141,97 @@ export default function SelfExcludePage() {
         } finally {
             setIsLoading(false)
         }
+    }
+
+    // Show blocked state if user already has active exclusion
+    if (currentStep === 'blocked') {
+        const exclusionEnd = activeExclusion?.end_date ? new Date(activeExclusion.end_date) : null
+        const daysRemaining = exclusionEnd
+            ? Math.ceil((exclusionEnd.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+            : 0
+
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50">
+                <DashboardHeader title="Self-Exclusion" subtitle="Registration not available" />
+
+                <main className="max-w-2xl mx-auto px-6 py-8">
+                    <div className="bg-white rounded-xl shadow-lg border-2 border-orange-200 p-8">
+                        <div className="flex items-center gap-4 mb-6">
+                            <div className="p-3 bg-orange-100 rounded-full">
+                                <XCircle className="h-8 w-8 text-orange-600" />
+                            </div>
+                            <h1 className="text-2xl font-bold text-gray-900">Cannot Register New Exclusion</h1>
+                        </div>
+
+                        <div className="bg-orange-50 border-l-4 border-orange-600 p-4 rounded mb-8">
+                            <h3 className="font-bold text-orange-900 mb-2">Active Exclusion Found</h3>
+                            <p className="text-orange-800 text-sm">
+                                You already have an active self-exclusion. You cannot register a new exclusion while one is already active.
+                            </p>
+                        </div>
+
+                        {activeExclusion && (
+                            <div className="bg-gray-50 rounded-lg p-6 mb-8 border border-gray-200">
+                                <h3 className="font-bold text-gray-900 mb-4">Your Active Exclusion Details</h3>
+                                <div className="space-y-3">
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-gray-600">Status</span>
+                                        <span className="font-medium text-orange-600">Active</span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-gray-600">Start Date</span>
+                                        <span className="font-medium text-gray-900">
+                                            {new Date(activeExclusion.start_date).toLocaleDateString()}
+                                        </span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-gray-600">End Date</span>
+                                        <span className="font-medium text-gray-900">
+                                            {new Date(activeExclusion.end_date).toLocaleDateString()}
+                                        </span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-gray-600">Days Remaining</span>
+                                        <span className="font-medium text-gray-900">{daysRemaining} days</span>
+                                    </div>
+                                    {activeExclusion.reason && (
+                                        <div className="pt-2 border-t border-gray-200">
+                                            <span className="text-gray-600 text-sm block mb-1">Reason</span>
+                                            <p className="text-gray-900 text-sm">{activeExclusion.reason}</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg mb-8">
+                            <h3 className="font-bold text-blue-900 mb-2">What You Can Do</h3>
+                            <ul className="text-sm text-blue-800 space-y-2">
+                                <li>✓ View your exclusion details in the History page</li>
+                                <li>✓ Contact support if you need to terminate early (in exceptional cases)</li>
+                                <li>✓ Once your exclusion expires, you can register a new one if needed</li>
+                                <li>✓ Get support resources at any time</li>
+                            </ul>
+                        </div>
+
+                        <div className="flex gap-4">
+                            <button
+                                onClick={() => router.push('/dashboard')}
+                                className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                            >
+                                Back to Dashboard
+                            </button>
+                            <button
+                                onClick={() => router.push('/dashboard/history')}
+                                className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+                            >
+                                View Exclusion History
+                            </button>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        )
     }
 
     if (currentStep === 'warning') {
@@ -220,8 +323,8 @@ export default function SelfExcludePage() {
                                     key={duration.value}
                                     onClick={() => setSelectedDuration(duration.value)}
                                     className={`p-4 rounded-lg border-2 transition-all text-left ${selectedDuration === duration.value
-                                            ? 'border-blue-500 bg-blue-50'
-                                            : 'border-gray-200 hover:border-gray-300'
+                                        ? 'border-blue-500 bg-blue-50'
+                                        : 'border-gray-200 hover:border-gray-300'
                                         }`}
                                 >
                                     <h3 className="font-bold text-gray-900 mb-1">{duration.label}</h3>
