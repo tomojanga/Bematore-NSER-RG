@@ -237,28 +237,41 @@ export default function Sidebar() {
                 </div>
             )}
 
+            {/* User Info Footer */}
+            <div className="p-4 border-t border-gray-200 bg-gray-50">
+            <div className="mb-4">
+            <p className="text-xs font-semibold text-gray-700 mb-1">Logged In As</p>
+            <p className="text-sm font-medium text-gray-900 truncate">
+            {user?.first_name && user?.last_name 
+                    ? `${user.first_name} ${user.last_name}` 
+                        : 'User'}
+            </p>
+            <p className="text-xs text-gray-600 truncate">{user?.phone_number}</p>
+            </div>
+            </div>
+
             {/* Role-specific footer */}
             <div className="p-4 border-t border-gray-200">
-                {user?.role?.includes('citizen') ? (
-                    <div className="bg-purple-50 rounded-lg p-3">
-                        <p className="text-xs font-semibold text-purple-900 mb-1">24/7 Support</p>
-                        <p className="text-xs text-purple-700">Emergency: 0800-GAMBLE</p>
-                    </div>
-                ) : user?.role?.includes('operator') ? (
-                    <div className="bg-blue-50 rounded-lg p-3">
-                        <p className="text-xs font-semibold text-blue-900 mb-1">API Support</p>
-                        <p className="text-xs text-blue-700">Integration Help</p>
-                    </div>
-                ) : (
-                    <div className="bg-green-50 rounded-lg p-3">
-                        <p className="text-xs font-semibold text-green-900 mb-1">System Status</p>
-                        <div className="flex items-center gap-2">
-                            <div className="h-2 w-2 bg-green-500 rounded-full"></div>
-                            <p className="text-xs text-green-700">All Systems Operational</p>
-                        </div>
-                    </div>
-                )}
+            {user?.role?.includes('citizen') ? (
+            <div className="bg-purple-50 rounded-lg p-3">
+            <p className="text-xs font-semibold text-purple-900 mb-1">24/7 Support</p>
+            <p className="text-xs text-purple-700">Emergency: 0800-GAMBLE</p>
             </div>
+            ) : user?.role?.includes('operator') ? (
+                    <div className="bg-blue-50 rounded-lg p-3">
+                         <p className="text-xs font-semibold text-blue-900 mb-1">API Support</p>
+                         <p className="text-xs text-blue-700">Integration Help</p>
+                     </div>
+                 ) : (
+                     <div className="bg-green-50 rounded-lg p-3">
+                         <p className="text-xs font-semibold text-green-900 mb-1">System Status</p>
+                         <div className="flex items-center gap-2">
+                             <div className="h-2 w-2 bg-green-500 rounded-full"></div>
+                             <p className="text-xs text-green-700">All Systems Operational</p>
+                         </div>
+                     </div>
+                 )}
+             </div>
         </div>
     )
 }

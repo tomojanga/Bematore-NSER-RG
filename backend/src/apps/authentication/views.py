@@ -451,13 +451,11 @@ class Verify2FAView(TimingMixin, SuccessResponseMixin, APIView):
         serializer = Verify2FASerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         
-        twofa = TwoFactorAuth.objects.filter(
-            user=request.user,
-            is_enabled=True
-        ).first()
+        # Check for existing 2FA (enabled or in setup process)
+        twofa = TwoFactorAuth.objects.filter(user=request.user).first()
         
         if not twofa:
-            return self.error_response(message='2FA not enabled')
+            return self.error_response(message='2FA not set up')
         
         code = serializer.validated_data['verification_code']
         
@@ -470,6 +468,24 @@ class Verify2FAView(TimingMixin, SuccessResponseMixin, APIView):
                     message='Invalid verification code',
                     status_code=status.HTTP_400_BAD_REQUEST
                 )
+        elif twofa.method in ['sms', 'email']:
+            # Verify against stored code in cache/session
+            from django.core.cache import cache
+            stored_code = cache.get(f'2fa_code_{request.user.id}')
+            
+            if not stored_code or stored_code != code:
+                return self.error_response(
+                    message='Invalid or expired verification code',
+                    status_code=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Clear the stored code
+            cache.delete(f'2fa_code_{request.user.id}')
+        
+        # Enable 2FA if not already enabled
+        if not twofa.is_enabled:
+            twofa.is_enabled = True
+            twofa.save()
         
         return self.success_response(
             data={'verified': True},

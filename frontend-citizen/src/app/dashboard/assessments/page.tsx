@@ -58,11 +58,19 @@ const ASSESSMENT_TYPES: { type: AssessmentType; name: string; duration: string; 
 ]
 
 const RISK_COLORS = {
+  none: { bg: 'bg-green-100', text: 'text-green-900', badge: 'bg-green-50' },
   low: { bg: 'bg-green-100', text: 'text-green-900', badge: 'bg-green-50' },
+  mild: { bg: 'bg-yellow-100', text: 'text-yellow-900', badge: 'bg-yellow-50' },
+  moderate: { bg: 'bg-yellow-100', text: 'text-yellow-900', badge: 'bg-yellow-50' },
   medium: { bg: 'bg-yellow-100', text: 'text-yellow-900', badge: 'bg-yellow-50' },
-  high: { bg: 'bg-red-100', text: 'text-red-900', badge: 'bg-red-50' },
-  severe: { bg: 'bg-red-200', text: 'text-red-900', badge: 'bg-red-50' }
-}
+  high: { bg: 'bg-orange-100', text: 'text-orange-900', badge: 'bg-orange-50' },
+  severe: { bg: 'bg-red-200', text: 'text-red-900', badge: 'bg-red-50' },
+  critical: { bg: 'bg-red-200', text: 'text-red-900', badge: 'bg-red-50' },
+  blacklisted: { bg: 'bg-purple-200', text: 'text-purple-900', badge: 'bg-purple-50' }
+} as Record<string, { bg: string; text: string; badge: string }>
+
+// Fallback color for unknown risk levels
+const DEFAULT_RISK_COLOR = { bg: 'bg-gray-100', text: 'text-gray-900', badge: 'bg-gray-50' }
 
 export default function AssessmentsPage() {
   const { toast } = useToast()
@@ -73,9 +81,16 @@ export default function AssessmentsPage() {
   useEffect(() => {
     const fetchAssessments = async () => {
       try {
-        const { data } = await api.get('/screening/assessments/')
-        if (data.success && data.data?.items) {
-          setAssessments(data.data.items)
+        const { data } = await api.get('/screening/my-assessments/')
+        if (data.results) {
+          setAssessments(data.results.map((item: any) => ({
+            id: item.id,
+            type: item.assessment_type.toUpperCase(),
+            score: item.score,
+            riskLevel: item.risk_level,
+            date: item.created_at,
+            recommendations: item.recommendations || []
+          })))
         }
       } catch (error) {
         console.error('Failed to fetch assessments:', error)
@@ -97,9 +112,20 @@ export default function AssessmentsPage() {
   const handleStartAssessment = async (type: AssessmentType) => {
     setIsLoading(true)
     try {
-      const { data } = await api.get(`/screening/questions/${type}/`)
-      if (data.success && data.data?.items) {
-        setQuestions(data.data.items)
+      const assessmentTypeMap: Record<AssessmentType, string> = {
+        'LIEBET': 'liebet',
+        'PGSI': 'pgsi',
+        'DSM5': 'dsm5'
+      }
+      const { data } = await api.get(`/screening/questions/type/${assessmentTypeMap[type]}/`)
+      if (data.results) {
+        setQuestions(data.results.map((item: any) => ({
+          id: item.id,
+          text: item.text,
+          type: item.question_type === 'multiple_choice' ? 'multiple_choice' : 'scale',
+          options: item.options,
+          scale: item.scale ? { min: item.scale.min, max: item.scale.max } : undefined
+        })))
         setStartedAssessment(type)
         setCurrentQuestionIndex(0)
         setAnswers({})
@@ -138,12 +164,12 @@ export default function AssessmentsPage() {
 
     setIsLoading(true)
     try {
-      const { data } = await api.post('/screening/calculate-risk/', {
-        assessment_type: startedAssessment,
+      const { data } = await api.post('/screening/risk/calculate/', {
+        assessment_type: startedAssessment.toLowerCase(),
         responses: answers
       })
 
-      if (data.success && data.data) {
+      if (data.data) {
         const newResult = {
           id: data.data.id || Date.now().toString(),
           type: startedAssessment,
@@ -283,7 +309,7 @@ export default function AssessmentsPage() {
 
   // Results
   if (showResults && results) {
-    const riskColor = RISK_COLORS[results.riskLevel]
+    const riskColor = RISK_COLORS[results.riskLevel] || DEFAULT_RISK_COLOR
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50">
@@ -401,7 +427,7 @@ export default function AssessmentsPage() {
             icon={Brain}
             label="Latest Risk Level"
             value={assessments[0]?.riskLevel?.toUpperCase() || 'N/A'}
-            color={assessments[0]?.riskLevel === 'high' || assessments[0]?.riskLevel === 'severe' ? 'red' : 'green'}
+            color={['high', 'severe', 'critical', 'blacklisted'].includes(assessments[0]?.riskLevel) ? 'red' : 'green'}
             description="Current risk profile"
           />
           <StatsCard
@@ -455,7 +481,7 @@ export default function AssessmentsPage() {
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Assessment History</h2>
             <div className="space-y-4">
               {assessments.map((assessment) => {
-                const riskColor = RISK_COLORS[assessment.riskLevel]
+                const riskColor = RISK_COLORS[assessment.riskLevel] || DEFAULT_RISK_COLOR
                 return (
                   <div key={assessment.id} className={`${riskColor.badge} border-2 border-current border-opacity-20 p-6 rounded-lg flex items-start justify-between`}>
                     <div>
