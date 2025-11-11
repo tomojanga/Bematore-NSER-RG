@@ -33,6 +33,8 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     'api-bematore.onrender.com',
+    'www.api-bematore.onrender.com',
+    'https://api-bematore.onrender.com',
     'bematore.com',
     'www.bematore.com',
     'api.bematore.com',
