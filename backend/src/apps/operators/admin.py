@@ -93,7 +93,7 @@ class OperatorAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
         (_('Location'), {
-            'fields': ('country', 'city', 'latitude', 'longitude'),
+            'fields': ('city', 'latitude', 'longitude'),
             'classes': ('collapse',)
         }),
         (_('Summaries'), {
