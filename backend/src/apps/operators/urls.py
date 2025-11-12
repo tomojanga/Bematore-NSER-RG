@@ -34,6 +34,7 @@ urlpatterns = [
     path('licenses/expiring/', views.ExpiringLicensesView.as_view(), name='expiring_licenses'),
     
     # API Key Management
+    path('my-api-keys/', views.OperatorAPIKeysView.as_view(), name='my_api_keys'),
     path('<uuid:pk>/api-keys/generate/', views.GenerateAPIKeyView.as_view(), name='generate_api_key'),
     path('api-keys/<uuid:key_id>/rotate/', views.RotateAPIKeyView.as_view(), name='rotate_api_key'),
     path('api-keys/<uuid:key_id>/revoke/', views.RevokeAPIKeyView.as_view(), name='revoke_api_key'),
