@@ -338,16 +338,30 @@ class TestWebhookView(TimingMixin, SuccessResponseMixin, APIView):
         serializer = TestWebhookSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         
-        webhook_url = serializer.validated_data['webhook_url']
+        webhook_url = serializer.validated_data.get('webhook_url')
         
-        # Send test webhook
-        from .tasks import test_webhook
-        task = test_webhook.delay(webhook_url)
+        if not webhook_url:
+            return Response(
+                {'error': 'webhook_url is required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         
-        return self.success_response(
-            data={'task_id': task.id},
-            message='Webhook test initiated'
-        )
+        try:
+            # Send test webhook
+            from .tasks import test_webhook
+            task = test_webhook.delay(webhook_url)
+            
+            return self.success_response(
+                data={'task_id': task.id if task else None},
+                message='Webhook test initiated'
+            )
+        except Exception as e:
+            import logging
+            logging.error(f'Failed to initiate webhook test: {str(e)}')
+            return Response(
+                {'error': 'Failed to initiate webhook test'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class ComplianceReportViewSet(TimingMixin, viewsets.ReadOnlyModelViewSet):
@@ -749,16 +763,37 @@ class TestIntegrationView(TimingMixin, SuccessResponseMixin, APIView):
     permission_classes = [IsAuthenticated]
     
     def post(self, request, pk):
-        operator = Operator.objects.get(pk=pk)
+        try:
+            operator = Operator.objects.get(pk=pk)
+        except Operator.DoesNotExist:
+            return Response(
+                {'error': 'Operator not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
         
-        # Test integration (async)
-        from .tasks import test_operator_integration
-        task = test_operator_integration.delay(str(operator.id))
+        # Verify operator has integration config
+        if not hasattr(operator, 'integration_config') or not operator.integration_config:
+            return Response(
+                {'error': 'Operator has no integration configuration'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         
-        return self.success_response(
-            data={'task_id': task.id},
-            message='Integration test started'
-        )
+        try:
+            # Test integration (async)
+            from .tasks import test_operator_integration
+            task = test_operator_integration.delay(str(operator.id))
+            
+            return self.success_response(
+                data={'task_id': task.id if task else None},
+                message='Integration test started'
+            )
+        except Exception as e:
+            import logging
+            logging.error(f'Failed to initiate integration test: {str(e)}')
+            return Response(
+                {'error': 'Failed to initiate integration test'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class ConfigureWebhooksView(TimingMixin, SuccessResponseMixin, APIView):
@@ -767,14 +802,38 @@ class ConfigureWebhooksView(TimingMixin, SuccessResponseMixin, APIView):
     
     @transaction.atomic
     def post(self, request, pk):
-        operator = Operator.objects.get(pk=pk)
-        config = operator.integration_config
+        try:
+            operator = Operator.objects.get(pk=pk)
+        except Operator.DoesNotExist:
+            return Response(
+                {'error': 'Operator not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
         
-        config.webhook_url = request.data.get('webhook_url')
-        config.webhook_events = request.data.get('webhook_events', [])
-        config.save()
+        # Get integration config, create if missing
+        config = getattr(operator, 'integration_config', None)
+        if not config:
+            return Response(
+                {'error': 'No integration configuration found for operator'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         
-        return self.success_response(message='Webhooks configured')
+        try:
+            webhook_url = request.data.get('webhook_url')
+            webhook_events = request.data.get('webhook_events', [])
+            
+            config.webhook_url = webhook_url or config.webhook_url
+            config.webhook_events = webhook_events if webhook_events else (config.webhook_events or [])
+            config.save()
+            
+            return self.success_response(message='Webhooks configured')
+        except Exception as e:
+            import logging
+            logging.error(f'Failed to configure webhooks: {str(e)}')
+            return Response(
+                {'error': 'Failed to configure webhooks'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class WebhookLogsView(TimingMixin, generics.ListAPIView):
@@ -793,16 +852,30 @@ class RunComplianceCheckView(TimingMixin, SuccessResponseMixin, APIView):
     permission_classes = [IsAuthenticated]
     
     def post(self, request, pk):
-        operator = Operator.objects.get(pk=pk)
+        try:
+            operator = Operator.objects.get(pk=pk)
+        except Operator.DoesNotExist:
+            return Response(
+                {'error': 'Operator not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
         
-        # Run compliance check (async)
-        from .tasks import run_operator_compliance_check
-        task = run_operator_compliance_check.delay(str(operator.id))
-        
-        return self.success_response(
-            data={'task_id': task.id},
-            message='Compliance check started'
-        )
+        try:
+            # Run compliance check (async)
+            from .tasks import run_operator_compliance_check
+            task = run_operator_compliance_check.delay(str(operator.id))
+            
+            return self.success_response(
+                data={'task_id': task.id if task else None},
+                message='Compliance check started'
+            )
+        except Exception as e:
+            import logging
+            logging.error(f'Failed to initiate compliance check: {str(e)}')
+            return Response(
+                {'error': 'Failed to initiate compliance check'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class ComplianceScoreView(TimingMixin, SuccessResponseMixin, APIView):
@@ -840,10 +913,12 @@ class ComplianceScoreView(TimingMixin, SuccessResponseMixin, APIView):
                     status_code=status.HTTP_403_FORBIDDEN
                 )
         
+        # Safe access to operator attributes
         score = {
             'operator_id': str(operator.id),
-            'compliance_score': operator.compliance_score,
-            'last_check': operator.last_compliance_check.isoformat() if operator.last_compliance_check else None
+            'compliance_score': float(getattr(operator, 'compliance_score', 0) or 0),
+            'is_compliant': bool(getattr(operator, 'is_compliant', True)),
+            'last_check': operator.last_compliance_check.isoformat() if getattr(operator, 'last_compliance_check', None) else None
         }
         
         return self.success_response(data=score)
@@ -855,18 +930,38 @@ class GenerateComplianceReportView(TimingMixin, SuccessResponseMixin, APIView):
     
     @transaction.atomic
     def post(self, request, pk):
-        operator = Operator.objects.get(pk=pk)
+        try:
+            operator = Operator.objects.get(pk=pk)
+        except Operator.DoesNotExist:
+            return Response(
+                {'error': 'Operator not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
         
-        report = ComplianceReport.objects.create(
-            operator=operator,
-            report_date=timezone.now().date(),
-            report_type='audit'
-        )
-        
-        return self.success_response(
-            data=ComplianceReportSerializer(report).data,
-            status_code=status.HTTP_201_CREATED
-        )
+        try:
+            today = timezone.now().date()
+            report_ref = f"CRP-{operator.id}-{today.timestamp()}".replace('.', '-')[:50]
+            
+            report = ComplianceReport.objects.create(
+                operator=operator,
+                report_reference=report_ref,
+                report_period_start=today,
+                report_period_end=today,
+                overall_score=float(getattr(operator, 'compliance_score', 0) or 0),
+                is_compliant=bool(getattr(operator, 'is_compliant', True))
+            )
+            
+            return self.success_response(
+                data=ComplianceReportSerializer(report).data,
+                status_code=status.HTTP_201_CREATED
+            )
+        except Exception as e:
+            import logging
+            logging.error(f'Failed to generate compliance report: {str(e)}')
+            return Response(
+                {'error': 'Failed to generate compliance report'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class ComplianceOverviewView(TimingMixin, SuccessResponseMixin, APIView):
@@ -874,14 +969,27 @@ class ComplianceOverviewView(TimingMixin, SuccessResponseMixin, APIView):
     permission_classes = [IsAuthenticated, IsGRAKStaff]
     
     def get(self, request):
-        overview = {
-            'total_operators': Operator.objects.count(),
-            'compliant': Operator.objects.filter(compliance_score__gte=80).count(),
-            'non_compliant': Operator.objects.filter(compliance_score__lt=80).count(),
-            'pending_checks': 0
-        }
-        
-        return self.success_response(data=overview)
+        try:
+            total_operators = Operator.objects.count()
+            compliant = Operator.objects.filter(is_compliant=True).count()
+            non_compliant = total_operators - compliant
+            
+            overview = {
+                'total_operators': total_operators,
+                'compliant': compliant,
+                'non_compliant': non_compliant,
+                'compliance_rate': (compliant / total_operators * 100) if total_operators > 0 else 0,
+                'pending_checks': 0
+            }
+            
+            return self.success_response(data=overview)
+        except Exception as e:
+            import logging
+            logging.error(f'Failed to get compliance overview: {str(e)}')
+            return Response(
+                {'error': 'Failed to get compliance overview'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class OperatorMetricsView(TimingMixin, SuccessResponseMixin, APIView):
@@ -919,13 +1027,26 @@ class OperatorMetricsView(TimingMixin, SuccessResponseMixin, APIView):
                     status_code=status.HTTP_403_FORBIDDEN
                 )
         
-        metrics = {
-            'api_calls_today': 0,
-            'response_time_avg': 0,
-            'uptime_percentage': 99.9
-        }
-        
-        return self.success_response(data=metrics)
+        try:
+            # Safely get operator metrics or defaults
+            metrics = {
+                'operator_id': str(operator.id),
+                'api_calls_today': getattr(operator, 'total_screenings', 0) or 0,
+                'response_time_avg': 0,
+                'uptime_percentage': 99.9,
+                'total_users': getattr(operator, 'total_users', 0) or 0,
+                'total_exclusions': getattr(operator, 'total_exclusions', 0) or 0,
+                'is_api_active': bool(getattr(operator, 'is_api_active', False))
+            }
+            
+            return self.success_response(data=metrics)
+        except Exception as e:
+            import logging
+            logging.error(f'Failed to get operator metrics: {str(e)}')
+            return Response(
+                {'error': 'Failed to get operator metrics'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class ResponseTimeMetricsView(TimingMixin, SuccessResponseMixin, APIView):

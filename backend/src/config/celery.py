@@ -163,6 +163,7 @@ app.conf.beat_schedule = {
 
 # Task Routing
 app.conf.task_routes = {
+    'apps.operators.tasks.*': {'queue': 'operators'},
     'apps.nser.tasks.*': {'queue': 'nser'},
     'apps.screening.tasks.*': {'queue': 'screening'},
     'apps.notifications.tasks.*': {'queue': 'notifications'},

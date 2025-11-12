@@ -87,14 +87,21 @@ export default function CompliancePage() {
     setRunningCheck(true)
     try {
       const operatorRes = await apiService.operator.getMe()
-      const operatorId = operatorRes.data.data.id
+      const operatorId = operatorRes?.data?.data?.id
+
+      if (!operatorId) {
+        setMessage({ type: 'error', text: 'Could not retrieve operator information' })
+        return
+      }
 
       await apiService.compliance.runCheck(operatorId)
-      setMessage({ type: 'success', text: 'Compliance check completed!' })
-      fetchComplianceReport()
-      setTimeout(() => setMessage(null), 3000)
+      setMessage({ type: 'success', text: 'Compliance check initiated!' })
+      // Refresh after delay
+      setTimeout(() => fetchComplianceReport(), 2000)
+      setTimeout(() => setMessage(null), 5000)
     } catch (error: any) {
-      setMessage({ type: 'error', text: error.response?.data?.message || 'Failed to run compliance check' })
+      console.error('Compliance check error:', error)
+      setMessage({ type: 'error', text: error?.response?.data?.error || error?.response?.data?.message || 'Failed to run compliance check' })
     } finally {
       setRunningCheck(false)
     }
@@ -103,9 +110,19 @@ export default function CompliancePage() {
   const downloadReport = async () => {
     try {
       const operatorRes = await apiService.operator.getMe()
-      const operatorId = operatorRes.data.data.id
+      const operatorId = operatorRes?.data?.data?.id
+
+      if (!operatorId) {
+        setMessage({ type: 'error', text: 'Could not retrieve operator information' })
+        return
+      }
 
       const response = await apiService.compliance.generateReport(operatorId)
+      
+      if (!response?.data) {
+        setMessage({ type: 'error', text: 'No report data received' })
+        return
+      }
       
       // Download PDF
       const url = window.URL.createObjectURL(new Blob([response.data]))
@@ -119,7 +136,8 @@ export default function CompliancePage() {
       setMessage({ type: 'success', text: 'Report downloaded successfully!' })
       setTimeout(() => setMessage(null), 3000)
     } catch (error: any) {
-      setMessage({ type: 'error', text: error.response?.data?.message || 'Failed to download report' })
+      console.error('Download report error:', error)
+      setMessage({ type: 'error', text: error?.response?.data?.error || error?.response?.data?.message || 'Failed to download report' })
     }
   }
 
