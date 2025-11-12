@@ -36,13 +36,48 @@ export default function CompliancePage() {
     try {
       setLoading(true)
       const operatorRes = await apiService.operator.getMe()
-      const operatorId = operatorRes.data.data.id
+      const operatorId = operatorRes.data?.data?.id
+
+      if (!operatorId) {
+        setMessage({ type: 'error', text: 'Could not load operator information' })
+        setLoading(false)
+        return
+      }
 
       const response = await apiService.compliance.getScore(operatorId)
-      setReport(response.data.data)
+      const reportData = response.data?.data
+      
+      if (reportData) {
+        setReport({
+          compliance_score: reportData.compliance_score || 0,
+          total_checks: reportData.total_checks || 0,
+          passed_checks: reportData.passed_checks || 0,
+          failed_checks: reportData.failed_checks || 0,
+          last_check_date: reportData.last_check_date || new Date().toISOString(),
+          metrics: reportData.metrics || []
+        })
+      } else {
+        setReport({
+          compliance_score: 0,
+          total_checks: 0,
+          passed_checks: 0,
+          failed_checks: 0,
+          last_check_date: new Date().toISOString(),
+          metrics: []
+        })
+      }
     } catch (error) {
       console.error('Failed to fetch compliance report:', error)
       setMessage({ type: 'error', text: 'Failed to load compliance data' })
+      // Set empty report on error
+      setReport({
+        compliance_score: 0,
+        total_checks: 0,
+        passed_checks: 0,
+        failed_checks: 0,
+        last_check_date: new Date().toISOString(),
+        metrics: []
+      })
     } finally {
       setLoading(false)
     }
@@ -52,14 +87,21 @@ export default function CompliancePage() {
     setRunningCheck(true)
     try {
       const operatorRes = await apiService.operator.getMe()
-      const operatorId = operatorRes.data.data.id
+      const operatorId = operatorRes?.data?.data?.id
+
+      if (!operatorId) {
+        setMessage({ type: 'error', text: 'Could not retrieve operator information' })
+        return
+      }
 
       await apiService.compliance.runCheck(operatorId)
-      setMessage({ type: 'success', text: 'Compliance check completed!' })
-      fetchComplianceReport()
-      setTimeout(() => setMessage(null), 3000)
+      setMessage({ type: 'success', text: 'Compliance check initiated!' })
+      // Refresh after delay
+      setTimeout(() => fetchComplianceReport(), 2000)
+      setTimeout(() => setMessage(null), 5000)
     } catch (error: any) {
-      setMessage({ type: 'error', text: error.response?.data?.message || 'Failed to run compliance check' })
+      console.error('Compliance check error:', error)
+      setMessage({ type: 'error', text: error?.response?.data?.error || error?.response?.data?.message || 'Failed to run compliance check' })
     } finally {
       setRunningCheck(false)
     }
@@ -68,9 +110,19 @@ export default function CompliancePage() {
   const downloadReport = async () => {
     try {
       const operatorRes = await apiService.operator.getMe()
-      const operatorId = operatorRes.data.data.id
+      const operatorId = operatorRes?.data?.data?.id
+
+      if (!operatorId) {
+        setMessage({ type: 'error', text: 'Could not retrieve operator information' })
+        return
+      }
 
       const response = await apiService.compliance.generateReport(operatorId)
+      
+      if (!response?.data) {
+        setMessage({ type: 'error', text: 'No report data received' })
+        return
+      }
       
       // Download PDF
       const url = window.URL.createObjectURL(new Blob([response.data]))
@@ -84,7 +136,8 @@ export default function CompliancePage() {
       setMessage({ type: 'success', text: 'Report downloaded successfully!' })
       setTimeout(() => setMessage(null), 3000)
     } catch (error: any) {
-      setMessage({ type: 'error', text: error.response?.data?.message || 'Failed to download report' })
+      console.error('Download report error:', error)
+      setMessage({ type: 'error', text: error?.response?.data?.error || error?.response?.data?.message || 'Failed to download report' })
     }
   }
 
@@ -224,7 +277,8 @@ export default function CompliancePage() {
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-6">Compliance Metrics</h2>
             <div className="space-y-4">
-              {report.metrics.map((metric, idx) => (
+              {report.metrics && Array.isArray(report.metrics) && report.metrics.length > 0 ? (
+                report.metrics.map((metric, idx) => (
                 <div key={idx} className="border-b border-gray-200 pb-4 last:border-0">
                   <div className="flex items-center justify-between mb-2">
                     <div>
@@ -258,12 +312,15 @@ export default function CompliancePage() {
                       }}
                     />
                   </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </>
-      )}
+                  </div>
+                  ))
+                  ) : (
+                  <p className="text-gray-600">No compliance metrics available.</p>
+                  )}
+                  </div>
+                  </div>
+                  </>
+                  )}
 
       {/* Compliance Guidelines */}
       <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">

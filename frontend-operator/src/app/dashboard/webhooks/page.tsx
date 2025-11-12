@@ -55,13 +55,20 @@ export default function WebhooksPage() {
     try {
       setLoading(true)
       const operatorRes = await apiService.operator.getMe()
-      const operatorId = operatorRes.data.data.id
+      const operatorId = operatorRes?.data?.data?.id
+      
+      if (!operatorId) {
+        setMessage({ type: 'error', text: 'Could not retrieve operator information' })
+        setLoading(false)
+        return
+      }
       
       const response = await apiService.integration.getWebhookLogs(operatorId)
-      setWebhooks(response.data.data?.results || [])
+      setWebhooks(response?.data?.data?.results || [])
     } catch (error) {
       console.error('Failed to fetch webhooks:', error)
       setMessage({ type: 'error', text: 'Failed to load webhooks' })
+      setWebhooks([])
     } finally {
       setLoading(false)
     }
@@ -81,7 +88,13 @@ export default function WebhooksPage() {
     setCreating(true)
     try {
       const operatorRes = await apiService.operator.getMe()
-      const operatorId = operatorRes.data.data.id
+      const operatorId = operatorRes?.data?.data?.id
+
+      if (!operatorId) {
+        setMessage({ type: 'error', text: 'Could not retrieve operator information' })
+        setCreating(false)
+        return
+      }
 
       await apiService.integration.configureWebhooks(operatorId, {
         url: formData.url,
@@ -95,7 +108,8 @@ export default function WebhooksPage() {
       fetchWebhooks()
       setTimeout(() => setMessage(null), 3000)
     } catch (error: any) {
-      setMessage({ type: 'error', text: error.response?.data?.message || 'Failed to create webhook' })
+      console.error('Create webhook error:', error)
+      setMessage({ type: 'error', text: error?.response?.data?.error || error?.response?.data?.message || 'Failed to create webhook' })
     } finally {
       setCreating(false)
     }
@@ -106,14 +120,20 @@ export default function WebhooksPage() {
 
     try {
       const operatorRes = await apiService.operator.getMe()
-      const operatorId = operatorRes.data.data.id
+      const operatorId = operatorRes?.data?.data?.id
+
+      if (!operatorId) {
+        setMessage({ type: 'error', text: 'Could not retrieve operator information' })
+        return
+      }
       
       await apiService.integration.testWebhook(operatorId, { webhook_id: id, action: 'delete' })
       setMessage({ type: 'success', text: 'Webhook deleted successfully!' })
       fetchWebhooks()
       setTimeout(() => setMessage(null), 3000)
     } catch (error: any) {
-      setMessage({ type: 'error', text: error.response?.data?.message || 'Failed to delete webhook' })
+      console.error('Delete webhook error:', error)
+      setMessage({ type: 'error', text: error?.response?.data?.error || error?.response?.data?.message || 'Failed to delete webhook' })
     }
   }
 
@@ -121,13 +141,20 @@ export default function WebhooksPage() {
     setTesting(id)
     try {
       const operatorRes = await apiService.operator.getMe()
-      const operatorId = operatorRes.data.data.id
+      const operatorId = operatorRes?.data?.data?.id
+
+      if (!operatorId) {
+        setMessage({ type: 'error', text: 'Could not retrieve operator information' })
+        setTesting(null)
+        return
+      }
       
       await apiService.integration.testWebhook(operatorId, { webhook_id: id })
       setMessage({ type: 'success', text: 'Test event sent! Check your webhook logs.' })
       setTimeout(() => setMessage(null), 3000)
     } catch (error: any) {
-      setMessage({ type: 'error', text: error.response?.data?.message || 'Failed to test webhook' })
+      console.error('Test webhook error:', error)
+      setMessage({ type: 'error', text: error?.response?.data?.error || error?.response?.data?.message || 'Failed to test webhook' })
     } finally {
       setTesting(null)
     }
@@ -137,12 +164,20 @@ export default function WebhooksPage() {
     setShowDetails(id)
     try {
       const operatorRes = await apiService.operator.getMe()
-      const operatorId = operatorRes.data.data.id
+      const operatorId = operatorRes?.data?.data?.id
+
+      if (!operatorId) {
+        setMessage({ type: 'error', text: 'Could not retrieve operator information' })
+        setShowDetails(null)
+        return
+      }
       
       const response = await apiService.integration.getWebhookLogs(operatorId)
-      setWebhookLogs(response.data.data?.results || [])
+      setWebhookLogs(response?.data?.data?.results || [])
     } catch (error) {
       console.error('Failed to load webhook logs:', error)
+      setMessage({ type: 'error', text: 'Failed to load webhook logs' })
+      setShowDetails(null)
     }
   }
 
