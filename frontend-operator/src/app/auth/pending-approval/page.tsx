@@ -82,7 +82,7 @@ export default function PendingApprovalPage() {
                 <Clock className="h-10 w-10 text-yellow-400 animate-pulse" />
               </div>
               <h1 className="text-3xl font-bold text-white mb-2">Pending Approval</h1>
-              <p className="text-gray-300">Your registration is under review by GRAK</p>
+              <p className="text-gray-300">Your registration is under review by the National Self Exclusion Register</p>
             </div>
 
             {operator && (
@@ -108,7 +108,7 @@ export default function PendingApprovalPage() {
                 <div className="text-sm text-yellow-100">
                   <p className="font-semibold mb-2">What happens next?</p>
                   <ul className="space-y-1 text-yellow-50/90 text-xs">
-                    <li>⚙️ GRAK will verify your license and documentation</li>
+                    <li>⚙️ The register will verify your license and documentation</li>
                     <li>✉️ You'll receive an email notification when approved</li>
                     <li>⏱️ Approval typically takes 1-3 business days</li>
                     <li>🔑 Once approved, you can generate API keys</li>
@@ -134,17 +134,13 @@ export default function PendingApprovalPage() {
             </div>
 
             <div className="border-t border-white/10 pt-6 text-center">
-              <p className="text-xs text-gray-400 mb-4">Need help? Contact GRAK support</p>
-              <div className="flex flex-col gap-2 text-sm">
-                <a href="mailto:support@grak.ke" className="text-purple-400 hover:text-purple-300 flex items-center justify-center gap-2 transition">
-                  <Mail className="h-4 w-4" />
-                  support@grak.ke
-                </a>
-                <a href="tel:+254712345678" className="text-purple-400 hover:text-purple-300 flex items-center justify-center gap-2 transition">
-                  <Phone className="h-4 w-4" />
-                  +254 7 1234 5678
-                </a>
-              </div>
+              <p className="text-xs text-gray-400 mb-4">Need help? Contact support</p>
+               <div className="flex flex-col gap-2 text-sm">
+                 <a href="mailto:support@nser.local" className="text-purple-400 hover:text-purple-300 flex items-center justify-center gap-2 transition">
+                   <Mail className="h-4 w-4" />
+                   support@nser.local
+                 </a>
+               </div>
             </div>
           </div>
         )}
@@ -156,7 +152,7 @@ export default function PendingApprovalPage() {
               <CheckCircle className="h-10 w-10 text-green-400" />
             </div>
             <h1 className="text-3xl font-bold text-white mb-2">Approved!</h1>
-            <p className="text-gray-300 mb-4">Your application has been approved by GRAK</p>
+            <p className="text-gray-300 mb-4">Your application has been approved by the National Self Exclusion Register</p>
             <p className="text-sm text-gray-400">Redirecting to dashboard...</p>
           </div>
         )}
@@ -174,7 +170,7 @@ export default function PendingApprovalPage() {
 
             <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-8">
               <p className="text-sm text-red-100 mb-3">
-                For more information about why your application was rejected, please contact GRAK support.
+                For more information about why your application was rejected, please contact support.
               </p>
               <p className="text-xs text-red-200">
                 You may be able to resubmit your application with additional documentation or corrections.
@@ -189,10 +185,10 @@ export default function PendingApprovalPage() {
                 Back to Login
               </Link>
               <a
-                href="mailto:support@grak.ke"
+                href="mailto:support@nser.local"
                 className="block w-full px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-lg font-medium transition text-center"
               >
-                Contact GRAK Support
+                Contact Support
               </a>
             </div>
           </div>
