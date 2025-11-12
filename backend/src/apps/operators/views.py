@@ -21,7 +21,7 @@ from .serializers import (
     GenerateAPIKeySerializer, UpdateIntegrationSerializer,
     TestWebhookSerializer
 )
-from apps.api.permissions import IsGRAKStaff, IsOperator
+from apps.api.permissions import IsGRAKStaff, IsOperator, IsGRAKStaffOrOperator
 from apps.api.mixins import TimingMixin, SuccessResponseMixin
 
 
@@ -149,7 +149,7 @@ class OperatorLicenseViewSet(TimingMixin, viewsets.ModelViewSet):
 
 class APIKeyViewSet(TimingMixin, viewsets.ModelViewSet):
     """API key management"""
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsGRAKStaffOrOperator]
     
     def get_serializer_class(self):
         if self.action == 'retrieve':

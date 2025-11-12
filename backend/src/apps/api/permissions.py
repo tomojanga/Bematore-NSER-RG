@@ -42,6 +42,18 @@ class IsOperator(permissions.BasePermission):
         )
 
 
+class IsGRAKStaffOrOperator(permissions.BasePermission):
+    """Permission for GRAK staff or operators"""
+    message = "You must be GRAK staff or an operator to perform this action."
+    
+    def has_permission(self, request, view):
+        return (
+            request.user and
+            request.user.is_authenticated and
+            request.user.role in ['grak_admin', 'grak_officer', 'operator_admin']
+        )
+
+
 class IsCitizen(permissions.BasePermission):
     """Permission for citizens only"""
     message = "This action is only available to citizens."
