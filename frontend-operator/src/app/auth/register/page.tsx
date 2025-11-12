@@ -94,6 +94,7 @@ export default function RegisterPage() {
         license_expiry_date: formData.license_expiry_date,
         website: formData.website_url,
         city: formData.physical_address.split(',')[1]?.trim() || '',
+        password: formData.password,
         terms_accepted: formData.terms_accepted
       })
       

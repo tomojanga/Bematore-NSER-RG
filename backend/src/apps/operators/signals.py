@@ -32,13 +32,17 @@ def create_operator_user(sender, instance, created, **kwargs):
         )
         
         if user_created:
-            # Set a temporary password (operator should reset via email)
-            import secrets
-            temp_password = secrets.token_urlsafe(16)
-            user.set_password(temp_password)
-            user.save()
+            # Set password from registration form (passed via _temp_password attribute)
+            password = getattr(instance, '_temp_password', None)
+            if password:
+                user.set_password(password)
+            else:
+                # Fallback: generate a temporary password if not provided
+                import secrets
+                temp_password = secrets.token_urlsafe(16)
+                user.set_password(temp_password)
             
-            # TODO: Send email with temporary password or password reset link
+            user.save()
             print(f"Created operator user: {user.email} with role: {user.role}")
         else:
             # Update existing user to operator_admin role if not already set
