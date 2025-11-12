@@ -81,8 +81,8 @@ class OperatorViewSet(TimingMixin, viewsets.ModelViewSet):
 
 
 class RegisterOperatorView(TimingMixin, SuccessResponseMixin, APIView):
-    """Register new operator"""
-    permission_classes = [IsAuthenticated, IsGRAKStaff]
+    """Register new operator - Public for operator self-registration"""
+    permission_classes = []  # Public endpoint for operator registration
     
     @transaction.atomic
     def post(self, request):
@@ -710,8 +710,8 @@ class ValidateAPIKeyView(TimingMixin, SuccessResponseMixin, APIView):
 
 
 class SetupIntegrationView(TimingMixin, SuccessResponseMixin, APIView):
-    """Setup integration"""
-    permission_classes = [IsAuthenticated, IsGRAKStaff]
+    """Setup integration - For operators and GRAK staff"""
+    permission_classes = [IsAuthenticated]
     
     @transaction.atomic
     def post(self, request, pk):
@@ -750,8 +750,8 @@ class TestIntegrationView(TimingMixin, SuccessResponseMixin, APIView):
 
 
 class ConfigureWebhooksView(TimingMixin, SuccessResponseMixin, APIView):
-    """Configure webhooks"""
-    permission_classes = [IsAuthenticated, IsGRAKStaff]
+    """Configure webhooks - For operators and GRAK staff"""
+    permission_classes = [IsAuthenticated]
     
     @transaction.atomic
     def post(self, request, pk):
@@ -777,8 +777,8 @@ class WebhookLogsView(TimingMixin, generics.ListAPIView):
 
 
 class RunComplianceCheckView(TimingMixin, SuccessResponseMixin, APIView):
-    """Run compliance check"""
-    permission_classes = [IsAuthenticated, IsGRAKStaff]
+    """Run compliance check - For operators and GRAK staff"""
+    permission_classes = [IsAuthenticated]
     
     def post(self, request, pk):
         operator = Operator.objects.get(pk=pk)
@@ -838,8 +838,8 @@ class ComplianceScoreView(TimingMixin, SuccessResponseMixin, APIView):
 
 
 class GenerateComplianceReportView(TimingMixin, SuccessResponseMixin, APIView):
-    """Generate compliance report"""
-    permission_classes = [IsAuthenticated, IsGRAKStaff]
+    """Generate compliance report - For operators and GRAK staff"""
+    permission_classes = [IsAuthenticated]
     
     @transaction.atomic
     def post(self, request, pk):
@@ -858,7 +858,7 @@ class GenerateComplianceReportView(TimingMixin, SuccessResponseMixin, APIView):
 
 
 class ComplianceOverviewView(TimingMixin, SuccessResponseMixin, APIView):
-    """Compliance overview"""
+    """Compliance overview - GRAK staff only (admin view)"""
     permission_classes = [IsAuthenticated, IsGRAKStaff]
     
     def get(self, request):
@@ -947,7 +947,7 @@ class APIUsageStatsView(TimingMixin, SuccessResponseMixin, APIView):
 
 
 class ActiveOperatorsStatsView(TimingMixin, SuccessResponseMixin, APIView):
-    """Active operators stats"""
+    """Active operators stats - GRAK staff only (admin view)"""
     permission_classes = [IsAuthenticated, IsGRAKStaff]
     
     def get(self, request):
@@ -962,7 +962,7 @@ class ActiveOperatorsStatsView(TimingMixin, SuccessResponseMixin, APIView):
 
 
 class IntegrationStatusStatsView(TimingMixin, SuccessResponseMixin, APIView):
-    """Integration status stats"""
+    """Integration status stats - GRAK staff only (admin view)"""
     permission_classes = [IsAuthenticated, IsGRAKStaff]
     
     def get(self, request):
@@ -976,7 +976,7 @@ class IntegrationStatusStatsView(TimingMixin, SuccessResponseMixin, APIView):
 
 
 class SearchOperatorsView(TimingMixin, SuccessResponseMixin, APIView):
-    """Search operators"""
+    """Search operators - GRAK staff only (admin view)"""
     permission_classes = [IsAuthenticated, IsGRAKStaff]
     
     def get(self, request):
@@ -992,7 +992,7 @@ class SearchOperatorsView(TimingMixin, SuccessResponseMixin, APIView):
 
 
 class CompliantOperatorsView(TimingMixin, generics.ListAPIView):
-    """Compliant operators"""
+    """Compliant operators - GRAK staff only (admin view)"""
     serializer_class = OperatorListSerializer
     permission_classes = [IsAuthenticated, IsGRAKStaff]
     
@@ -1001,7 +1001,7 @@ class CompliantOperatorsView(TimingMixin, generics.ListAPIView):
 
 
 class NonCompliantOperatorsView(TimingMixin, generics.ListAPIView):
-    """Non-compliant operators"""
+    """Non-compliant operators - GRAK staff only (admin view)"""
     serializer_class = OperatorListSerializer
     permission_classes = [IsAuthenticated, IsGRAKStaff]
     
