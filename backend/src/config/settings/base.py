@@ -97,6 +97,7 @@ CORS_ALLOW_HEADERS = [
     'x-requested-with',
     'x-device-id',  # Our custom header
     'http_x_device_id',  # Django's convention
+    'x-api-key',  # API key header for operator authentication
 ]
 
 ROOT_URLCONF = 'config.urls'
