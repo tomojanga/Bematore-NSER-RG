@@ -23,7 +23,9 @@ def create_operator_user(sender, instance, created, **kwargs):
                 'phone_number': instance.phone,
                 'role': 'operator_admin',
                 'is_active': True,
-                'is_verified': False,
+                'is_phone_verified': False,
+                'is_email_verified': False,
+                'is_id_verified': False,
                 'first_name': instance.name.split()[0] if instance.name else '',
                 'last_name': ' '.join(instance.name.split()[1:]) if len(instance.name.split()) > 1 else '',
             }
