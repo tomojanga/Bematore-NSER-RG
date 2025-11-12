@@ -259,13 +259,21 @@ class ExclusionLookupView(TimingMixin, SuccessResponseMixin, CacheMixin, APIView
         cache.set(cache_key, response_data, self.cache_timeout)
         
         # Log lookup (async to not impact performance)
-        from .tasks import log_exclusion_lookup
-        log_exclusion_lookup.delay(
-            operator_id=str(operator_id),
-            lookup_data=serializer.validated_data,
-            result=response_data,
-            response_time_ms=response_time_ms
-        )
+        # Wrapped in try-except to prevent Celery issues from blocking the response
+        try:
+            from .tasks import log_exclusion_lookup
+            log_exclusion_lookup.apply_async(
+                kwargs={
+                    'operator_id': str(operator_id),
+                    'lookup_data': serializer.validated_data,
+                    'result': response_data,
+                    'response_time_ms': response_time_ms
+                },
+                ignore_result=True  # Fire-and-forget to avoid waiting for result
+            )
+        except Exception as e:
+            # Log Celery errors but don't fail the lookup response
+            logger.warning(f'Failed to queue exclusion lookup log: {str(e)}')
         
         return Response(response_data, status=status.HTTP_200_OK)
 
@@ -339,9 +347,15 @@ class ActivateExclusionView(TimingMixin, SuccessResponseMixin, APIView):
         exclusion.effective_date = timezone.now()
         exclusion.save()
         
-        # Trigger propagation
-        from .tasks import propagate_exclusion_to_operators
-        propagate_exclusion_to_operators.delay(str(exclusion.id))
+        # Trigger propagation (async)
+        try:
+            from .tasks import propagate_exclusion_to_operators
+            propagate_exclusion_to_operators.apply_async(
+                args=[str(exclusion.id)],
+                ignore_result=True
+            )
+        except Exception as e:
+            logger.warning(f'Failed to queue propagation task: {str(e)}')
         
         return self.success_response(
             data=SelfExclusionDetailSerializer(exclusion).data,
@@ -434,11 +448,19 @@ class PropagateExclusionView(TimingMixin, SuccessResponseMixin, APIView):
         exclusion = SelfExclusionRecord.objects.get(pk=pk)
         
         # Trigger async propagation
-        from .tasks import propagate_exclusion_to_operators
-        task = propagate_exclusion_to_operators.delay(str(exclusion.id))
+        try:
+            from .tasks import propagate_exclusion_to_operators
+            task = propagate_exclusion_to_operators.apply_async(
+                args=[str(exclusion.id)],
+                ignore_result=False  # Keep result to get task_id
+            )
+            task_id = task.id
+        except Exception as e:
+            logger.warning(f'Failed to queue propagation task: {str(e)}')
+            task_id = None
         
         return self.success_response(
-            data={'task_id': task.id},
+            data={'task_id': task_id},
             message='Propagation initiated'
         )
 
