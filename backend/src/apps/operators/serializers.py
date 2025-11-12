@@ -282,6 +282,7 @@ class OperatorDetailSerializer(serializers.ModelSerializer):
 class RegisterOperatorSerializer(serializers.ModelSerializer):
     """Register new operator serializer"""
     terms_accepted = serializers.BooleanField(write_only=True, required=True)
+    password = serializers.CharField(write_only=True, required=True, min_length=8)
     
     class Meta:
         model = Operator
@@ -290,9 +291,8 @@ class RegisterOperatorSerializer(serializers.ModelSerializer):
             'email', 'phone', 'website',
             'license_number', 'license_type',
             'license_issued_date', 'license_expiry_date',
-            'city', 'county', 'country_code', 'postal_code',
-            'latitude', 'longitude',
-            'terms_accepted'
+            'city', 'latitude', 'longitude',
+            'terms_accepted', 'password'
         ]
     
     def validate(self, attrs):
@@ -311,6 +311,8 @@ class RegisterOperatorSerializer(serializers.ModelSerializer):
         return attrs
     
     def create(self, validated_data):
+        # Extract password and terms
+        password = validated_data.pop('password')
         validated_data.pop('terms_accepted', None)
         
         # Generate operator code
@@ -318,7 +320,11 @@ class RegisterOperatorSerializer(serializers.ModelSerializer):
         operator_code = f"OP-{str(uuid.uuid4())[:8].upper()}"
         validated_data['operator_code'] = operator_code
         
-        return super().create(validated_data)
+        # Store password in context for signal
+        operator = super().create(validated_data)
+        operator._temp_password = password  # Will be picked up by signal
+        
+        return operator
 
 
 class GenerateAPIKeySerializer(serializers.Serializer):
