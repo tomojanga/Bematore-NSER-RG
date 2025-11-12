@@ -21,6 +21,7 @@ export default function SimulatorPage() {
     const [testData, setTestData] = useState({
         phone_number: '',
         national_id: '',
+        email: '',
         bst_token: '',
     })
     const [response, setResponse] = useState<TestResponse | null>(null)
@@ -73,8 +74,8 @@ export default function SimulatorPage() {
     }
 
     const runTest = async () => {
-        if (!testData.phone_number && !testData.national_id && !testData.bst_token) {
-            setMessage('Please fill in at least one field')
+        if (!testData.phone_number && !testData.national_id && !testData.email && !testData.bst_token) {
+            setMessage('Please fill in at least one identifier field (phone number, national ID, email, or BST token)')
             return
         }
 
@@ -89,25 +90,32 @@ export default function SimulatorPage() {
         const startTime = performance.now()
 
         try {
+            // Build payload with at least one identifier
             const payload: any = {
                 operator_id: operatorId
             }
+
             if (testData.phone_number) payload.phone_number = testData.phone_number
             if (testData.national_id) payload.national_id = testData.national_id
+            if (testData.email) payload.email = testData.email
             if (testData.bst_token) payload.bst_token = testData.bst_token
 
-            // Make direct request with API key
+            console.log('[Simulator] Test Parameters:', payload)
+            console.log('[Simulator] Operator ID:', operatorId)
+            console.log('[Simulator] API Key loaded:', !!apiKey)
+            console.log('[Simulator] API Key substring:', apiKey.substring(0, 10) + '...')
+
+            // Make direct request with API key (following test.py pattern)
             const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api-bematore.onrender.com/api/v1'
             const endpoint = `${apiUrl}/nser/lookup/`
 
             console.log('[Simulator] Making request to:', endpoint)
             console.log('[Simulator] Payload:', payload)
-            console.log('[Simulator] Using API Key:', apiKey.substring(0, 10) + '...')
 
             const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: {
-                    'X-API-Key': apiKey,
+                    'X-API-Key': apiKey,  // Use X-API-Key header for API key authentication
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(payload),
@@ -132,24 +140,36 @@ export default function SimulatorPage() {
                 setResponse({ error: errorMsg })
                 setMessage(`Error: ${errorMsg}`)
             } else {
-                setResponse(result.data || result)
+                // Handle successful response
+                const responseData = result.data || result
+                console.log('[Simulator] Exclusion lookup result:', {
+                    is_excluded: responseData.is_excluded,
+                    exclusion_id: responseData.exclusion_id,
+                    days_remaining: responseData.days_remaining,
+                    user_message: responseData.user_message,
+                })
+                setResponse(responseData)
                 setMessage(null)
             }
         } catch (error: any) {
             const endTime = performance.now()
             setResponseTime(Math.round(endTime - startTime))
+
             console.error('[Simulator] Network/Fetch error:', error)
             console.error('[Simulator] Error stack:', error.stack)
 
-            const errMsg = error.message || 'Test failed'
+            // This is a network-level error (CORS, connection refused, etc.)
+            const errorMsg = error.message || 'Failed to fetch'
             const fullError = {
                 message: error.message,
                 name: error.name,
                 stack: error.stack,
+                timestamp: new Date().toISOString(),
             }
+
             setErrorDetails(JSON.stringify(fullError, null, 2))
-            setResponse({ error: errMsg })
-            setMessage(`Error: ${errMsg}`)
+            setResponse({ error: errorMsg })
+            setMessage(`Error: ${errorMsg}`)
         } finally {
             setLoading(false)
         }
@@ -168,6 +188,7 @@ export default function SimulatorPage() {
     const exampleCode = {
         curl: `# Get your API key from: Dashboard → API Keys
 # Operator ID: ${operatorId || 'YOUR_OPERATOR_ID'}
+# Required: At least one of phone_number, national_id, email, or bst_token
 
 curl -X POST ${apiUrl}/nser/lookup/ \\
   -H "X-API-Key: $API_KEY" \\
@@ -175,7 +196,8 @@ curl -X POST ${apiUrl}/nser/lookup/ \\
   -d '{
     "operator_id": "${operatorId || 'YOUR_OPERATOR_ID'}",
     "phone_number": "${testData.phone_number || '+254712345678'}",
-    "national_id": "${testData.national_id || '12345678'}"
+    "national_id": "${testData.national_id || '12345678'}",
+    "email": "${testData.email || 'user@example.com'}"
   }'`,
         python: `import os
 import requests
@@ -186,6 +208,19 @@ api_key = os.getenv('NSER_API_KEY') or 'YOUR_API_KEY'
 operator_id = '${operatorId || 'YOUR_OPERATOR_ID'}'
 endpoint = '${apiUrl}/nser/lookup/'
 
+# Build lookup payload - at least one identifier is required
+lookup_data = {
+    'operator_id': operator_id,
+}
+
+# Add identifiers (at least one required)
+if '${testData.phone_number || ''}':
+    lookup_data['phone_number'] = '${testData.phone_number || '+254712345678'}'
+if '${testData.national_id || ''}':
+    lookup_data['national_id'] = '${testData.national_id || '12345678'}'
+if '${testData.email || ''}':
+    lookup_data['email'] = '${testData.email || 'user@example.com'}'
+
 try:
     response = requests.post(
         endpoint,
@@ -193,11 +228,7 @@ try:
             'X-API-Key': api_key,
             'Content-Type': 'application/json'
         },
-        json={
-            'operator_id': operator_id,
-            'phone_number': '${testData.phone_number || '+254712345678'}',
-            'national_id': '${testData.national_id || '12345678'}'
-        },
+        json=lookup_data,
         timeout=10
     )
     
@@ -219,19 +250,21 @@ const apiKey = process.env.REACT_APP_NSER_API_KEY || 'YOUR_API_KEY';
 const operatorId = '${operatorId || 'YOUR_OPERATOR_ID'}';
 const endpoint = '${apiUrl}/nser/lookup/';
 
-async function checkExclusion(phoneNumber, nationalId) {
+async function checkExclusion(identifiers) {
   try {
+    // Build lookup data - at least one identifier required
+    const lookupData = {
+      operator_id: operatorId,
+      ...identifiers  // phone_number, national_id, email, or bst_token
+    };
+
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
         'X-API-Key': apiKey,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        operator_id: operatorId,
-        phone_number: phoneNumber,
-        national_id: nationalId
-      })
+      body: JSON.stringify(lookupData)
     });
 
     if (!response.ok) {
@@ -250,8 +283,12 @@ async function checkExclusion(phoneNumber, nationalId) {
   }
 }
 
-// Usage
-checkExclusion('${testData.phone_number || '+254712345678'}', '${testData.national_id || '12345678'}')
+// Usage - pass at least one identifier
+checkExclusion({
+  phone_number: '${testData.phone_number || '+254712345678'}',
+  national_id: '${testData.national_id || '12345678'}',
+  email: '${testData.email || 'user@example.com'}'
+})
   .then(result => console.log(result))
   .catch(err => console.error(err));`,
     }
@@ -265,8 +302,8 @@ checkExclusion('${testData.phone_number || '+254712345678'}', '${testData.nation
 
             {message && (
                 <div className={`rounded-lg p-4 flex gap-3 border ${message.includes('Error') || message.includes('failed')
-                        ? 'bg-red-50 border-red-200'
-                        : 'bg-blue-50 border-blue-200'
+                    ? 'bg-red-50 border-red-200'
+                    : 'bg-blue-50 border-blue-200'
                     }`}>
                     {message.includes('Error') || message.includes('failed') ? (
                         <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
@@ -284,8 +321,8 @@ checkExclusion('${testData.phone_number || '+254712345678'}', '${testData.nation
                 <div className="space-y-6">
                     {/* API Key Status */}
                     <div className={`rounded-lg p-4 border-2 flex items-start gap-3 ${apiKeyLoaded
-                            ? 'bg-green-50 border-green-200'
-                            : 'bg-yellow-50 border-yellow-200'
+                        ? 'bg-green-50 border-green-200'
+                        : 'bg-yellow-50 border-yellow-200'
                         }`}>
                         <div className="flex-1">
                             <p className={`font-semibold ${apiKeyLoaded ? 'text-green-900' : 'text-yellow-900'}`}>
@@ -361,6 +398,20 @@ checkExclusion('${testData.phone_number || '+254712345678'}', '${testData.nation
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Email Address
+                                </label>
+                                <input
+                                    type="email"
+                                    value={testData.email}
+                                    onChange={(e) => setTestData({ ...testData, email: e.target.value })}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                    placeholder="user@example.com"
+                                />
+                                <p className="text-xs text-gray-500 mt-1">Valid email address</p>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
                                     BST Token (Optional)
                                 </label>
                                 <input
@@ -409,8 +460,8 @@ checkExclusion('${testData.phone_number || '+254712345678'}', '${testData.nation
                             <div className="space-y-4">
                                 {response.is_excluded !== undefined && (
                                     <div className={`p-4 rounded-lg flex items-center gap-3 border-2 ${response.is_excluded
-                                            ? 'bg-red-50 border-red-200'
-                                            : 'bg-green-50 border-green-200'
+                                        ? 'bg-red-50 border-red-200'
+                                        : 'bg-green-50 border-green-200'
                                         }`}>
                                         {response.is_excluded ? (
                                             <>
@@ -476,8 +527,8 @@ checkExclusion('${testData.phone_number || '+254712345678'}', '${testData.nation
                                     key={tab}
                                     onClick={() => setActiveTab(tab)}
                                     className={`px-4 py-2 font-medium text-sm border-b-2 transition ${activeTab === tab
-                                            ? 'border-purple-600 text-purple-600'
-                                            : 'border-transparent text-gray-600 hover:text-gray-900'
+                                        ? 'border-purple-600 text-purple-600'
+                                        : 'border-transparent text-gray-600 hover:text-gray-900'
                                         }`}
                                 >
                                     {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -513,31 +564,51 @@ checkExclusion('${testData.phone_number || '+254712345678'}', '${testData.nation
                         <ul className="text-sm text-blue-800 space-y-2">
                             <li className="flex gap-2">
                                 <span className="flex-shrink-0">•</span>
-                                <span>Endpoint: <code className="bg-white px-1 rounded text-xs">{apiUrl}/nser/lookup/</code></span>
+                                <span><strong>Endpoint:</strong> <code className="bg-white px-1 rounded text-xs">{apiUrl}/nser/lookup/</code></span>
                             </li>
                             <li className="flex gap-2">
                                 <span className="flex-shrink-0">•</span>
-                                <span>Authentication: Use <code className="bg-white px-1 rounded text-xs">X-API-Key</code> header</span>
+                                <span><strong>Method:</strong> <code className="bg-white px-1 rounded text-xs">POST</code></span>
                             </li>
                             <li className="flex gap-2">
                                 <span className="flex-shrink-0">•</span>
-                                <span>Your Operator ID: <code className="bg-white px-1 rounded text-xs font-medium">{operatorId || 'Loading...'}</code></span>
+                                <span><strong>Authentication:</strong> <code className="bg-white px-1 rounded text-xs">X-API-Key</code> header (not Authorization)</span>
                             </li>
                             <li className="flex gap-2">
                                 <span className="flex-shrink-0">•</span>
-                                <span>Required fields: <code className="bg-white px-1 rounded text-xs">operator_id</code>, and at least one of: phone_number, national_id, or bst_token</span>
+                                <span><strong>Your Operator ID:</strong> <code className="bg-white px-1 rounded text-xs font-medium">{operatorId || 'Loading...'}</code></span>
                             </li>
                             <li className="flex gap-2">
                                 <span className="flex-shrink-0">•</span>
-                                <span>Response time target: <strong>&lt;100ms</strong></span>
+                                <span><strong>Required Fields:</strong> <code className="bg-white px-1 rounded text-xs">operator_id</code> (UUID) + at least ONE of:</span>
+                            </li>
+                            <li className="flex gap-2 ml-6">
+                                <span className="flex-shrink-0">-</span>
+                                <span><code className="bg-white px-1 rounded text-xs">phone_number</code> (E.164 format, e.g., +254712345678)</span>
+                            </li>
+                            <li className="flex gap-2 ml-6">
+                                <span className="flex-shrink-0">-</span>
+                                <span><code className="bg-white px-1 rounded text-xs">national_id</code> (ID/Passport number)</span>
+                            </li>
+                            <li className="flex gap-2 ml-6">
+                                <span className="flex-shrink-0">-</span>
+                                <span><code className="bg-white px-1 rounded text-xs">email</code> (valid email address)</span>
+                            </li>
+                            <li className="flex gap-2 ml-6">
+                                <span className="flex-shrink-0">-</span>
+                                <span><code className="bg-white px-1 rounded text-xs">bst_token</code> (Blockchain Secure Token)</span>
                             </li>
                             <li className="flex gap-2">
                                 <span className="flex-shrink-0">•</span>
-                                <span>Rate limits apply based on your plan</span>
+                                <span><strong>Response time target:</strong> &lt;100ms (with Redis caching)</span>
                             </li>
                             <li className="flex gap-2">
                                 <span className="flex-shrink-0">•</span>
-                                <span>All requests are logged for audit purposes</span>
+                                <span>Results cached for 1 minute per identifier</span>
+                            </li>
+                            <li className="flex gap-2">
+                                <span className="flex-shrink-0">•</span>
+                                <span>All requests logged for audit &amp; compliance</span>
                             </li>
                         </ul>
                     </div>
@@ -553,6 +624,10 @@ checkExclusion('${testData.phone_number || '+254712345678'}', '${testData.nation
                             <li className="flex gap-2">
                                 <span className="flex-shrink-0">✓</span>
                                 <span>Use <strong>backend proxy</strong> for browser-based integrations (never expose keys to frontend)</span>
+                            </li>
+                            <li className="flex gap-2">
+                                <span className="flex-shrink-0">✓</span>
+                                <span>Always use <strong>X-API-Key</strong> header (not Authorization header)</span>
                             </li>
                             <li className="flex gap-2">
                                 <span className="flex-shrink-0">✓</span>
@@ -573,27 +648,62 @@ checkExclusion('${testData.phone_number || '+254712345678'}', '${testData.nation
                         </ul>
                     </div>
 
+                    {/* Troubleshooting Common Issues */}
+                    <div className="bg-red-50 border border-red-200 rounded-xl p-6">
+                        <h3 className="font-semibold text-red-900 mb-3">🔧 Troubleshooting Common Errors</h3>
+                        <ul className="text-sm text-red-800 space-y-3">
+                            <li className="flex gap-2">
+                                <span className="flex-shrink-0">•</span>
+                                <div>
+                                    <p className="font-semibold">Failed to fetch</p>
+                                    <p className="text-xs mt-1">Check that your API key is loaded. If using a backend proxy, ensure CORS headers are configured. Use HTTPS endpoint, not HTTP.</p>
+                                </div>
+                            </li>
+                            <li className="flex gap-2">
+                                <span className="flex-shrink-0">•</span>
+                                <div>
+                                    <p className="font-semibold">401 Unauthorized</p>
+                                    <p className="text-xs mt-1">API key is invalid or expired. Generate a new key from the API Keys dashboard and try again.</p>
+                                </div>
+                            </li>
+                            <li className="flex gap-2">
+                                <span className="flex-shrink-0">•</span>
+                                <div>
+                                    <p className="font-semibold">422 Validation Error</p>
+                                    <p className="text-xs mt-1">At least one identifier is required (phone, national ID, email, or BST token). Ensure phone is in E.164 format.</p>
+                                </div>
+                            </li>
+                            <li className="flex gap-2">
+                                <span className="flex-shrink-0">•</span>
+                                <div>
+                                    <p className="font-semibold">Missing API Key</p>
+                                    <p className="text-xs mt-1">Navigate to Dashboard → API Keys to generate an API key for your operator account.</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
                     {/* Performance Info */}
                     {response && (
                         <div className={`border rounded-xl p-6 ${responseTime < 100
-                                ? 'bg-green-50 border-green-200'
-                                : responseTime < 500
-                                    ? 'bg-yellow-50 border-yellow-200'
-                                    : 'bg-red-50 border-red-200'
+                            ? 'bg-green-50 border-green-200'
+                            : responseTime < 500
+                                ? 'bg-yellow-50 border-yellow-200'
+                                : 'bg-red-50 border-red-200'
                             }`}>
                             <h3 className={`font-semibold mb-2 ${responseTime < 100
-                                    ? 'text-green-900'
-                                    : responseTime < 500
-                                        ? 'text-yellow-900'
-                                        : 'text-red-900'
+                                ? 'text-green-900'
+                                : responseTime < 500
+                                    ? 'text-yellow-900'
+                                    : 'text-red-900'
                                 }`}>
                                 Performance Analysis
                             </h3>
                             <p className={`text-sm ${responseTime < 100
-                                    ? 'text-green-800'
-                                    : responseTime < 500
-                                        ? 'text-yellow-800'
-                                        : 'text-red-800'
+                                ? 'text-green-800'
+                                : responseTime < 500
+                                    ? 'text-yellow-800'
+                                    : 'text-red-800'
                                 }`}>
                                 {responseTime < 100
                                     ? '✓ Excellent response time! Your integration is optimized.'

@@ -40,6 +40,7 @@ CORS_ALLOW_HEADERS = [
     'x-requested-with',
     'x-device-id',
     'http_x_device_id',
+    'x-api-key',  # API key header for external API integrations
 ]
 
 # Disable ALLOWED_HOSTS check
