@@ -60,6 +60,11 @@ export const operatorAPI = {
 // API KEY APIs
 // ============================================
 export const apiKeyAPI = {
+  // Get current operator's API keys (simplified endpoint)
+  getMyKeys: () =>
+    api.get('/operators/my-api-keys/'),
+  
+  // Get all API keys (admin)
   getAll: () =>
     api.get('/operators/api-keys/'),
   

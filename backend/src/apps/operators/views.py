@@ -248,6 +248,57 @@ class APIKeyViewSet(TimingMixin, viewsets.ModelViewSet):
         return Response({'message': 'API key revoked'})
 
 
+class OperatorAPIKeysView(TimingMixin, SuccessResponseMixin, APIView):
+    """Get operator's own API keys - simpler endpoint for operators"""
+    permission_classes = [IsAuthenticated, IsOperator]
+    
+    def get(self, request):
+        """Get current operator's API keys"""
+        user = request.user
+        user_role = getattr(user, 'role', None)
+        
+        if user_role != 'operator_admin':
+            return self.error_response(
+                message='Only operators can access this endpoint',
+                status_code=status.HTTP_403_FORBIDDEN
+            )
+        
+        # Find the operator for this user
+        operator = None
+        
+        # Try by email first
+        if user.email:
+            operator = Operator.objects.filter(email__iexact=user.email).first()
+        
+        # Try by phone
+        if not operator:
+            phone = getattr(user, 'phone_number', None)
+            if phone:
+                operator = Operator.objects.filter(phone=str(phone)).first()
+        
+        # Try by direct relationship
+        if not operator and hasattr(user, 'operator'):
+            operator = getattr(user, 'operator', None)
+        
+        if not operator:
+            return self.error_response(
+                message='Operator account not found. Please contact administrator.',
+                status_code=status.HTTP_404_NOT_FOUND
+            )
+        
+        # Get operator's API keys
+        api_keys = APIKey.objects.filter(
+            operator=operator
+        ).order_by('-created_at')
+        
+        serializer = APIKeyDetailSerializer(api_keys, many=True)
+        
+        return self.success_response(
+            data=serializer.data,
+            message='API keys retrieved successfully'
+        )
+
+
 class GenerateAPIKeyView(TimingMixin, SuccessResponseMixin, APIView):
     """Generate new API key"""
     permission_classes = [IsAuthenticated]
