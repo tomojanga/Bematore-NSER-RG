@@ -16,11 +16,11 @@ def create_operator_user(sender, instance, created, **kwargs):
     Automatically create a user account for operator with operator_admin role
     """
     if created:
-        # Check if user already exists with this email
+        # Check if user already exists with this phone number (primary key)
         user, user_created = User.objects.get_or_create(
-            email=instance.email,
+            phone_number=instance.phone,
             defaults={
-                'phone_number': instance.phone,
+                'email': instance.email,
                 'role': 'operator_admin',
                 'is_active': True,
                 'is_phone_verified': False,
