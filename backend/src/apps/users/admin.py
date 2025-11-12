@@ -19,8 +19,8 @@ class UserProfileInline(admin.StackedInline):
     model = UserProfile
     extra = 0
     fk_name = 'user'
-    fields = ('bio', 'profile_photo', 'date_of_birth', 'gender')
-    readonly_fields = ('created_at', 'updated_at', 'user')
+    fields = ('bio', 'avatar', 'occupation', 'employer', 'address_line1', 'address_line2')
+    readonly_fields = ('created_at', 'updated_at', 'profile_completion_percentage')
 
 
 class UserDeviceInline(admin.TabularInline):

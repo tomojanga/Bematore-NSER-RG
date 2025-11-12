@@ -320,9 +320,12 @@ class RegisterOperatorSerializer(serializers.ModelSerializer):
         operator_code = f"OP-{str(uuid.uuid4())[:8].upper()}"
         validated_data['operator_code'] = operator_code
         
-        # Store password in context for signal
+        # Create operator instance
         operator = super().create(validated_data)
-        operator._temp_password = password  # Will be picked up by signal
+        
+        # Store password in instance for signal handler
+        # The signal will use this to set the user password
+        operator._temp_password = password
         
         return operator
 
