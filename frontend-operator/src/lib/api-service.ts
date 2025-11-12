@@ -280,8 +280,8 @@ export const dashboardAPI = {
   getOperatorDashboard: () =>
     api.get('/dashboards/operator/'),
   
-  getGRAKDashboard: () =>
-    api.get('/dashboards/grak/'),
+  getRegulatorDashboard: () =>
+    api.get('/dashboards/regulator/'),
   
   getAnalytics: (params?: any) =>
     api.get('/analytics/', { params }),

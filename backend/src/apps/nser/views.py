@@ -555,10 +555,11 @@ class ExclusionStatisticsView(TimingMixin, CacheMixin, SuccessResponseMixin, API
     cache_timeout = 300  # 5 minutes
     
     def get(self, request):
-        # Check if user has permission
-        if not hasattr(request.user, "role") or request.user.role not in ["grak_admin", "grak_officer"]:
+        # Check if user has permission - allow GRAK staff and operators
+        user_role = getattr(request.user, "role", None)
+        if not user_role or user_role not in ["grak_admin", "grak_officer", "operator_admin"]:
             return self.error_response(
-                message="Access denied. GRAK staff role required.",
+                message="Access denied. GRAK staff or Operator role required.",
                 status_code=status.HTTP_403_FORBIDDEN
             )
         
@@ -771,9 +772,17 @@ class CheckExclusionStatusView(TimingMixin, SuccessResponseMixin, APIView):
 
 class DailyExclusionStatsView(TimingMixin, SuccessResponseMixin, APIView):
     """Daily exclusion statistics"""
-    permission_classes = [IsAuthenticated, IsGRAKStaff]
+    permission_classes = [IsAuthenticated]
     
     def get(self, request):
+        # Allow GRAK staff and operators
+        user_role = getattr(request.user, "role", None)
+        if not user_role or user_role not in ["grak_admin", "grak_officer", "operator_admin"]:
+            return self.error_response(
+                message="Access denied.",
+                status_code=status.HTTP_403_FORBIDDEN
+            )
+        
         stats = ExclusionStatistics.objects.filter(
             date__gte=timezone.now().date() - timedelta(days=30)
         ).order_by('-date')
@@ -785,10 +794,18 @@ class DailyExclusionStatsView(TimingMixin, SuccessResponseMixin, APIView):
 
 class ExclusionTrendsView(TimingMixin, SuccessResponseMixin, CacheMixin, APIView):
     """Exclusion trends analysis"""
-    permission_classes = [IsAuthenticated, IsGRAKStaff]
+    permission_classes = [IsAuthenticated]
     cache_timeout = 3600
     
     def get(self, request):
+        # Allow GRAK staff and operators
+        user_role = getattr(request.user, "role", None)
+        if not user_role or user_role not in ["grak_admin", "grak_officer", "operator_admin"]:
+            return self.error_response(
+                message="Access denied.",
+                status_code=status.HTTP_403_FORBIDDEN
+            )
+        
         period = request.query_params.get('period', 'month')
         
         if period == 'week':

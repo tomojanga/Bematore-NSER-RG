@@ -159,18 +159,24 @@ class APIKeyViewSet(TimingMixin, viewsets.ModelViewSet):
         user = self.request.user
         
         # Allow access for GRAK staff and operators
-        if not hasattr(user, 'role'):
+        user_role = getattr(user, 'role', None)
+        if not user_role:
             return APIKey.objects.none()
         
-        if user.role in ['grak_admin', 'grak_officer']:
+        if user_role in ['grak_admin', 'grak_officer']:
             return APIKey.objects.select_related('operator').order_by('-created_at')
-        elif user.role == 'operator_admin':
-            # Get operator for this user
-            try:
-                operator = Operator.objects.get(contact_person_email=user.email)
-                return APIKey.objects.filter(operator=operator)
-            except Operator.DoesNotExist:
-                return APIKey.objects.none()
+        elif user_role == 'operator_admin':
+            # Get operator for this user - try multiple identifiers
+            operator = Operator.objects.filter(
+                email=user.email
+            ).first() or Operator.objects.filter(
+                phone=getattr(user, 'phone_number', None)
+            ).first()
+            
+            if operator:
+                return APIKey.objects.filter(operator=operator).select_related('operator').order_by('-created_at')
+            
+            return APIKey.objects.none()
         
         return APIKey.objects.none()
     
@@ -249,15 +255,15 @@ class IntegrationConfigViewSet(TimingMixin, viewsets.ModelViewSet):
     
     def get_queryset(self):
         user = self.request.user
+        user_role = getattr(user, 'role', None)
         
-        if user.role in ['grak_admin', 'grak_officer']:
+        if user_role in ['grak_admin', 'grak_officer']:
             return IntegrationConfig.objects.select_related('operator')
-        elif user.role == 'operator_admin':
-            try:
-                operator = Operator.objects.get(contact_person_email=user.email)
+        elif user_role == 'operator_admin':
+            operator = Operator.objects.filter(email=user.email).first()
+            if operator:
                 return IntegrationConfig.objects.filter(operator=operator)
-            except Operator.DoesNotExist:
-                return IntegrationConfig.objects.none()
+            return IntegrationConfig.objects.none()
         
         return IntegrationConfig.objects.none()
 
@@ -307,15 +313,15 @@ class ComplianceReportViewSet(TimingMixin, viewsets.ReadOnlyModelViewSet):
     
     def get_queryset(self):
         user = self.request.user
+        user_role = getattr(user, 'role', None)
         
-        if user.role in ['grak_admin', 'grak_officer']:
+        if user_role in ['grak_admin', 'grak_officer']:
             return ComplianceReport.objects.select_related('operator').order_by('-report_date')
-        elif user.role == 'operator_admin':
-            try:
-                operator = Operator.objects.get(contact_person_email=user.email)
+        elif user_role == 'operator_admin':
+            operator = Operator.objects.filter(email=user.email).first()
+            if operator:
                 return ComplianceReport.objects.filter(operator=operator).order_by('-report_date')
-            except Operator.DoesNotExist:
-                return ComplianceReport.objects.none()
+            return ComplianceReport.objects.none()
         
         return ComplianceReport.objects.none()
 
@@ -389,7 +395,8 @@ class MyOperatorView(TimingMixin, SuccessResponseMixin, APIView):
     
     def get(self, request):
         # Check if user is operator or GRAK staff
-        if not hasattr(request.user, 'role') or request.user.role not in ['operator_admin', 'grak_admin', 'grak_officer']:
+        user_role = getattr(request.user, 'role', None)
+        if not user_role or user_role not in ['operator_admin', 'grak_admin', 'grak_officer']:
             return self.error_response(
                 message='Access denied. Operator or GRAK staff role required.',
                 status_code=status.HTTP_403_FORBIDDEN
@@ -398,7 +405,7 @@ class MyOperatorView(TimingMixin, SuccessResponseMixin, APIView):
         try:
             # Try email first, then phone_number
             operator = Operator.objects.filter(email=request.user.email).first()
-            if not operator:
+            if not operator and hasattr(request.user, 'phone_number'):
                 operator = Operator.objects.filter(phone=request.user.phone_number).first()
             
             if not operator:
@@ -686,7 +693,35 @@ class ComplianceScoreView(TimingMixin, SuccessResponseMixin, APIView):
     permission_classes = [IsAuthenticated]
     
     def get(self, request, pk):
-        operator = Operator.objects.get(pk=pk)
+        try:
+            operator = Operator.objects.get(pk=pk)
+        except Operator.DoesNotExist:
+            return self.error_response(
+                message="Operator not found",
+                status_code=status.HTTP_404_NOT_FOUND
+            )
+        
+        # Check permissions - allow GRAK staff or own operator
+        user_role = getattr(request.user, 'role', None)
+        if user_role not in ['grak_admin', 'grak_officer']:
+            if user_role == 'operator_admin':
+                # Check if user owns this operator
+                user_operator = Operator.objects.filter(
+                    email=request.user.email
+                ).first() or Operator.objects.filter(
+                    phone=getattr(request.user, 'phone_number', None)
+                ).first()
+                
+                if not user_operator or user_operator.id != operator.id:
+                    return self.error_response(
+                        message="Not authorized",
+                        status_code=status.HTTP_403_FORBIDDEN
+                    )
+            else:
+                return self.error_response(
+                    message="Not authorized",
+                    status_code=status.HTTP_403_FORBIDDEN
+                )
         
         score = {
             'operator_id': str(operator.id),
@@ -737,7 +772,35 @@ class OperatorMetricsView(TimingMixin, SuccessResponseMixin, APIView):
     permission_classes = [IsAuthenticated]
     
     def get(self, request, pk):
-        operator = Operator.objects.get(pk=pk)
+        try:
+            operator = Operator.objects.get(pk=pk)
+        except Operator.DoesNotExist:
+            return self.error_response(
+                message="Operator not found",
+                status_code=status.HTTP_404_NOT_FOUND
+            )
+        
+        # Check permissions - allow GRAK staff or own operator
+        user_role = getattr(request.user, 'role', None)
+        if user_role not in ['grak_admin', 'grak_officer']:
+            if user_role == 'operator_admin':
+                # Check if user owns this operator
+                user_operator = Operator.objects.filter(
+                    email=request.user.email
+                ).first() or Operator.objects.filter(
+                    phone=getattr(request.user, 'phone_number', None)
+                ).first()
+                
+                if not user_operator or user_operator.id != operator.id:
+                    return self.error_response(
+                        message="Not authorized to view this operator's metrics",
+                        status_code=status.HTTP_403_FORBIDDEN
+                    )
+            else:
+                return self.error_response(
+                    message="Not authorized to view this operator's metrics",
+                    status_code=status.HTTP_403_FORBIDDEN
+                )
         
         metrics = {
             'api_calls_today': 0,
