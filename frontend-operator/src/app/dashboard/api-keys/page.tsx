@@ -22,8 +22,9 @@ export default function APIKeysPage() {
 
   const fetchKeys = async () => {
     try {
-      const response = await apiService.apiKey.getAll()
-      setKeys(response.data.data?.results || response.data.data || [])
+      // Use the new simplified endpoint for operators to get their own API keys
+      const response = await apiService.apiKey.getMyKeys()
+      setKeys(response.data.data || [])
     } catch (error) {
       console.error('Failed to fetch API keys:', error)
       setMessage({ type: 'error', text: 'Failed to fetch API keys' })
