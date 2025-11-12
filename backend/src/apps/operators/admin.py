@@ -177,8 +177,8 @@ class OperatorAdmin(admin.ModelAdmin):
             color = '#d73026'
         
         return format_html(
-            '<span style="background-color: {}; color: white; padding: 3px 10px; border-radius: 3px;">{:.1f}%</span>',
-            color, score
+            '<span style="background-color: {}; color: white; padding: 3px 10px; border-radius: 3px;">{}</span>',
+            color, f'{score:.1f}%'
         )
     compliance_score_badge.short_description = _('Compliance')
     
@@ -621,8 +621,8 @@ class ComplianceReportAdmin(admin.ModelAdmin):
             color = '#d73026'
         
         return format_html(
-            '<span style="background-color: {}; color: white; padding: 3px 10px; border-radius: 3px;">{:.1f}%</span>',
-            color, score
+            '<span style="background-color: {}; color: white; padding: 3px 10px; border-radius: 3px;">{}</span>',
+            color, f'{score:.1f}%'
         )
     overall_score_badge.short_description = _('Score')
     
