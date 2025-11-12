@@ -136,6 +136,11 @@ DATABASES['default']['OPTIONS'].setdefault('connect_timeout', 10)
 # Custom User Model
 AUTH_USER_MODEL = 'users.User'
 
+# Authentication backends
+AUTHENTICATION_BACKENDS = [
+    'apps.authentication.backends.PhoneNumberBackend',
+]
+
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
