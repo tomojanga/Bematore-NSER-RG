@@ -157,38 +157,59 @@ class APIKeyViewSet(TimingMixin, viewsets.ModelViewSet):
         return APIKeySerializer
     
     def get_queryset(self):
+        from rest_framework.exceptions import PermissionDenied
         user = self.request.user
         
         # Allow access for GRAK staff and operators
         user_role = getattr(user, 'role', None)
         
+        if not user_role:
+            raise PermissionDenied(detail="User role not set.")
+        
         if user_role in ['grak_admin', 'grak_officer']:
             return APIKey.objects.select_related('operator').order_by('-created_at')
         elif user_role == 'operator_admin':
             # Get operator for this user - try multiple identifiers
-            # First try by email
-            operator = Operator.objects.filter(
-                email=user.email
-            ).first()
+            operator = None
             
-            # Then try by phone_number
+            # First try by exact email match
+            if user.email:
+                operator = Operator.objects.filter(
+                    email__iexact=user.email
+                ).first()
+            
+            # Try by phone_number (handle various phone formats)
             if not operator:
                 phone = getattr(user, 'phone_number', None)
                 if phone:
-                    operator = Operator.objects.filter(phone=phone).first()
+                    # Try exact match first
+                    operator = Operator.objects.filter(phone=str(phone)).first()
+                    
+                    # Try matching the last 9 digits (common phone number matching)
+                    if not operator and str(phone):
+                        # Extract last 9 digits of user's phone
+                        phone_digits = ''.join(filter(str.isdigit, str(phone)))
+                        if len(phone_digits) >= 9:
+                            last_9 = phone_digits[-9:]
+                            # Look for operators with a phone ending in the same digits
+                            operators = Operator.objects.all()
+                            for op in operators:
+                                op_digits = ''.join(filter(str.isdigit, str(op.phone)))
+                                if op_digits.endswith(last_9) or last_9 in op_digits:
+                                    operator = op
+                                    break
             
-            # Finally try by user's ID if there's an operator_user relationship
+            # Try relationship if it exists
             if not operator and hasattr(user, 'operator'):
                 operator = getattr(user, 'operator', None)
             
-            if operator:
-                return APIKey.objects.filter(operator=operator).select_related('operator').order_by('-created_at')
+            if not operator:
+                raise PermissionDenied(detail="Your user account is not linked to an operator. Please contact your administrator to link your account.")
             
-            # If no operator found, return empty but don't cause 403
-            return APIKey.objects.none()
+            return APIKey.objects.filter(operator=operator).select_related('operator').order_by('-created_at')
         
-        # Return empty for unknown roles instead of none
-        return APIKey.objects.none()
+        # Other roles don't have access to API keys
+        raise PermissionDenied(detail="Your role does not have access to manage API keys.")
     
     @action(detail=True, methods=['post'])
     def rotate(self, request, pk=None):
