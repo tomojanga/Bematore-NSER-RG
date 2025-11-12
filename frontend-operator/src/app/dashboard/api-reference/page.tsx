@@ -192,20 +192,34 @@ export default function ApiReferencePage() {
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Authentication</h2>
         <div className="space-y-4">
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">Bearer Token</h3>
-            <p className="text-sm text-gray-600 mb-3">Include your API key in the Authorization header:</p>
+            <h3 className="font-semibold text-gray-900 mb-2">API Key Authentication</h3>
+            <p className="text-sm text-gray-600 mb-3">Include your API key in the X-API-Key header:</p>
             <div className="relative bg-gray-100 p-4 rounded-lg">
               <button
-                onClick={() => copyCode('Authorization: Bearer YOUR_API_KEY', 'auth-header')}
+                onClick={() => copyCode('X-API-Key: YOUR_API_KEY', 'auth-header')}
                 className="absolute top-2 right-2 p-2 bg-gray-600 hover:bg-gray-700 rounded text-white"
               >
                 {copied === 'auth-header' ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
               </button>
-              <code className="text-sm text-gray-800 font-mono">Authorization: Bearer YOUR_API_KEY</code>
+              <code className="text-sm text-gray-800 font-mono">X-API-Key: YOUR_API_KEY</code>
             </div>
           </div>
-          <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-sm text-blue-900">Generate API keys from the <span className="font-semibold">API Keys</span> section in your dashboard</p>
+          <div className="space-y-3 text-sm">
+            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-blue-900"><span className="font-semibold">Example (Python):</span></p>
+              <code className="text-blue-800 font-mono text-xs mt-2 block">
+                headers = {'{'}'X-API-Key': 'your_api_key'{'}'}
+              </code>
+            </div>
+            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-blue-900"><span className="font-semibold">Example (JavaScript):</span></p>
+              <code className="text-blue-800 font-mono text-xs mt-2 block">
+                headers: {'{'}'X-API-Key': 'your_api_key'{'}'}
+              </code>
+            </div>
+          </div>
+          <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+            <p className="text-sm text-green-900">Generate API keys from the <span className="font-semibold">API Keys</span> section in your dashboard</p>
           </div>
         </div>
       </div>

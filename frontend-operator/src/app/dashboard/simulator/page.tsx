@@ -66,7 +66,7 @@ export default function SimulatorPage() {
 
   const exampleCode = {
     curl: `curl -X POST https://api.nser.local/api/v1/nser/lookup/ \\
-  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "X-API-Key: YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{
     "phone_number": "${testData.phone_number || '+254712345678'}",
@@ -80,7 +80,7 @@ endpoint = 'https://api.nser.local/api/v1/nser/lookup/'
 response = requests.post(
     endpoint,
     headers={
-        'Authorization': f'Bearer {api_key}',
+        'X-API-Key': api_key,
         'Content-Type': 'application/json'
     },
     json={
@@ -96,7 +96,7 @@ const endpoint = 'https://api.nser.local/api/v1/nser/lookup/';
 const response = await fetch(endpoint, {
   method: 'POST',
   headers: {
-    'Authorization': \`Bearer \${apiKey}\`,
+    'X-API-Key': apiKey,
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({
