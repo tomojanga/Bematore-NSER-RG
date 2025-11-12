@@ -52,35 +52,47 @@ export default function ProfilePage() {
     try {
       setLoading(true)
       const userRes = await apiService.operator.getMe()
-      const user = userRes.data.data
+      const user = userRes.data?.data
+
+      if (!user) {
+        setMessage({ type: 'error', text: 'Failed to load profile data' })
+        setLoading(false)
+        return
+      }
 
       setUserProfile({
-        name: user.name,
-        email: user.email,
-        phone: user.phone || '',
-        job_title: user.job_title || '',
+        name: user.name || user.company_name || 'User',
+        email: user.email || user.contact_person_email || '',
+        phone: user.phone || user.contact_person_phone || '',
+        job_title: user.job_title || 'Operator',
         last_login: user.last_login || '',
         created_at: user.created_at
       })
 
       setOperatorProfile({
-        name: user.name,
-        license_status: user.license_status,
+        name: user.name || user.company_name || 'Operator',
+        license_status: user.license_status || 'pending',
         license_expiry_date: user.license_expiry_date,
         country: user.country || '',
-        website: user.website || '',
+        website: user.website_url || user.website || '',
         industry: user.industry || ''
       })
 
       setEditData({
-        name: user.name,
-        phone: user.phone || '',
+        name: user.name || user.company_name || '',
+        phone: user.phone || user.contact_person_phone || '',
         job_title: user.job_title || ''
       })
 
       // Fetch login activity
-      const auditRes = await apiService.audit.getOperatorLogs({ limit: 10 })
-      setLoginActivity(auditRes.data.data?.results || [])
+      try {
+        const auditRes = await apiService.audit.getOperatorLogs({ limit: 10 })
+        setLoginActivity(auditRes.data?.data?.results || [])
+      } catch (auditError) {
+        console.error('Failed to fetch audit logs:', auditError)
+        // Don't fail the whole profile fetch if audit logs fail
+        setLoginActivity([])
+      }
     } catch (error) {
       console.error('Failed to fetch profile:', error)
       setMessage({ type: 'error', text: 'Failed to load profile' })

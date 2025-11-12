@@ -38,21 +38,59 @@ export default function StatisticsPage() {
     try {
       setLoading(true)
       const operatorRes = await apiService.operator.getMe()
-      const operatorId = operatorRes.data.data.id
+      const operatorId = operatorRes.data?.data?.id
+
+      if (!operatorId) {
+        setMessage({ type: 'error', text: 'Could not load operator information' })
+        setLoading(false)
+        return
+      }
 
       // Fetch operator metrics
-      const metricsRes = await apiService.metrics.getOperatorMetrics(operatorId)
-      setMetrics(metricsRes.data.data)
+      try {
+        const metricsRes = await apiService.metrics.getOperatorMetrics(operatorId)
+        const metricsData = metricsRes.data?.data
+        if (metricsData) {
+          setMetrics({
+            total_lookups: metricsData.total_lookups || 0,
+            lookups_today: metricsData.lookups_today || 0,
+            lookups_this_month: metricsData.lookups_this_month || 0,
+            average_response_time_ms: metricsData.average_response_time_ms || 0,
+            success_rate: metricsData.success_rate || 0,
+            exclusions_found: metricsData.exclusions_found || 0,
+            p50_response_time: metricsData.p50_response_time || 0,
+            p99_response_time: metricsData.p99_response_time || 0
+          })
+        }
+      } catch (metricsError) {
+        console.error('Failed to fetch metrics:', metricsError)
+        // Set default metrics
+        setMetrics({
+          total_lookups: 0,
+          lookups_today: 0,
+          lookups_this_month: 0,
+          average_response_time_ms: 0,
+          success_rate: 0,
+          exclusions_found: 0,
+          p50_response_time: 0,
+          p99_response_time: 0
+        })
+      }
 
       // Fetch daily stats
-      const daysRes = await apiService.nser.getDailyStats()
-      // Filter by period
-      const now = new Date()
-      const pastDate = new Date(now.getTime() - parseInt(periodFilter) * 24 * 60 * 60 * 1000)
-      const filtered = (daysRes.data.data || []).filter((stat: DailyStats) => {
-        return new Date(stat.date) >= pastDate
-      })
-      setDailyStats(filtered)
+      try {
+        const daysRes = await apiService.nser.getDailyStats()
+        // Filter by period
+        const now = new Date()
+        const pastDate = new Date(now.getTime() - parseInt(periodFilter) * 24 * 60 * 60 * 1000)
+        const filtered = (daysRes.data?.data || []).filter((stat: DailyStats) => {
+          return new Date(stat.date) >= pastDate
+        })
+        setDailyStats(filtered)
+      } catch (daysError) {
+        console.error('Failed to fetch daily stats:', daysError)
+        setDailyStats([])
+      }
     } catch (error) {
       console.error('Failed to fetch statistics:', error)
       setMessage({ type: 'error', text: 'Failed to load statistics' })
@@ -150,7 +188,7 @@ export default function StatisticsPage() {
         </div>
       )}
 
-      {metrics && (
+      {metrics ? (
         <>
           {/* Key Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -281,9 +319,13 @@ export default function StatisticsPage() {
             </div>
           )}
         </>
-      )}
+        ) : (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6">
+          <p className="text-yellow-800">No metrics available. Please try again later.</p>
+        </div>
+        )}
 
-      {/* Info Box */}
+        {/* Info Box */}
       <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
         <h3 className="font-semibold text-blue-900 mb-3">Performance Targets</h3>
         <ul className="text-sm text-blue-800 space-y-2">
