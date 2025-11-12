@@ -22,7 +22,7 @@ export default function APIKeysPage() {
 
   const fetchKeys = async () => {
     try {
-      // Use the new simplified endpoint for operators to get their own API keys
+      // Use the new  endpoint for operators to get their own API keys
       const response = await apiService.apiKey.getMyKeys()
       setKeys(response.data.data || [])
     } catch (error) {
