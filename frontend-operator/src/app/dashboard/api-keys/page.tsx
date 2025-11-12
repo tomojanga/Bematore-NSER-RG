@@ -15,10 +15,21 @@ export default function APIKeysPage() {
   const [keyName, setKeyName] = useState('')
   const [expiresInDays, setExpiresInDays] = useState(365)
   const [operatingKey, setOperatingKey] = useState<string | null>(null)
+  const [operatorId, setOperatorId] = useState<string>('')
 
   useEffect(() => {
+    fetchOperatorId()
     fetchKeys()
   }, [])
+
+  const fetchOperatorId = async () => {
+    try {
+      const response = await apiService.operator.getMe()
+      setOperatorId(response.data.data.id)
+    } catch (error) {
+      console.error('Failed to fetch operator ID:', error)
+    }
+  }
 
   const fetchKeys = async () => {
     try {
@@ -141,6 +152,30 @@ export default function APIKeysPage() {
           Create API Key
         </button>
       </div>
+
+      {/* Operator ID Info */}
+      {operatorId && (
+        <div className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-xl p-6">
+          <h3 className="font-semibold text-gray-900 mb-2">Your Operator ID</h3>
+          <p className="text-sm text-gray-600 mb-3">Required when making API requests to the lookup endpoint</p>
+          <div className="flex items-center gap-2">
+            <code className="bg-white px-3 py-2 rounded text-sm font-mono flex-1 border border-purple-200 text-gray-900">
+              {operatorId}
+            </code>
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(operatorId)
+                setMessage({ type: 'success', text: 'Operator ID copied!' })
+                setTimeout(() => setMessage(null), 2000)
+              }}
+              className="p-2 hover:bg-purple-100 rounded transition"
+              title="Copy Operator ID"
+            >
+              <Copy className="h-4 w-4 text-purple-600" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {message && (
         <div className={`rounded-lg p-4 flex gap-3 border ${

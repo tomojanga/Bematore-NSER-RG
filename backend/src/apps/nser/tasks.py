@@ -353,3 +353,30 @@ def generate_compliance_report():
     
     logger.info(f"Generated compliance report {report.id}")
     return {'report_id': str(report.id)}
+
+
+@shared_task
+def log_exclusion_lookup(operator_id, lookup_data, result, response_time_ms):
+    """
+    Log exclusion lookup for audit and analytics
+    Non-blocking async task
+    """
+    from apps.compliance.models import AuditLog
+    
+    try:
+        audit_log = AuditLog.objects.create(
+            action='exclusion_lookup',
+            operator_id=operator_id,
+            details={
+                'lookup_data': lookup_data,
+                'result': result,
+                'response_time_ms': response_time_ms,
+                'timestamp': timezone.now().isoformat()
+            },
+            status='completed'
+        )
+        logger.info(f"Logged exclusion lookup for operator {operator_id}")
+        return {'logged': True, 'log_id': str(audit_log.id)}
+    except Exception as e:
+        logger.error(f"Failed to log exclusion lookup: {str(e)}")
+        return {'logged': False, 'error': str(e)}
