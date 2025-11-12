@@ -161,8 +161,6 @@ class APIKeyViewSet(TimingMixin, viewsets.ModelViewSet):
         
         # Allow access for GRAK staff and operators
         user_role = getattr(user, 'role', None)
-        if not user_role:
-            return APIKey.objects.none()
         
         if user_role in ['grak_admin', 'grak_officer']:
             return APIKey.objects.select_related('operator').order_by('-created_at')
@@ -189,6 +187,7 @@ class APIKeyViewSet(TimingMixin, viewsets.ModelViewSet):
             # If no operator found, return empty but don't cause 403
             return APIKey.objects.none()
         
+        # Return empty for unknown roles instead of none
         return APIKey.objects.none()
     
     @action(detail=True, methods=['post'])
@@ -233,12 +232,25 @@ class GenerateAPIKeyView(TimingMixin, SuccessResponseMixin, APIView):
     permission_classes = [IsAuthenticated]
     
     @transaction.atomic
-    def post(self, request):
+    def post(self, request, pk=None):
         serializer = GenerateAPIKeySerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         
-        operator_id = serializer.validated_data['operator_id']
-        operator = Operator.objects.get(id=operator_id)
+        # operator_id comes from URL path parameter
+        operator_id = pk
+        if not operator_id:
+            return self.error_response(
+                message='operator_id is required',
+                status_code=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            operator = Operator.objects.get(id=operator_id)
+        except Operator.DoesNotExist:
+            return self.error_response(
+                message='Operator not found',
+                status_code=status.HTTP_404_NOT_FOUND
+            )
         
         # Check permissions: GRAK staff can generate for any operator, operators can only generate for themselves
         user_role = getattr(request.user, 'role', None)
@@ -250,7 +262,7 @@ class GenerateAPIKeyView(TimingMixin, SuccessResponseMixin, APIView):
                 phone=getattr(request.user, 'phone_number', None)
             ).first()
             
-            if not user_operator or user_operator.id != operator_id:
+            if not user_operator or str(user_operator.id) != str(operator_id):
                 return self.error_response(
                     message='You can only generate API keys for your own operator account',
                     status_code=status.HTTP_403_FORBIDDEN
