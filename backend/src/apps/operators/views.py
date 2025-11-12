@@ -9,6 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from django.utils import timezone
 from django.db import transaction
+from datetime import timedelta
 import secrets
 
 from .models import Operator, OperatorLicense, APIKey, IntegrationConfig, ComplianceReport, OperatorAuditLog
@@ -167,15 +168,25 @@ class APIKeyViewSet(TimingMixin, viewsets.ModelViewSet):
             return APIKey.objects.select_related('operator').order_by('-created_at')
         elif user_role == 'operator_admin':
             # Get operator for this user - try multiple identifiers
+            # First try by email
             operator = Operator.objects.filter(
                 email=user.email
-            ).first() or Operator.objects.filter(
-                phone=getattr(user, 'phone_number', None)
             ).first()
+            
+            # Then try by phone_number
+            if not operator:
+                phone = getattr(user, 'phone_number', None)
+                if phone:
+                    operator = Operator.objects.filter(phone=phone).first()
+            
+            # Finally try by user's ID if there's an operator_user relationship
+            if not operator and hasattr(user, 'operator'):
+                operator = getattr(user, 'operator', None)
             
             if operator:
                 return APIKey.objects.filter(operator=operator).select_related('operator').order_by('-created_at')
             
+            # If no operator found, return empty but don't cause 403
             return APIKey.objects.none()
         
         return APIKey.objects.none()
@@ -219,26 +230,47 @@ class APIKeyViewSet(TimingMixin, viewsets.ModelViewSet):
 
 class GenerateAPIKeyView(TimingMixin, SuccessResponseMixin, APIView):
     """Generate new API key"""
-    permission_classes = [IsAuthenticated, IsGRAKStaff]
+    permission_classes = [IsAuthenticated]
     
     @transaction.atomic
     def post(self, request):
         serializer = GenerateAPIKeySerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         
-        operator = Operator.objects.get(id=serializer.validated_data['operator_id'])
+        operator_id = serializer.validated_data['operator_id']
+        operator = Operator.objects.get(id=operator_id)
+        
+        # Check permissions: GRAK staff can generate for any operator, operators can only generate for themselves
+        user_role = getattr(request.user, 'role', None)
+        if user_role not in ['grak_admin', 'grak_officer']:
+            # Operator user - check if they're generating for their own operator
+            user_operator = Operator.objects.filter(
+                email=request.user.email
+            ).first() or Operator.objects.filter(
+                phone=getattr(request.user, 'phone_number', None)
+            ).first()
+            
+            if not user_operator or user_operator.id != operator_id:
+                return self.error_response(
+                    message='You can only generate API keys for your own operator account',
+                    status_code=status.HTTP_403_FORBIDDEN
+                )
+        
+        # Calculate expires_at based on expires_in_days
+        expires_in_days = serializer.validated_data.get('expires_in_days', 365)
+        expires_at = timezone.now() + timedelta(days=expires_in_days)
         
         # Generate API key
         api_key = APIKey.objects.create(
             operator=operator,
             key_name=serializer.validated_data['key_name'],
-            api_key=secrets.token_urlsafe(32),
             can_lookup=serializer.validated_data.get('can_lookup', True),
             can_register=serializer.validated_data.get('can_register', True),
             can_screen=serializer.validated_data.get('can_screen', True),
-            rate_limit=serializer.validated_data.get('rate_limit', 1000),
-            ip_whitelist=serializer.validated_data.get('ip_whitelist'),
-            expires_at=serializer.validated_data.get('expires_at')
+            rate_limit_per_second=serializer.validated_data.get('rate_limit_per_second', 100),
+            rate_limit_per_day=serializer.validated_data.get('rate_limit_per_day', 100000),
+            ip_whitelist=serializer.validated_data.get('ip_whitelist', []),
+            expires_at=expires_at
         )
         
         return self.success_response(
@@ -329,28 +361,67 @@ class ComplianceReportViewSet(TimingMixin, viewsets.ReadOnlyModelViewSet):
 class OperatorAuditLogViewSet(TimingMixin, viewsets.ReadOnlyModelViewSet):
     """Operator audit logs"""
     serializer_class = OperatorAuditLogSerializer
-    permission_classes = [IsAuthenticated, IsGRAKStaff]
+    permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
-        return OperatorAuditLog.objects.select_related('operator', 'performed_by').order_by('-created_at')
+        user = self.request.user
+        user_role = getattr(user, 'role', None)
+        
+        # GRAK staff see all audit logs
+        if user_role in ['grak_admin', 'grak_officer']:
+            return OperatorAuditLog.objects.select_related('operator', 'performed_by').order_by('-created_at')
+        
+        # Operators see only their own audit logs
+        elif user_role == 'operator_admin':
+            operator = Operator.objects.filter(email=user.email).first()
+            if not operator:
+                operator = Operator.objects.filter(phone=getattr(user, 'phone_number', None)).first()
+            
+            if operator:
+                return OperatorAuditLog.objects.filter(operator=operator).select_related('operator', 'performed_by').order_by('-created_at')
+        
+        return OperatorAuditLog.objects.none()
 
 
 class OperatorStatisticsView(TimingMixin, SuccessResponseMixin, APIView):
     """Operator statistics"""
-    permission_classes = [IsAuthenticated, IsGRAKStaff]
+    permission_classes = [IsAuthenticated]
     
     def get(self, request):
-        stats = {
-            'total_operators': Operator.objects.count(),
-            'active_operators': Operator.objects.filter(license_status='active').count(),
-            'pending_approval': Operator.objects.filter(license_status='pending').count(),
-            'suspended_operators': Operator.objects.filter(license_status='suspended').count(),
-            'total_api_keys': APIKey.objects.count(),
-            'active_api_keys': APIKey.objects.filter(is_active=True).count(),
-            'expired_licenses': OperatorLicense.objects.filter(
-                expiry_date__lt=timezone.now().date()
-            ).count()
-        }
+        user_role = getattr(request.user, 'role', None)
+        
+        # GRAK staff see global statistics
+        if user_role in ['grak_admin', 'grak_officer']:
+            stats = {
+                'total_operators': Operator.objects.count(),
+                'active_operators': Operator.objects.filter(license_status='active').count(),
+                'pending_approval': Operator.objects.filter(license_status='pending').count(),
+                'suspended_operators': Operator.objects.filter(license_status='suspended').count(),
+                'total_api_keys': APIKey.objects.count(),
+                'active_api_keys': APIKey.objects.filter(is_active=True).count(),
+                'expired_licenses': OperatorLicense.objects.filter(
+                    expiry_date__lt=timezone.now().date()
+                ).count()
+            }
+        # Operators see their own statistics
+        elif user_role == 'operator_admin':
+            operator = Operator.objects.filter(email=request.user.email).first()
+            if not operator:
+                operator = Operator.objects.filter(phone=getattr(request.user, 'phone_number', None)).first()
+            
+            if operator:
+                stats = {
+                    'operator_id': str(operator.id),
+                    'operator_name': operator.name,
+                    'license_status': operator.license_status,
+                    'api_keys_count': APIKey.objects.filter(operator=operator).count(),
+                    'active_api_keys': APIKey.objects.filter(operator=operator, is_active=True).count(),
+                    'compliance_score': getattr(operator, 'compliance_score', 0)
+                }
+            else:
+                stats = {}
+        else:
+            stats = {}
         
         return self.success_response(data=stats)
 
@@ -549,11 +620,28 @@ class ExpiringLicensesView(TimingMixin, generics.ListAPIView):
 
 class RotateAPIKeyView(TimingMixin, SuccessResponseMixin, APIView):
     """Rotate API key"""
-    permission_classes = [IsAuthenticated, IsGRAKStaff]
+    permission_classes = [IsAuthenticated]
     
     @transaction.atomic
     def post(self, request, key_id):
         old_key = APIKey.objects.get(pk=key_id)
+        
+        # Check permissions: GRAK staff can rotate any key, operators can only rotate their own
+        user_role = getattr(request.user, 'role', None)
+        if user_role not in ['grak_admin', 'grak_officer']:
+            # Operator user - check if they own this key
+            user_operator = Operator.objects.filter(
+                email=request.user.email
+            ).first() or Operator.objects.filter(
+                phone=getattr(request.user, 'phone_number', None)
+            ).first()
+            
+            if not user_operator or old_key.operator.id != user_operator.id:
+                return self.error_response(
+                    message='You can only rotate API keys for your own operator account',
+                    status_code=status.HTTP_403_FORBIDDEN
+                )
+        
         old_key.is_active = False
         old_key.save()
         
@@ -575,10 +663,27 @@ class RotateAPIKeyView(TimingMixin, SuccessResponseMixin, APIView):
 
 class RevokeAPIKeyView(TimingMixin, SuccessResponseMixin, APIView):
     """Revoke API key"""
-    permission_classes = [IsAuthenticated, IsGRAKStaff]
+    permission_classes = [IsAuthenticated]
     
     def post(self, request, key_id):
         api_key = APIKey.objects.get(pk=key_id)
+        
+        # Check permissions: GRAK staff can revoke any key, operators can only revoke their own
+        user_role = getattr(request.user, 'role', None)
+        if user_role not in ['grak_admin', 'grak_officer']:
+            # Operator user - check if they own this key
+            user_operator = Operator.objects.filter(
+                email=request.user.email
+            ).first() or Operator.objects.filter(
+                phone=getattr(request.user, 'phone_number', None)
+            ).first()
+            
+            if not user_operator or api_key.operator.id != user_operator.id:
+                return self.error_response(
+                    message='You can only revoke API keys for your own operator account',
+                    status_code=status.HTTP_403_FORBIDDEN
+                )
+        
         api_key.is_active = False
         api_key.revoked_at = timezone.now()
         api_key.save()
