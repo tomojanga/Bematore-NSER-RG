@@ -8,78 +8,10 @@
   <!-- Bootstrap and Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-  <link rel="icon" type="image/png" href="../Media/new-logo.jpg" />
+  <link rel="icon" type="image/png" href="../Media/nser-icon.png" />
   <link rel="stylesheet" href="CSS/index.css">
+  <link rel="stylesheet" href="CSS/audit.css">
 
-  <style>
-    .audit-card {
-      border-radius: 12px;
-      background: #fff;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      transition: transform 0.3s ease;
-      border-left: 4px solid;
-      height: 100%;
-    }
-    .audit-card:hover { transform: translateY(-4px); }
-    .chart-container { height: 280px; position: relative; }
-    .small-chart-container { height: 200px; position: relative; }
-    .table thead { background-color: #1e5aa8; color: #fff; }
-    .dashboard-title { color: #1e5aa8; font-weight: 600; }
-    .stats-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-    }
-    .audit-badge {
-      font-size: 0.75rem;
-      padding: 4px 8px;
-      border-radius: 8px;
-    }
-    .equal-height {
-      min-height: 140px;
-      display: flex;
-      flex-direction: column;
-    }
-    .equal-height .card-body {
-      flex: 1;
-    }
-    .log-level-info { border-left-color: #1e5aa8 !important; }
-    .log-level-warning { border-left-color: #ffc107 !important; }
-    .log-level-error { border-left-color: #dc3545 !important; }
-    .log-level-success { border-left-color: #28a745 !important; }
-    .user-avatar {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: #1e5aa8;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      font-size: 0.8rem;
-    }
-    .search-box-custom {
-      position: relative;
-    }
-    .search-box-custom input {
-      border: 1px solid #e4e7ec;
-      border-radius: 6px;
-      padding: 8px 15px 8px 35px;
-      width: 100%;
-    }
-    .search-box-custom i {
-      position: absolute;
-      top: 50%;
-      left: 12px;
-      transform: translateY(-50%);
-      color: #a0aec0;
-    }
-  </style>
 </head>
 
 <body>

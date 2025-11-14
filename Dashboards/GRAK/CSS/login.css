@@ -1,0 +1,197 @@
+ :root {
+      --nser-blue: #1e5aa8;
+      --nser-dark: #0d3d7a;
+      --nser-light: #e8f1fc;
+    }
+
+    body {
+      font-family: Georgia, 'Times New Roman', Times, serif;
+      background-color: #f8f9fa;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem 0;
+    }
+
+    .registration-container {
+      max-width: 1020px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+      overflow: hidden;
+      min-height: 600px;
+    }
+
+    /* Left Side */
+    .left-side {
+      background: linear-gradient(rgba(0, 0, 0, 0.397), rgba(0, 0, 0, 0.8)), url('../../Media/admin.jpg');
+      background-position: center;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.2rem;
+      position: relative;
+    }
+
+    .portal-content {
+      text-align: center;
+      z-index: 2;
+    }
+
+    .portal-icon {
+      font-size: 3rem;
+      margin-bottom: 1.5rem;
+      opacity: 0.9;
+      color: white;
+    }
+
+    .portal-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: white;
+    }
+
+    .portal-subtitle {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      margin-bottom: 2rem;
+      color: white;
+    }
+
+    /* Right Side */
+    .right-side {
+      padding: 2.5rem;
+      display: flex;
+      align-items: center;
+      height: 80%;
+    }
+
+    .form-container {
+      width: 100%;
+      max-width: 450px;
+    }
+
+    .form-title {
+      color: var(--nser-dark);
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      font-size: 1.6rem;
+      text-align: center;
+    }
+
+    .form-subtitle {
+      color: #6c757d;
+      text-align: center;
+      margin-bottom: 2rem;
+      font-size: 0.85rem;
+    }
+
+    .form-label {
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .form-control {
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      transition: all 0.3s ease;
+      font-size: 0.75rem;
+      height: 41px;
+    }
+
+    .form-control:focus {
+      border-color: var(--nser-blue);
+      box-shadow: 0 0 0 0.2rem rgba(30, 90, 168, 0.1);
+    }
+
+    .form-control:invalid {
+      border: 1px solid;
+      border-color: var(--nser-blue);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--nser-blue), var(--nser-dark));
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      font-size: 1rem;
+      height: 50px;
+      width: 100%;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(30, 90, 168, 0.3);
+    }
+
+    .form-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1.5rem;
+      font-size: 0.9rem;
+    }
+
+    .signup-link, .forgot-link {
+      color: var(--nser-blue);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .signup-link:hover, .forgot-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsiveness */
+    @media (max-width: 992px) {
+      .registration-container {
+        margin: 0.5rem;
+        min-height: auto;
+      }
+      
+      .left-side {
+        padding: 1.5rem;
+        min-height: 200px;
+      }
+      
+      .portal-title {
+        font-size: 2rem;
+      }
+      
+      .right-side {
+        padding: 2rem 1.5rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .right-side {
+        padding: 1.5rem 1rem;
+      }
+      
+      .portal-icon {
+        font-size: 2.5rem;
+      }
+      
+      .portal-title {
+        font-size: 1.8rem;
+      }
+      
+      .form-title {
+        font-size: 1.5rem;
+      }
+      
+      .form-footer {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+    }

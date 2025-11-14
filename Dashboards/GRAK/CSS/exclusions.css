@@ -1,0 +1,65 @@
+  .exclusion-stats-card {
+      border-radius: 10px;
+      transition: transform 0.2s ease;
+      border-left: 4px solid;
+      min-height: 120px;
+    }
+    .exclusion-table {
+      font-size: 0.9rem;
+    }
+    .exclusion-table th {
+      border-top: none;
+      font-weight: 600;
+      color: var(--neutral-text);
+      background-color: var(--neutral-lighter);
+    }
+    .chart-container-sm {
+      height: 220px;
+      position: relative;
+    }
+    .status-badge {
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      border-radius: 12px;
+    }
+    .duration-badge {
+      font-size: 0.7rem;
+      padding: 3px 6px;
+      border-radius: 10px;
+      background-color: #e9ecef;
+      color: #495057;
+    }
+    .bst-token {
+      font-family: monospace;
+      font-size: 0.85rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid #e9ecef;
+    }
+    .stats-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+    .search-box-custom {
+      position: relative;
+      max-width: 400px;
+    }
+    .search-box-custom input {
+      border: 1px solid var(--neutral-border);
+      border-radius: 6px;
+      padding: 8px 15px 8px 35px;
+      width: 100%;
+    }
+    .search-box-custom i {
+      position: absolute;
+      top: 50%;
+      left: 12px;
+      transform: translateY(-50%);
+      color: var(--neutral-text-lighter);
+    }

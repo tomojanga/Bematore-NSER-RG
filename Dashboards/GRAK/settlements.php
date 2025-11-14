@@ -8,31 +8,10 @@
   <!-- Bootstrap and Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-  <link rel="icon" type="image/png" href="../Media/new-logo.jpg" />
+  <link rel="icon" type="image/png" href="../Media/nser-icon.png" />
   <link rel="stylesheet" href="CSS/index.css">
-  <style>
-    .settlement-card {
-      border-radius: 12px;
-      background: #fff;
-      transition: transform 0.3s ease;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-    .settlement-card:hover {
-      transform: translateY(-5px);
-    }
-    .table thead {
-      background-color: #1e5aa8;
-      color: white;
-    }
-    .chart-container {
-      height: 280px;
-      position: relative;
-    }
-    .dashboard-title {
-      color: #1e5aa8;
-      font-weight: 600;
-    }
-  </style>
+  <link rel="stylesheet" href="CSS/settlements.css">
+
 </head>
 
 <body>

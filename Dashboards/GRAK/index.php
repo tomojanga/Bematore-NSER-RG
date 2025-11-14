@@ -9,7 +9,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
   <!-- Favicon -->
-    <link rel="icon" type="image/png" href="../Media/new-logo.jpg" />
+    <link rel="icon" type="image/png" href="../Media/nser-icon.png" />
   <link rel="stylesheet" href="CSS/index.css">
 </head>
 
@@ -58,7 +58,7 @@
         <div class="col-md-3">
           <div class="card text-center shadow-sm border-0 equal-height-card dashboard-card-yellow">
             <div class="card-body">
-              <h6 class="opacity-75 stats-card-text-dark">Compliance Fund</h6>
+              <h6 class="opacity-75 stats-card-text-dark">Daily Revenue</h6>
               <h4 class="fw-bold stats-card-text-dark">$2.8M</h4>
               <small class="stats-card-text-dark">5% levy collection</small>
             </div>

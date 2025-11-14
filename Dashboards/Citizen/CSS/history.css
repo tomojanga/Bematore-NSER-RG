@@ -1,0 +1,113 @@
+ :root {
+      --primary-blue: #1E5AA8;
+      --primary-blue-light: #e8f0fc;
+      --primary-blue-dark: #1a4d8c;
+      --neutral-light: #f8f9fa;
+      --neutral-border: #e4e7ec;
+      --neutral-text: #4a5568;
+      --neutral-text-light: #95a1b2;
+    }
+
+    .main-content {
+      margin-left: 250px;
+      padding: 30px;
+      min-height: 100vh;
+    }
+
+    .page-title {
+      color: var(--primary-blue);
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .page-subtitle {
+      color: var(--neutral-text-light);
+      margin-bottom: 30px;
+    }
+
+    /* History Table */
+    .history-container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+
+    .history-header {
+      background: var(--primary-blue-light);
+      padding: 20px 25px;
+      border-bottom: 1px solid var(--neutral-border);
+    }
+
+    .history-header h5 {
+      color: var(--primary-blue);
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .history-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+      gap: 15px;
+      padding: 20px 25px;
+      border-bottom: 1px solid var(--neutral-border);
+      align-items: center;
+    }
+
+    .history-row:last-child {
+      border-bottom: none;
+    }
+
+    .history-row.header {
+      background: var(--neutral-light);
+      font-weight: 600;
+      color: var(--primary-blue);
+      padding: 15px 25px;
+    }
+
+    .status-badge {
+      padding: 6px 12px;
+      border-radius: 15px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .status-active {
+      background: var(--primary-blue);
+      color: white;
+    }
+
+    .status-pending {
+      background: var(--neutral-text-light);
+      color: white;
+    }
+
+    .period-badge {
+      background: var(--primary-blue-light);
+      color: var(--primary-blue);
+      padding: 6px 12px;
+      border-radius: 15px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .progress-text {
+      color: var(--primary-blue);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .history-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        text-align: center;
+      }
+      
+      .history-row.header {
+        display: none;
+      }
+    }

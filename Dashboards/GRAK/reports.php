@@ -8,69 +8,9 @@
   <!-- Bootstrap and Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-  <link rel="icon" type="image/png" href="../Media/new-logo.jpg" />
+  <link rel="icon" type="image/png" href="../Media/nser-icon.png" />
   <link rel="stylesheet" href="CSS/index.css">
-
-  <style>
-    .report-card {
-      border-radius: 12px;
-      background: #fff;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      transition: transform 0.3s ease;
-      border-left: 4px solid;
-      height: 100%;
-    }
-    .report-card:hover { transform: translateY(-4px); }
-    .chart-container { height: 280px; position: relative; }
-    .small-chart-container { height: 200px; position: relative; }
-    .table thead { background-color: #1e5aa8; color: #fff; }
-    .dashboard-title { color: #1e5aa8; font-weight: 600; }
-    .stats-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-    }
-    .report-badge {
-      font-size: 0.75rem;
-      padding: 4px 8px;
-      border-radius: 8px;
-    }
-    .progress-thin {
-      height: 6px;
-    }
-    .nav-pills .nav-link {
-      color: #6c757d;
-      font-weight: 500;
-    }
-    .nav-pills .nav-link.active {
-      background-color: #1e5aa8;
-      color: white;
-    }
-    .tab-content {
-      display: none;
-    }
-    .tab-content.active {
-      display: block;
-    }
-    .equal-height {
-      min-height: 140px;
-      display: flex;
-      flex-direction: column;
-    }
-    .equal-height .card-body {
-      flex: 1;
-    }
-    .tab-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.5rem;
-    }
-  </style>
+  <link rel="stylesheet" href="CSS/reports.css">
 </head>
 
 <body>

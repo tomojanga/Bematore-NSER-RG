@@ -1,0 +1,52 @@
+  .card-stat {
+      border-radius: 12px;
+      transition: transform 0.3s ease;
+      border-left: 4px solid;
+    }
+    .card-stat:hover {
+      transform: translateY(-5px);
+    }
+    .tab-content table thead {
+      background: #1e5aa8;
+      color: white;
+    }
+    .risk-badge {
+      font-size: 0.8rem;
+      padding: 4px 8px;
+      border-radius: 10px;
+    }
+    .risk-low {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .risk-medium {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+    .risk-high {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+    .chart-container {
+      position: relative;
+      height: 260px;
+      width: 100%;
+    }
+    .stats-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+    .screening-type-badge {
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      border-radius: 8px;
+      background-color: #e9ecef;
+    }
+    .progress-thin {
+      height: 6px;
+    }

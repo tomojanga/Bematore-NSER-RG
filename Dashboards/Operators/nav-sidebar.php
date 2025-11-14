@@ -7,59 +7,60 @@
         <div class="logo-icon">
             <i class="fa-solid fa-shield-alt"></i>
         </div>
-        <span>GRAK</span>
+        <span>NSER Portal</span>
     </div>
 
     <div class="section">
-        <div class="section-title">Compliance Monitoring</div>
+        <div class="section-title">Core</div>
         <a href="index.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'index.php' ? 'active' : ''; ?>">
             <i class="fa-solid fa-border-all"></i> Dashboard
         </a>
-        <a href="operators.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'operators.php' ? 'active' : ''; ?>">
-            <i class="fa-solid fa-building"></i> Operators
+        <a href="exclusion-lookup.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'exclusion-lookup.php' ? 'active' : ''; ?>">
+            <i class="fa-solid fa-magnifying-glass"></i> Exclusion Lookup
         </a>
-        <a href="exclusions.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'exclusions.php' ? 'active' : ''; ?>">
-            <i class="fa-solid fa-user-slash"></i> Exclusions
+        <a href="api-keys.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'api-keys.php' ? 'active' : ''; ?>">
+            <i class="fa-solid fa-key"></i> API Keys
         </a>
-        <a href="screening.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'screening.php' ? 'active' : ''; ?>">
-            <i class="fa-solid fa-clipboard-check"></i> Screening
+        <a href="webhooks.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'webhooks.php' ? 'active' : ''; ?>">
+            <i class="fa-solid fa-link"></i> Webhooks
         </a>
-        <a href="settlements.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'settlements.php' ? 'active' : ''; ?>">
-            <i class="fa-solid fa-money-bill-wave"></i> Settlements
+   
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section">
+        <div class="section-title">Simulator</div>
+        <a href="simulator.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'simulator.php' ? 'active' : ''; ?>">
+            <i class="fa-solid fa-sliders"></i> Simulator
+        </a>
+        <a href="integration-guide.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'integration-guide.php' ? 'active' : ''; ?>">
+            <i class="fa-solid fa-book"></i> Integration Guide
+        </a>
+        <a href="api-reference.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'api-reference.php' ? 'active' : ''; ?>">
+            <i class="fa-solid fa-code"></i> API Reference
         </a>
     </div>
 
     <div class="divider"></div>
 
     <div class="section">
-        <div class="section-title">Analytics & Reports</div>
-        <a href="reports.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'reports.php' ? 'active' : ''; ?>">
-            <i class="fa-solid fa-chart-line"></i> Reports
+        <div class="section-title">Insights</div>
+        <a href="statistics.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'statistics.php' ? 'active' : ''; ?>">
+            <i class="fa-solid fa-chart-line"></i> Statistics
         </a>
- 
-        <a href="audit.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'audit.php' ? 'active' : ''; ?>">
-            <i class="fa-solid fa-search"></i> Audit Trail
+        <a href="compliance.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'compliance.php' ? 'active' : ''; ?>">
+            <i class="fa-solid fa-file-contract"></i> Compliance
         </a>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="section">
-        <div class="section-title">System Management</div>
-        <a href="settings.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'settings.php' ? 'active' : ''; ?>">
-            <i class="fa-solid fa-gear"></i> Settings
-        </a>
-        <a href="users.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'users.php' ? 'active' : ''; ?>">
-            <i class="fa-solid fa-users"></i> User Management
-        </a>
-
     </div>
 
     <div class="divider"></div>
 
     <div class="section">
         <div class="section-title">Account</div>
-
+        <a href="settings.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'settings.php' ? 'active' : ''; ?>">
+            <i class="fa-solid fa-gear"></i> Settings
+        </a>
         <a href="logout.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'logout.php' ? 'active' : ''; ?>">
             <i class="fa-solid fa-right-from-bracket"></i> Logout
         </a>
@@ -87,8 +88,8 @@
             <div class="user-profile" data-bs-toggle="dropdown" aria-expanded="false">
                 <img src="../Media/new-logo.jpg" alt="User">
                 <div>
-                    <div class="name">GRAK</div>
-                    <div class="role">Admin</div>
+                    <div class="name">NSER User</div>
+                    <div class="role">Operator</div>
                 </div>
                 <i class="fa-solid fa-angle-down ms-2 text-muted"></i>
             </div>

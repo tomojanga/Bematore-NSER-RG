@@ -7,59 +7,32 @@
         <div class="logo-icon">
             <i class="fa-solid fa-shield-alt"></i>
         </div>
-        <span>GRAK</span>
+        <span>NSER Portal</span>
     </div>
 
     <div class="section">
-        <div class="section-title">Compliance Monitoring</div>
+        <div class="section-title">Self-Exclusion</div>
         <a href="index.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'index.php' ? 'active' : ''; ?>">
             <i class="fa-solid fa-border-all"></i> Dashboard
         </a>
-        <a href="operators.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'operators.php' ? 'active' : ''; ?>">
-            <i class="fa-solid fa-building"></i> Operators
+        <a href="self-exclude.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'self-exclude.php' ? 'active' : ''; ?>">
+            <i class="fa-solid fa-user-slash"></i> Self-Exclude
         </a>
-        <a href="exclusions.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'exclusions.php' ? 'active' : ''; ?>">
-            <i class="fa-solid fa-user-slash"></i> Exclusions
+        <a href="assessments.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'assessments.php' ? 'active' : ''; ?>">
+            <i class="fa-solid fa-clipboard-check"></i> Assessments
         </a>
-        <a href="screening.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'screening.php' ? 'active' : ''; ?>">
-            <i class="fa-solid fa-clipboard-check"></i> Screening
+        <a href="history.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'history.php' ? 'active' : ''; ?>">
+            <i class="fa-solid fa-clock-rotate-left"></i> History
         </a>
-        <a href="settlements.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'settlements.php' ? 'active' : ''; ?>">
-            <i class="fa-solid fa-money-bill-wave"></i> Settlements
-        </a>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="section">
-        <div class="section-title">Analytics & Reports</div>
-        <a href="reports.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'reports.php' ? 'active' : ''; ?>">
-            <i class="fa-solid fa-chart-line"></i> Reports
-        </a>
- 
-        <a href="audit.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'audit.php' ? 'active' : ''; ?>">
-            <i class="fa-solid fa-search"></i> Audit Trail
-        </a>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="section">
-        <div class="section-title">System Management</div>
-        <a href="settings.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'settings.php' ? 'active' : ''; ?>">
-            <i class="fa-solid fa-gear"></i> Settings
-        </a>
-        <a href="users.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'users.php' ? 'active' : ''; ?>">
-            <i class="fa-solid fa-users"></i> User Management
-        </a>
-
     </div>
 
     <div class="divider"></div>
 
     <div class="section">
         <div class="section-title">Account</div>
-
+        <a href="settings.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'settings.php' ? 'active' : ''; ?>">
+            <i class="fa-solid fa-gear"></i> Settings
+        </a>
         <a href="logout.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'logout.php' ? 'active' : ''; ?>">
             <i class="fa-solid fa-right-from-bracket"></i> Logout
         </a>
@@ -87,8 +60,8 @@
             <div class="user-profile" data-bs-toggle="dropdown" aria-expanded="false">
                 <img src="../Media/new-logo.jpg" alt="User">
                 <div>
-                    <div class="name">GRAK</div>
-                    <div class="role">Admin</div>
+                    <div class="name">NSER User</div>
+                    <div class="role">Citizen</div>
                 </div>
                 <i class="fa-solid fa-angle-down ms-2 text-muted"></i>
             </div>

@@ -1,0 +1,69 @@
+   .settings-card {
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      transition: transform 0.3s ease;
+      border-left: 4px solid #1e5aa8;
+      height: 100%;
+    }
+    .settings-card:hover { transform: translateY(-4px); }
+    .dashboard-title { color: #1e5aa8; font-weight: 600; }
+    .settings-section {
+      border-bottom: 1px solid #e4e7ec;
+      padding: 1.5rem 0;
+    }
+    .settings-section:last-child {
+      border-bottom: none;
+    }
+    .form-switch .form-check-input:checked {
+      background-color: #1e5aa8;
+      border-color: #1e5aa8;
+    }
+    .api-key-display {
+      background: #f8f9fa;
+      border: 1px solid #e4e7ec;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-family: monospace;
+      font-size: 0.9rem;
+    }
+    .security-level {
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .nav-pills .nav-link {
+      color: #6c757d;
+      font-weight: 500;
+      border-radius: 8px;
+      margin-bottom: 5px;
+    }
+    .nav-pills .nav-link.active {
+      background-color: #1e5aa8;
+      color: white;
+    }
+    .settings-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(30, 90, 168, 0.1);
+      color: #1e5aa8;
+      margin-right: 12px;
+    }
+    .language-flag {
+      width: 20px;
+      height: 15px;
+      border-radius: 2px;
+      margin-right: 10px;
+      border: 1px solid #e4e7ec;
+      object-fit: cover;
+    }
+    .language-option {
+      display: flex;
+      align-items: center;
+      padding: 8px 12px;
+    }

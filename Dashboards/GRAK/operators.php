@@ -9,83 +9,10 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="../Media/new-logo.jpg" />
+  <link rel="icon" type="image/png" href="../Media/nser-icon.png" />
   <link rel="stylesheet" href="CSS/index.css">
-  <style>
+  <link rel="stylesheet" href="CSS/operators.css">
 
-    .operator-stats-card {
-      border-radius: 12px;
-      transition: transform 0.3s ease;
-    }
-    .operator-stats-card:hover {
-      transform: translateY(-5px);
-    }
-    .status-indicator {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      display: inline-block;
-      margin-right: 8px;
-    }
-    .status-active {
-      background-color: var(--success-green);
-    }
-    .status-pending {
-      background-color: var(--warning-yellow);
-    }
-    .status-suspended {
-      background-color: var(--danger-red);
-    }
-    .compliance-meter {
-      height: 8px;
-      border-radius: 4px;
-      overflow: hidden;
-    }
-    .operator-table {
-      font-size: 0.9rem;
-    }
-    .operator-table th {
-      border-top: none;
-      font-weight: 600;
-      color: var(--neutral-text);
-      background-color: var(--neutral-lighter);
-    }
-    .chart-container-sm {
-      height: 220px;
-      position: relative;
-    }
-    .action-buttons .btn {
-      padding: 4px 12px;
-      font-size: 0.85rem;
-    }
-    .filter-tabs .nav-link {
-      color: var(--neutral-text);
-      font-size: 0.9rem;
-      padding: 8px 16px;
-    }
-    .filter-tabs .nav-link.active {
-      color: var(--primary-blue);
-      font-weight: 600;
-      border-bottom: 2px solid var(--primary-blue);
-      background: transparent;
-    }
-    .operator-avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: bold;
-      font-size: 0.9rem;
-    }
-    .risk-badge {
-      font-size: 0.75rem;
-      padding: 4px 8px;
-      border-radius: 12px;
-    }
-  </style>
 </head>
 
 <body>
