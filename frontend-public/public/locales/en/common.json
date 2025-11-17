@@ -1,0 +1,170 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "self_exclude": "Self-Exclude",
+    "faq": "FAQ",
+    "contact": "Contact",
+    "resources": "Resources"
+  },
+  "common": {
+    "language": "Language",
+    "select_language": "Select Language",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "close": "Close",
+    "search": "Search",
+    "no_results": "No results found",
+    "something_went_wrong": "Something went wrong. Please try again.",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "home": {
+    "title": "National Self-Exclusion Register",
+    "subtitle": "Protecting gamblers across Africa",
+    "description": "The NSER is a voluntary, cross-border self-exclusion register that allows individuals to restrict their access to gambling services.",
+    "cta_primary": "Self-Exclude Now",
+    "cta_secondary": "Learn More",
+    "hero_image_alt": "Self-exclusion concept illustration"
+  },
+  "about": {
+    "title": "About NSER",
+    "description": "The National Self-Exclusion Register (NSER) is a groundbreaking initiative designed to help individuals manage their gambling habits.",
+    "mission_title": "Our Mission",
+    "mission_text": "To provide a safe, secure, and accessible platform for individuals to voluntarily exclude themselves from gambling services across participating operators.",
+    "vision_title": "Our Vision",
+    "vision_text": "A continent where problem gambling is prevented through proactive self-regulation and responsible gaming practices.",
+    "how_it_works_title": "How It Works",
+    "how_it_works_text": "Register your exclusion with NSER, and we'll notify all participating gambling operators. Your exclusion is legally binding.",
+    "benefits_title": "Benefits",
+    "benefits": [
+      "Cross-border protection",
+      "Legal enforceability",
+      "Privacy protection",
+      "24/7 accessibility",
+      "Multiple language support",
+      "Community support resources"
+    ]
+  },
+  "self_exclude": {
+    "title": "Register for Self-Exclusion",
+    "subtitle": "Take control of your gambling",
+    "description": "Self-exclusion is a voluntary tool to help you avoid gambling. When you register with NSER, participating operators will be required to prevent you from accessing their services.",
+    "form_title": "Self-Exclusion Form",
+    "step1": "Personal Information",
+    "step2": "Exclusion Details",
+    "step3": "Confirmation",
+    "first_name": "First Name",
+    "last_name": "Last Name",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "id_type": "ID Type",
+    "id_number": "ID/Passport Number",
+    "date_of_birth": "Date of Birth",
+    "country": "Country",
+    "exclusion_duration": "Exclusion Duration",
+    "duration_6months": "6 Months",
+    "duration_1year": "1 Year",
+    "duration_2years": "2 Years",
+    "duration_5years": "5 Years",
+    "duration_lifetime": "Lifetime",
+    "reason": "Reason for Self-Exclusion (Optional)",
+    "terms_agree": "I agree to the terms and conditions",
+    "terms_link": "Read our terms",
+    "privacy_agree": "I understand my data will be used to enforce this exclusion",
+    "submit_exclusion": "Submit Self-Exclusion",
+    "success_message": "Your self-exclusion has been registered successfully",
+    "error_message": "Failed to register. Please try again.",
+    "confirmation_text": "You are about to register for a self-exclusion. This action is legally binding."
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "search_placeholder": "Search FAQs...",
+    "no_results": "No questions match your search",
+    "questions": [
+      {
+        "id": "what_is_nser",
+        "question": "What is the National Self-Exclusion Register?",
+        "answer": "The NSER is a voluntary, cross-border register that helps individuals exclude themselves from gambling services across participating operators."
+      },
+      {
+        "id": "how_does_it_work",
+        "question": "How does self-exclusion work?",
+        "answer": "When you register with NSER, we notify participating operators who are required to prevent you from accessing their services during the exclusion period."
+      },
+      {
+        "id": "is_it_binding",
+        "question": "Is self-exclusion legally binding?",
+        "answer": "Yes, self-exclusion registered with NSER is legally binding. Operators must comply with the exclusion."
+      },
+      {
+        "id": "can_i_lift",
+        "question": "Can I lift my self-exclusion early?",
+        "answer": "Lifting a self-exclusion early depends on the terms you agreed to. Contact NSER support for assistance."
+      },
+      {
+        "id": "is_it_private",
+        "question": "Is my information private?",
+        "answer": "Yes, your personal information is protected and only shared with participating operators who need it to enforce your exclusion."
+      },
+      {
+        "id": "who_is_it_for",
+        "question": "Who should use NSER?",
+        "answer": "NSER is for anyone who feels they need to control their gambling habits and wants to exclude themselves from gambling services."
+      },
+      {
+        "id": "what_operators",
+        "question": "Which operators participate in NSER?",
+        "answer": "Many major operators across Africa participate in NSER. Check our operator list for details."
+      },
+      {
+        "id": "how_long",
+        "question": "How long does exclusion last?",
+        "answer": "You can choose exclusion periods ranging from 6 months to lifetime exclusion."
+      }
+    ]
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "We're here to help",
+    "description": "Have questions about NSER? Get in touch with our support team.",
+    "form_title": "Contact Form",
+    "name": "Full Name",
+    "email": "Email Address",
+    "subject": "Subject",
+    "message": "Message",
+    "send": "Send Message",
+    "success": "Thank you for contacting us. We'll respond soon.",
+    "error": "Failed to send message. Please try again.",
+    "support_email": "support@nser.example.com",
+    "support_phone": "+256 123 456 789",
+    "office_address": "123 Business Street, Nairobi, Kenya",
+    "office_hours": "Monday - Friday, 9 AM - 5 PM (East Africa Time)"
+  },
+  "resources": {
+    "title": "Resources",
+    "subtitle": "Educational materials and support",
+    "guides": "Guides",
+    "statistics": "Statistics",
+    "toolkits": "Toolkits",
+    "support_services": "Support Services",
+    "responsible_gambling": "Responsible Gambling Tips",
+    "help_lines": "Help Lines",
+    "download": "Download",
+    "view_more": "View More"
+  },
+  "footer": {
+    "about": "About NSER",
+    "privacy": "Privacy Policy",
+    "terms": "Terms & Conditions",
+    "contact": "Contact",
+    "support": "Support",
+    "copyright": "© 2025 National Self-Exclusion Register. All rights reserved."
+  }
+}

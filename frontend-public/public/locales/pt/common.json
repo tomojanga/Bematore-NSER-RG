@@ -1,0 +1,170 @@
+{
+  "nav": {
+    "home": "Início",
+    "about": "Sobre",
+    "self_exclude": "Auto-exclusão",
+    "faq": "Perguntas Frequentes",
+    "contact": "Contato",
+    "resources": "Recursos"
+  },
+  "common": {
+    "language": "Idioma",
+    "select_language": "Selecionar idioma",
+    "loading": "Carregando...",
+    "error": "Erro",
+    "success": "Sucesso",
+    "back": "Voltar",
+    "next": "Próximo",
+    "submit": "Enviar",
+    "cancel": "Cancelar",
+    "close": "Fechar",
+    "search": "Pesquisar",
+    "no_results": "Nenhum resultado encontrado",
+    "something_went_wrong": "Algo deu errado. Por favor, tente novamente.",
+    "confirm": "Confirmar",
+    "yes": "Sim",
+    "no": "Não"
+  },
+  "home": {
+    "title": "Registro Nacional de Auto-exclusão",
+    "subtitle": "Protegendo jogadores em toda a África",
+    "description": "O RNAR é um registro de auto-exclusão voluntário e transfronteiriço que permite aos indivíduos restringir seu acesso aos serviços de jogos.",
+    "cta_primary": "Auto-excluir agora",
+    "cta_secondary": "Saiba mais",
+    "hero_image_alt": "Ilustração do conceito de auto-exclusão"
+  },
+  "about": {
+    "title": "Sobre o RNAR",
+    "description": "O Registro Nacional de Auto-exclusão (RNAR) é uma iniciativa inovadora projetada para ajudar indivíduos a gerenciar seus hábitos de jogo.",
+    "mission_title": "Nossa Missão",
+    "mission_text": "Fornecer uma plataforma segura, confiável e acessível para indivíduos se auto-excluírem voluntariamente dos serviços de jogos dos operadores participantes.",
+    "vision_title": "Nossa Visão",
+    "vision_text": "Um continente onde os problemas de jogo são prevenidos através da auto-regulação proativa e práticas de jogo responsável.",
+    "how_it_works_title": "Como funciona",
+    "how_it_works_text": "Registre sua exclusão com o RNAR, e notificaremos todos os operadores participantes. Sua exclusão é legalmente vinculativa.",
+    "benefits_title": "Benefícios",
+    "benefits": [
+      "Proteção transfronteiriça",
+      "Força executória legal",
+      "Proteção de privacidade",
+      "Acessibilidade 24/7",
+      "Suporte multilíngue",
+      "Recursos de apoio comunitário"
+    ]
+  },
+  "self_exclude": {
+    "title": "Registre-se para Auto-exclusão",
+    "subtitle": "Tenha o controle de seu jogo",
+    "description": "A auto-exclusão é uma ferramenta voluntária para ajudá-lo a evitar jogos. Quando você se registra com o RNAR, os operadores participantes são obrigados a impedi-lo de acessar seus serviços.",
+    "form_title": "Formulário de Auto-exclusão",
+    "step1": "Informações Pessoais",
+    "step2": "Detalhes de Exclusão",
+    "step3": "Confirmação",
+    "first_name": "Primeiro Nome",
+    "last_name": "Sobrenome",
+    "email": "Endereço de Email",
+    "phone": "Número de Telefone",
+    "id_type": "Tipo de ID",
+    "id_number": "Número de ID/Passaporte",
+    "date_of_birth": "Data de Nascimento",
+    "country": "País",
+    "exclusion_duration": "Duração da Exclusão",
+    "duration_6months": "6 Meses",
+    "duration_1year": "1 Ano",
+    "duration_2years": "2 Anos",
+    "duration_5years": "5 Anos",
+    "duration_lifetime": "Vitalício",
+    "reason": "Razão para Auto-exclusão (Opcional)",
+    "terms_agree": "Concordo com os termos e condições",
+    "terms_link": "Leia nossos termos",
+    "privacy_agree": "Entendo que meus dados serão usados para aplicar esta exclusão",
+    "submit_exclusion": "Enviar Auto-exclusão",
+    "success_message": "Sua auto-exclusão foi registrada com sucesso",
+    "error_message": "Falha ao registrar. Por favor, tente novamente.",
+    "confirmation_text": "Você está prestes a se registrar para uma auto-exclusão. Esta ação é legalmente vinculativa."
+  },
+  "faq": {
+    "title": "Perguntas Frequentes",
+    "search_placeholder": "Pesquisar Perguntas Frequentes...",
+    "no_results": "Nenhuma pergunta corresponde sua pesquisa",
+    "questions": [
+      {
+        "id": "what_is_nser",
+        "question": "O que é o Registro Nacional de Auto-exclusão?",
+        "answer": "O RNAR é um registro de auto-exclusão voluntário e transfronteiriço que ajuda indivíduos a se excluírem dos serviços de jogo dos operadores participantes."
+      },
+      {
+        "id": "how_does_it_work",
+        "question": "Como funciona a auto-exclusão?",
+        "answer": "Quando você se registra com o RNAR, notificamos os operadores participantes que são obrigados a impedi-lo de acessar seus serviços durante o período de exclusão."
+      },
+      {
+        "id": "is_it_binding",
+        "question": "A auto-exclusão é legalmente vinculativa?",
+        "answer": "Sim, a auto-exclusão registrada com o RNAR é legalmente vinculativa. Os operadores devem cumprir a exclusão."
+      },
+      {
+        "id": "can_i_lift",
+        "question": "Posso remover minha auto-exclusão mais cedo?",
+        "answer": "A remoção de uma auto-exclusão antecipadamente depende dos termos que você concordou. Entre em contato com o suporte do RNAR para obter assistência."
+      },
+      {
+        "id": "is_it_private",
+        "question": "Minhas informações são privadas?",
+        "answer": "Sim, suas informações pessoais são protegidas e compartilhadas apenas com operadores participantes que precisam para aplicar sua exclusão."
+      },
+      {
+        "id": "who_is_it_for",
+        "question": "Para quem é o RNAR?",
+        "answer": "O RNAR é para qualquer pessoa que sinta que precisa controlar seus hábitos de jogo e deseje se excluir dos serviços de jogo."
+      },
+      {
+        "id": "what_operators",
+        "question": "Quais operadores participam do RNAR?",
+        "answer": "Muitos operadores importantes em toda a África participam do RNAR. Consulte nossa lista de operadores para obter detalhes."
+      },
+      {
+        "id": "how_long",
+        "question": "Quanto tempo dura a exclusão?",
+        "answer": "Você pode escolher períodos de exclusão variando de 6 meses a exclusão vitalícia."
+      }
+    ]
+  },
+  "contact": {
+    "title": "Entre em Contato",
+    "subtitle": "Estamos aqui para ajudar",
+    "description": "Tem dúvidas sobre o RNAR? Entre em contato com nossa equipe de suporte.",
+    "form_title": "Formulário de Contato",
+    "name": "Nome Completo",
+    "email": "Endereço de Email",
+    "subject": "Assunto",
+    "message": "Mensagem",
+    "send": "Enviar Mensagem",
+    "success": "Obrigado por nos contatar. Responderemos em breve.",
+    "error": "Falha ao enviar a mensagem. Por favor, tente novamente.",
+    "support_email": "support@nser.example.com",
+    "support_phone": "+256 123 456 789",
+    "office_address": "123 Rua de Negócios, Nairobi, Quênia",
+    "office_hours": "Segunda - Sexta, 9h - 17h (Hora da África Oriental)"
+  },
+  "resources": {
+    "title": "Recursos",
+    "subtitle": "Materiais educacionais e suporte",
+    "guides": "Guias",
+    "statistics": "Estatísticas",
+    "toolkits": "Kits de Ferramentas",
+    "support_services": "Serviços de Suporte",
+    "responsible_gambling": "Dicas de Jogo Responsável",
+    "help_lines": "Linhas de Ajuda",
+    "download": "Baixar",
+    "view_more": "Ver Mais"
+  },
+  "footer": {
+    "about": "Sobre o RNAR",
+    "privacy": "Política de Privacidade",
+    "terms": "Termos e Condições",
+    "contact": "Contato",
+    "support": "Suporte",
+    "copyright": "© 2025 Registro Nacional de Auto-exclusão. Todos os direitos reservados."
+  }
+}

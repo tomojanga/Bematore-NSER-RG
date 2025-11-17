@@ -1,0 +1,170 @@
+{
+  "nav": {
+    "home": "Ikaya",
+    "about": "Ngotutela",
+    "self_exclude": "Zithintele",
+    "faq": "Imibuzo Evamile",
+    "contact": "Xhumana Nathi",
+    "resources": "Izinsizakusebenza"
+  },
+  "common": {
+    "language": "Ulwimi",
+    "select_language": "Khetha ulwimi",
+    "loading": "Iyayalayitha...",
+    "error": "Iphutha",
+    "success": "Impumelelo",
+    "back": "Emuva",
+    "next": "Okulandelayo",
+    "submit": "Yomeleza",
+    "cancel": "Khansela",
+    "close": "Vala",
+    "search": "Sesha",
+    "no_results": "Akukho iziphumo ezitholakele",
+    "something_went_wrong": "Kwenzeka okuthile ekungathandeki. Sicela uzame kwakhona.",
+    "confirm": "Qinisekeza",
+    "yes": "Ewe",
+    "no": "Hayi"
+  },
+  "home": {
+    "title": "Irejistra Yesizwe Yezithintelo",
+    "subtitle": "Ukunaka abadlali kule Afrika",
+    "description": "I-NSER yirejistra yezithintelo eziqhubeka ngentembeko kwanengcebane zemikhakha eninzi, esivumela abantu ukuba baqala ingxaki yabo yokufikelela kwiinkonzo zokudlala.",
+    "cta_primary": "Zithintele Ngoku",
+    "cta_secondary": "Funda Okwengeziwe",
+    "hero_image_alt": "Umfanekiso womxholo wezithintelo"
+  },
+  "about": {
+    "title": "Ngotutela kwe-NSER",
+    "description": "Irejistra Yesizwe Yezithintelo (NSER) yumkhatho ozinikelele ekuncediseni abantu ukulawula iziphiwo zabo zokudlala.",
+    "mission_title": "Umgomo Wethu",
+    "mission_text": "Ukunika inqaba ekhuselekileyo, etitshiswe futhi ilula abantu ukuba bazisulele ngokuzithandela kwiinkonzo zokudlala zebasebenzi abazibophezela.",
+    "vision_title": "Injulalwazi Yethu",
+    "vision_text": "Ikhonthinente apho umncumbane wokudlala ungawethulwa ngokwapambili kwaye ngentshisekelo yokudlala kwesizathu.",
+    "how_it_works_title": "Indlela Ifunqayo",
+    "how_it_works_text": "Fundisa ithintelo lakho kwe-NSER, futhi sizatshela babasebenzi bonke abazibophezela. Ithintelo lakho linebophezela komthetho.",
+    "benefits_title": "Iinzuzo",
+    "benefits": [
+      "Ukunaka ngaaphandle komngcele",
+      "Ukufaka emithethweni",
+      "Ukunaka imfihlo",
+      "Ukufeza inkqubo ngo-24/7",
+      "Okwazisa izilimi eziningi",
+      "Izinsizakusebenza zoluntu"
+    ]
+  },
+  "self_exclude": {
+    "title": "Fundisa Ithintelo",
+    "subtitle": "Zilawule ukudlala kwakho",
+    "description": "Ithintelo yindlela enzululwazi yokunceda abantu ukuziphakelela ekudlaleni. Xa ufundisa kwe-NSER, abasebenzi abazibophezela banele ukuzikela ngokufikelela.",
+    "form_title": "Ifomu Yethintelo",
+    "step1": "Inkcazelo Yomntu",
+    "step2": "Imininingwane Yethintelo",
+    "step3": "Uqinisekeso",
+    "first_name": "Igama Lokuqala",
+    "last_name": "Isibongo",
+    "email": "Idilesi Yeposi Yaintelektsheni",
+    "phone": "Inombolo Yefowuni",
+    "id_type": "Uhlobo Lwesazisi",
+    "id_number": "Inombolo Yesazisi/Iphasiphothi",
+    "date_of_birth": "Usuku Lokuzalwa",
+    "country": "Ilizwe",
+    "exclusion_duration": "Ixesha Lethintelo",
+    "duration_6months": "Iinyanga Ezintandathu",
+    "duration_1year": "Unyaka Omnye",
+    "duration_2years": "Iminyaka Emibini",
+    "duration_5years": "Iminyaka Emihlanu",
+    "duration_lifetime": "Impilo Yonke",
+    "reason": "Isizathu Sethintelo (Okunokukhethelwa)",
+    "terms_agree": "Ndiyvuma iinzazo nokusebenziswa",
+    "terms_link": "Funda iinzazo zethu",
+    "privacy_agree": "Ndiyaqonda ukuba iinkcazelo zam ziya kusetyenziswa ukuyenza le nthintelo isebenze",
+    "submit_exclusion": "Yomeleza Ithintelo",
+    "success_message": "Ithintelo lakho linqathswe ngukusebenzela ngimpumelelo",
+    "error_message": "Kunivalela ukufundisa. Sicela uzame kwakhona.",
+    "confirmation_text": "Uyakuqalisa ukufundisa ithintelo lakho. Le ngxaki ibenebophezela komthetho."
+  },
+  "faq": {
+    "title": "Imibuzo Evamile",
+    "search_placeholder": "Sesha imibuzo evamile...",
+    "no_results": "Akukho imibuzo enjalo nokutshesheleka kwakho",
+    "questions": [
+      {
+        "id": "what_is_nser",
+        "question": "Kutheni i-NSER?",
+        "answer": "I-NSER yirejistra yezithintelo eziqhubeka ngentembeko kwanengcebane zemikhakha eninzi, enceda abantu ukuba bazisulele kwiinkonzo zokudlala zebasebenzi abazibophezela."
+      },
+      {
+        "id": "how_does_it_work",
+        "question": "Uthini ithintelo elimisela?",
+        "answer": "Xa ufundisa kwe-NSER, sizatshela abasebenzi abazibophezela abacacajwa ukuzikela ekufikeni kwiinkonzo zabo ixesha lethintelo."
+      },
+      {
+        "id": "is_it_binding",
+        "question": "Ithini ithintelo enebophezela komthetho?",
+        "answer": "Ewe, ithintelo elifundisiwe kwe-NSER linebophezela komthetho. Abasebenzi kufanele bakuthatele ithintelo."
+      },
+      {
+        "id": "can_i_lift",
+        "question": "Ingaba ndinokusithi ndithathe ithintelo lam ngaphambi kwexesha?",
+        "answer": "Ukuthatha kwi ithintelo ngaphambi kwexesha kuxhomekeke kummiselwano oyivumeleyo. Xhumana namkameli we-NSER uxelele isikhokela."
+      },
+      {
+        "id": "is_it_private",
+        "question": "Ingaba iinkcazelo zam zimfihlele?",
+        "answer": "Ewe, iinkcazelo zakho eziyimfihlo zigotywa futhi ziphiwo nje abasebenzi abazibophezela abayidinga ukuqhubekeza ithintelo lakho."
+      },
+      {
+        "id": "who_is_it_for",
+        "question": "Kutheni i-NSER?",
+        "answer": "I-NSER iyomuntu lomntu oziva ukuba kufanele azilawule inzo zokudlala yakhe futhi ayifuna azithintele kwiikonzo zokudlala."
+      },
+      {
+        "id": "what_operators",
+        "question": "Abasebenzi bani abazibophezela e-NSER?",
+        "answer": "Abasebenzi abaliqela amakulu kule Afrika basebenzela e-NSER. Jwayeleza uhlu lwethu lwabengxebi ukuze uthi inkcazelo."
+      },
+      {
+        "id": "how_long",
+        "question": "Ithintelo linemaxa eninzi?",
+        "answer": "Unokukhetha izixesha zethintelo ezisukela kwiinyanga ezintandathu ukuya ethintelo lonke ubomi."
+      }
+    ]
+  },
+  "contact": {
+    "title": "Xhumana Nathi",
+    "subtitle": "Nandikho ukukuncedisa",
+    "description": "Imibuzo ngotutela kwe-NSER? Xhumana nomsizakusebenza wethu.",
+    "form_title": "Ifomu Yokuxhumana",
+    "name": "Igama Eliphelele",
+    "email": "Idilesi Yeposi Yaintelektsheni",
+    "subject": "Isihloko",
+    "message": "Umyalezo",
+    "send": "Yomeleza Umyalezo",
+    "success": "Siyabonga ekuxhumaneni nathi. Sizakuphendula masikhwezi.",
+    "error": "Kunivalela kunyomeleza umyalezo. Sicela uzame kwakhona.",
+    "support_email": "okwakela@nser.example.com",
+    "support_phone": "+256 123 456 789",
+    "office_address": "123 Umgwaqo Wezimboni, Nairobi, Kenya",
+    "office_hours": "UMvulo - UMsombuluko, 9 AM - 5 PM (Isikhathi Seafrika Empumalanga)"
+  },
+  "resources": {
+    "title": "Izinsizakusebenza",
+    "subtitle": "Izinsizakusebenza zesikole nomtshireletso",
+    "guides": "Iingalelo",
+    "statistics": "Izibalo",
+    "toolkits": "Iimbiza",
+    "support_services": "Umsebenzi Womtshireletso",
+    "responsible_gambling": "Iingcebiso Zokudlala Kunobulumko",
+    "help_lines": "Imigca Yokuncediswa",
+    "download": "Yikhokhele",
+    "view_more": "Buka Okwengeziwe"
+  },
+  "footer": {
+    "about": "Ngotutela kwe-NSER",
+    "privacy": "Umgwedlule Wemfihlelo",
+    "terms": "Iinzazo Nokusebenziswa",
+    "contact": "Xhumana Nathi",
+    "support": "Okwakela",
+    "copyright": "© 2025 Irejistra Yesizwe Yezithintelo. Onke amahlo aligcinile."
+  }
+}

@@ -1,11 +1,10 @@
+const withNextIntl = require('next-intl/plugin')('./src/i18n.ts')
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   
-  // Static export for Netlify (avoids serverless function issues)
-  output: 'export',
-  
-  // Disable image optimization for static export
+  // Disable image optimization  
   images: {
     unoptimized: true,
   },
@@ -16,30 +15,6 @@ const nextConfig = {
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
     NEXT_PUBLIC_PORTAL_TYPE: process.env.NEXT_PUBLIC_PORTAL_TYPE || 'public',
   },
-  
-  // Redirects (if needed)
-  async redirects() {
-    return []
-  },
-  
-  // Headers for security
-  async headers() {
-    return [
-      {
-        source: '/:path*',
-        headers: [
-          {
-            key: 'X-DNS-Prefetch-Control',
-            value: 'on'
-          },
-          {
-            key: 'X-Frame-Options',
-            value: 'SAMEORIGIN'
-          },
-        ],
-      },
-    ]
-  },
 }
 
-module.exports = nextConfig
+module.exports = withNextIntl(nextConfig)
