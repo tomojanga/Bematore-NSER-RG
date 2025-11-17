@@ -1,0 +1,170 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "about": "À propos",
+    "self_exclude": "Auto-exclusion",
+    "faq": "FAQ",
+    "contact": "Contact",
+    "resources": "Ressources"
+  },
+  "common": {
+    "language": "Langue",
+    "select_language": "Sélectionner la langue",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "back": "Retour",
+    "next": "Suivant",
+    "submit": "Soumettre",
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "search": "Rechercher",
+    "no_results": "Aucun résultat trouvé",
+    "something_went_wrong": "Une erreur s'est produite. Veuillez réessayer.",
+    "confirm": "Confirmer",
+    "yes": "Oui",
+    "no": "Non"
+  },
+  "home": {
+    "title": "Registre National d'Auto-exclusion",
+    "subtitle": "Protéger les joueurs en Afrique",
+    "description": "Le NSER est un registre d'auto-exclusion volontaire et transfrontalier qui permet aux individus de restreindre leur accès aux services de jeu.",
+    "cta_primary": "S'auto-exclure maintenant",
+    "cta_secondary": "En savoir plus",
+    "hero_image_alt": "Illustration du concept d'auto-exclusion"
+  },
+  "about": {
+    "title": "À propos du NSER",
+    "description": "Le Registre National d'Auto-exclusion (NSER) est une initiative révolutionnaire conçue pour aider les individus à gérer leurs habitudes de jeu.",
+    "mission_title": "Notre Mission",
+    "mission_text": "Fournir une plateforme sûre, sécurisée et accessible pour que les individus s'auto-excluent volontairement des services de jeu auprès des opérateurs participants.",
+    "vision_title": "Notre Vision",
+    "vision_text": "Un continent où le jeu problématique est prévenu grâce à l'autoréglementation proactive et aux pratiques de jeu responsable.",
+    "how_it_works_title": "Comment ça marche",
+    "how_it_works_text": "Enregistrez votre exclusion auprès du NSER, et nous informerons tous les opérateurs participants. Votre exclusion est juridiquement contraignante.",
+    "benefits_title": "Avantages",
+    "benefits": [
+      "Protection transfrontalière",
+      "Force exécutoire légale",
+      "Protection de la vie privée",
+      "Accessibilité 24h/24, 7j/7",
+      "Support multilingue",
+      "Ressources de soutien communautaire"
+    ]
+  },
+  "self_exclude": {
+    "title": "S'enregistrer pour l'auto-exclusion",
+    "subtitle": "Prenez le contrôle de votre jeu",
+    "description": "L'auto-exclusion est un outil volontaire pour vous aider à éviter le jeu. Lorsque vous vous enregistrez auprès du NSER, les opérateurs participants sont tenus de vous empêcher d'accéder à leurs services.",
+    "form_title": "Formulaire d'auto-exclusion",
+    "step1": "Informations personnelles",
+    "step2": "Détails de l'exclusion",
+    "step3": "Confirmation",
+    "first_name": "Prénom",
+    "last_name": "Nom de famille",
+    "email": "Adresse e-mail",
+    "phone": "Numéro de téléphone",
+    "id_type": "Type d'ID",
+    "id_number": "Numéro d'ID/Passeport",
+    "date_of_birth": "Date de naissance",
+    "country": "Pays",
+    "exclusion_duration": "Durée de l'exclusion",
+    "duration_6months": "6 mois",
+    "duration_1year": "1 an",
+    "duration_2years": "2 ans",
+    "duration_5years": "5 ans",
+    "duration_lifetime": "À vie",
+    "reason": "Raison de l'auto-exclusion (Optionnel)",
+    "terms_agree": "J'accepte les conditions générales",
+    "terms_link": "Lire nos conditions",
+    "privacy_agree": "Je comprends que mes données seront utilisées pour appliquer cette exclusion",
+    "submit_exclusion": "Soumettre l'auto-exclusion",
+    "success_message": "Votre auto-exclusion a été enregistrée avec succès",
+    "error_message": "Échec de l'enregistrement. Veuillez réessayer.",
+    "confirmation_text": "Vous êtes sur le point de vous enregistrer pour une auto-exclusion. Cette action est juridiquement contraignante."
+  },
+  "faq": {
+    "title": "Questions fréquemment posées",
+    "search_placeholder": "Rechercher dans les FAQ...",
+    "no_results": "Aucune question ne correspond à votre recherche",
+    "questions": [
+      {
+        "id": "what_is_nser",
+        "question": "Qu'est-ce que le Registre National d'Auto-exclusion ?",
+        "answer": "Le NSER est un registre d'auto-exclusion volontaire et transfrontalier qui aide les individus à s'exclure des services de jeu auprès des opérateurs participants."
+      },
+      {
+        "id": "how_does_it_work",
+        "question": "Comment fonctionne l'auto-exclusion ?",
+        "answer": "Lorsque vous vous enregistrez auprès du NSER, nous notifions les opérateurs participants qui sont tenus de vous empêcher d'accéder à leurs services pendant la période d'exclusion."
+      },
+      {
+        "id": "is_it_binding",
+        "question": "L'auto-exclusion est-elle juridiquement contraignante ?",
+        "answer": "Oui, l'auto-exclusion enregistrée auprès du NSER est juridiquement contraignante. Les opérateurs doivent respecter l'exclusion."
+      },
+      {
+        "id": "can_i_lift",
+        "question": "Puis-je lever mon auto-exclusion plus tôt ?",
+        "answer": "La levée d'une auto-exclusion plus tôt dépend des conditions que vous avez acceptées. Contactez le support du NSER pour obtenir de l'aide."
+      },
+      {
+        "id": "is_it_private",
+        "question": "Mes informations sont-elles privées ?",
+        "answer": "Oui, vos informations personnelles sont protégées et uniquement partagées avec les opérateurs participants qui en ont besoin pour appliquer votre exclusion."
+      },
+      {
+        "id": "who_is_it_for",
+        "question": "À qui s'adresse le NSER ?",
+        "answer": "Le NSER s'adresse à toute personne qui estime avoir besoin de contrôler ses habitudes de jeu et qui souhaite s'exclure des services de jeu."
+      },
+      {
+        "id": "what_operators",
+        "question": "Quels opérateurs participent au NSER ?",
+        "answer": "De nombreux opérateurs majeurs en Afrique participent au NSER. Consultez notre liste d'opérateurs pour plus de détails."
+      },
+      {
+        "id": "how_long",
+        "question": "Combien de temps dure l'exclusion ?",
+        "answer": "Vous pouvez choisir des périodes d'exclusion allant de 6 mois à une exclusion à vie."
+      }
+    ]
+  },
+  "contact": {
+    "title": "Nous contacter",
+    "subtitle": "Nous sommes là pour vous aider",
+    "description": "Avez-vous des questions sur le NSER ? Contactez notre équipe de support.",
+    "form_title": "Formulaire de contact",
+    "name": "Nom complet",
+    "email": "Adresse e-mail",
+    "subject": "Sujet",
+    "message": "Message",
+    "send": "Envoyer le message",
+    "success": "Merci de nous avoir contactés. Nous répondrons bientôt.",
+    "error": "Échec de l'envoi du message. Veuillez réessayer.",
+    "support_email": "support@nser.example.com",
+    "support_phone": "+256 123 456 789",
+    "office_address": "123 Rue de l'Entreprise, Nairobi, Kenya",
+    "office_hours": "Lundi - Vendredi, 9 h - 17 h (Heure de l'Afrique de l'Est)"
+  },
+  "resources": {
+    "title": "Ressources",
+    "subtitle": "Matériel éducatif et support",
+    "guides": "Guides",
+    "statistics": "Statistiques",
+    "toolkits": "Boîtes à outils",
+    "support_services": "Services d'assistance",
+    "responsible_gambling": "Conseils de jeu responsable",
+    "help_lines": "Lignes d'aide",
+    "download": "Télécharger",
+    "view_more": "Voir plus"
+  },
+  "footer": {
+    "about": "À propos du NSER",
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions générales",
+    "contact": "Contact",
+    "support": "Support",
+    "copyright": "© 2025 Registre National d'Auto-exclusion. Tous droits réservés."
+  }
+}

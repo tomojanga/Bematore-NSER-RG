@@ -1,0 +1,170 @@
+{
+  "nav": {
+    "home": "Ụlọ",
+    "about": "Banyere",
+    "self_exclude": "Jiri Onewe",
+    "faq": "Ajụjụ A Na-Ajụ Mgbe Nile",
+    "contact": "Kpọtụrụ Anyị",
+    "resources": "Ike Mmụọ"
+  },
+  "common": {
+    "language": "Asụsụ",
+    "select_language": "Họrọ Asụsụ",
+    "loading": "Ịnatọ...",
+    "error": "Njehie",
+    "success": "Ịga mma",
+    "back": "Laghachi",
+    "next": "Nke Osote",
+    "submit": "Nyefe",
+    "cancel": "Kagbuo",
+    "close": "Mechie",
+    "search": "Chọọ",
+    "no_results": "Achọtaghị ihe ọ bụla",
+    "something_went_wrong": "Ihe ụfọdụ adịghị mma. Biko zaa ọzọ.",
+    "confirm": "Kwesie",
+    "yes": "Ee",
+    "no": "Mba"
+  },
+  "home": {
+    "title": "Ndekọ Mbanye Mpu Ego",
+    "subtitle": "Ichebe ndị egwu egwu n'ofe Afrika",
+    "description": "NSER bụ ndekọ mbanye mpu ego na-adịghị aka na ndụ e ji ịwere azụ ụmụ mmadụ ike igbakwa ndụ ha ma ọ bụ agbanyeghị mkpali ụmụ mmadụ ike igbakwa ndụ ha.",
+    "cta_primary": "Jiri Onewe Ugbu A",
+    "cta_secondary": "Mụta Ihe Ọzọ",
+    "hero_image_alt": "Foto nke echiche nke jiri onewe"
+  },
+  "about": {
+    "title": "Banyere NSER",
+    "description": "Ndekọ Mbanye Mpu Ego (NSER) bụ nkema ọhụ elu na-eme mgbe emechaa ka ụmụ mmadụ malite n'ila azụ ndụ ha n'ịmụ ego.",
+    "mission_title": "Ihe Ọrụ Anyị",
+    "mission_text": "Ịnye ndụ dị elu, na-edozi ma ọ bụ ọrụ dị mma ka ụmụ mmadụ nwere ike jiri onewe mgbe ha chọrọ n'ụlọ ọrụ mgbakọ ego ndị na-abaghị.",
+    "vision_title": "Echiche Anyị",
+    "vision_text": "Elu ụdị Afrika ebe a na-agbochikwa mma mkpaokwu mpu ego site na nkwado ụzọ ọzọ na omume mpu ego na-ekwere.",
+    "how_it_works_title": "Otú O Ka Rụọ Ọrụ",
+    "how_it_works_text": "Debanye anya ụnyaahụ gị n'NSER, ma anyị ga-agwa ndị na-azụ azụ nile. Ụnyaahụ gị nwere ntọ mma.",
+    "benefits_title": "Onyinye",
+    "benefits": [
+      "Ichebe karịrị ala",
+      "Ike ntọ n'ime ihe",
+      "Ichebe ihe ndị dị mma",
+      "Ọrụ bụ 24/7",
+      "Ịtụ asụsụ ọtụtụ",
+      "Ike mmụọ nke obodo"
+    ]
+  },
+  "self_exclude": {
+    "title": "Debanye Anya Mpu Ego Onewe",
+    "subtitle": "Ichebakwa mpu ego gị",
+    "description": "Jiri onewe bụ ọrụ ahụ e nyere ka ụmụ mmadụ gbakwa ego. Mgbe ị debanye anya n'NSER, ndị na-azụ azụ na-akwai iwu ka ha gbakwa gị.",
+    "form_title": "Ọdịnala Jiri Onewe",
+    "step1": "Ozi Nke Onwe Gị",
+    "step2": "Akụkụ nke Mpu Ego",
+    "step3": "Ntụkwasị",
+    "first_name": "Aha Mbu",
+    "last_name": "Aha Ezinaụlọ",
+    "email": "Adres Imeeli",
+    "phone": "Ọnụ Ọgugu Telefọnu",
+    "id_type": "Ụdị Akwụkwọ Njide",
+    "id_number": "Ọnụ Ọgugu Akwụkwọ Njide/Paspọtị",
+    "date_of_birth": "Ubọchị Amụrụ",
+    "country": "Mba",
+    "exclusion_duration": "Oge Jiri Onewe",
+    "duration_6months": "Ọnwa Isii",
+    "duration_1year": "Afọ Otu",
+    "duration_2years": "Afọ Abụọ",
+    "duration_5years": "Afọ Ise",
+    "duration_lifetime": "Oge Ụdị Ndụ",
+    "reason": "Ihe Mere Jiri Onewe (Ndị Ndị A Ga-Eme)",
+    "terms_agree": "Eme m ka m kwere n'usoro na ụkpụ",
+    "terms_link": "Gụ usoro anyị",
+    "privacy_agree": "Ama m na ozi m ga-eji chekwa mpu ego a",
+    "submit_exclusion": "Nyefe Mpu Ego Jiri Onewe",
+    "success_message": "Mpu ego gị jiri onewe nyefekwasịrị nke ọma",
+    "error_message": "Mmebi na debanye anya. Biko zaa ọzọ.",
+    "confirmation_text": "Ị na-achọ ịdebanya anya mpu ego jiri onewe. Ọrụ a nwere ntọ mma."
+  },
+  "faq": {
+    "title": "Ajụjụ A Na-Ajụ Mgbe Nile",
+    "search_placeholder": "Chọọ Ajụjụ A Na-Ajụ Mgbe Nile...",
+    "no_results": "Ajụjụ ọ bụla abụghị na ịchọ gị",
+    "questions": [
+      {
+        "id": "what_is_nser",
+        "question": "Kedu ihe NSER bụ?",
+        "answer": "NSER bụ ndekọ mbanye mpu ego na-adịghị aka na ndụ e ji ịwere azụ ụmụ mmadụ ma ọ bụ agbanyeghị mkpali ụmụ mmadụ ike igbakwa ndụ ha."
+      },
+      {
+        "id": "how_does_it_work",
+        "question": "Otú mpu ego jiri rụọ ọrụ?",
+        "answer": "Mgbe ị debanye anya n'NSER, anyị ga-agwa ndị na-azụ azụ nile ike ịma na-agbakwa gị n'oge mpu ego."
+      },
+      {
+        "id": "is_it_binding",
+        "question": "Mpu ego jiri nwere otù ke n'ime ihe?",
+        "answer": "Ee, mpu ego jiri debanye anya n'NSER nwere ntọ mma. Ndị na-azụ azụ ga-atụ ụkpụ mpu ego."
+      },
+      {
+        "id": "can_i_lift",
+        "question": "Enwere m ike ibuli mpu ego m mgbe ozugbo?",
+        "answer": "Ibilikwa mpu ego tupu oge gachara na-adepụta n'usoro ị kwere. Kpọtụrụ NSER enyemaka."
+      },
+      {
+        "id": "is_it_private",
+        "question": "Ozi m na-adịghị mma?",
+        "answer": "Ee, ozi gị na-echebe ma ọ bụ na-eji ndị na-azụ azụ naanị ndị chọrọ mpu ego gị."
+      },
+      {
+        "id": "who_is_it_for",
+        "question": "NSER bụ maka onye?",
+        "answer": "NSER bụ maka onye ọ bụla na-eche na ọ kwesịrị ịchebakwa mpu ego ya ma ọ bụ chọrọ jiri onewe."
+      },
+      {
+        "id": "what_operators",
+        "question": "Kedu ndị na-azụ azụ na-abaghị n'NSER?",
+        "answer": "Ọtụtụ ndị na-azụ azụ buru ibu n'ofe Afrika na-abaghị n'NSER. Lelite uhe ndị na-azụ azụ anyị."
+      },
+      {
+        "id": "how_long",
+        "question": "Mpu ego na-adị oge ole?",
+        "answer": "Ị nwere ike ihọrọ oge mpu ego site n'ọnwa isii ruo ndụ ụdị."
+      }
+    ]
+  },
+  "contact": {
+    "title": "Kpọtụrụ Anyị",
+    "subtitle": "Anyị nandikwa inyere gị",
+    "description": "Ọ nwere ajụjụ maka NSER? Kpọtụrụ ndị enyemaka anyị.",
+    "form_title": "Ọdịnala Kpọtụ",
+    "name": "Aha Ozugbo",
+    "email": "Adres Imeeli",
+    "subject": "Isiokwu",
+    "message": "Ozi",
+    "send": "Nyefe Ozi",
+    "success": "Daalụ maka ịkpọtụ anyị. Anyị ga-azaa ngwa ngwa.",
+    "error": "Mmebi na ọnụ ozi. Biko zaa ọzọ.",
+    "support_email": "enyemaka@nser.example.com",
+    "support_phone": "+256 123 456 789",
+    "office_address": "123 Okporo Ụlọ Ọrụ, Nairobi, Kenya",
+    "office_hours": "Mọnde - Fraide, 9 AM - 5 PM (Oge Mpaghara Afrika"
+  },
+  "resources": {
+    "title": "Ike Mmụọ",
+    "subtitle": "Ihe ọzọ muta na enyemaka",
+    "guides": "Ọmumụ",
+    "statistics": "Ọnụ Ọgugu",
+    "toolkits": "Ihe Ọrụ Ngwa",
+    "support_services": "Ọrụ Enyemaka",
+    "responsible_gambling": "Nkwado Mpu Ego Na-ekwere",
+    "help_lines": "Ibuo Enyemaka",
+    "download": "Gbakota",
+    "view_more": "Lee Ihe Ọzọ"
+  },
+  "footer": {
+    "about": "Banyere NSER",
+    "privacy": "Usoro Ihe Ndị Dị Mma",
+    "terms": "Usoro Na Ụkpụ",
+    "contact": "Kpọtụrụ Anyị",
+    "support": "Enyemaka",
+    "copyright": "© 2025 Ndekọ Mbanye Mpu Ego. Ịchekwasị nile."
+  }
+}

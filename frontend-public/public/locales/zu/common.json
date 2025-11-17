@@ -1,0 +1,170 @@
+{
+  "nav": {
+    "home": "Ekhaya",
+    "about": "Mayelana",
+    "self_exclude": "Zisulele",
+    "faq": "Imibuzo Evamile",
+    "contact": "Xhumana Nathi",
+    "resources": "Izinsizakusebenza"
+  },
+  "common": {
+    "language": "Ulimi",
+    "select_language": "Khetha ulimi",
+    "loading": "Iyalayitha...",
+    "error": "Iphutha",
+    "success": "Impumelelo",
+    "back": "Emuva",
+    "next": "Okulandelayo",
+    "submit": "Thumela",
+    "cancel": "Khansela",
+    "close": "Vala",
+    "search": "Sesha",
+    "no_results": "Iziphumo ezingenawo zitholakele",
+    "something_went_wrong": "Kwenzeka okuthile okungakunamnandi. Ngiyaloba zama futhi.",
+    "confirm": "Qinisekeza",
+    "yes": "Yebo",
+    "no": "Cha"
+  },
+  "home": {
+    "title": "Rejista Yomazwi Ezempi Yezisulelo",
+    "subtitle": "Okwakela abadlali kule Aferika",
+    "description": "I-NSER iyiredista eyenziwe ngokuzithandela yokupilanisa ekhaya lapho abantu bangakwazi ukuzibeka ngebang lokuhlobana nemisebenzi yomdlalo.",
+    "cta_primary": "Zisulele Manje",
+    "cta_secondary": "Funda Kabanzi",
+    "hero_image_alt": "Isifanekiso sekhonsepti yesisulelo"
+  },
+  "about": {
+    "title": "Mayelana Ne-NSER",
+    "description": "Irejista Yomazwi Ezempi Yezisulelo (NSER) ingumkhakhalwane owakusekelwe ukusiza abantu abukhele izinhlelo zabo zokudlala.",
+    "mission_title": "Umgomo Wethu",
+    "mission_text": "Ukunikeza indawo ephakeme, elindile, nelula abantu abangazisulela ngokhululeka emisebenzi yomdlalo yabamcintiswano abahubeni.",
+    "vision_title": "Injulalwazi Yethu",
+    "vision_text": "Isiko lapho ukuphalaza ngamadlalo kuyavikwa ngezindlela zamazwe ezenzekelele kanye nemikhuba yomdlalo owanele.",
+    "how_it_works_title": "Indlela Isebenza Ngayo",
+    "how_it_works_text": "Fundisa isulelo sakho nge-NSER, futhi sizotshela onke abamcintiswano abahubeni. Isulelo sakho siyabophezela emthethweni.",
+    "benefits_title": "Izinzuzo",
+    "benefits": [
+      "Okwakela ekunqobeni imingcele",
+      "Umthethwesi wemilando",
+      "Ukuvikela ubunkulu",
+      "Ukutholakala ngesikhathi somosuka 24/7",
+      "Okwazisa izilimi eziningi",
+      "Izinsizakusebenza zomhlangano"
+    ]
+  },
+  "self_exclude": {
+    "title": "Fundisa Isulelo",
+    "subtitle": "Zilawule umdlalo wakho",
+    "description": "Isulelo yindlela ezenzekelele yokuvula abantu ekudlaleni. Uma ufundisa nge-NSER, onke abamcintiswano abahubeni banelungile ukuzikela ngokusifakla.",
+    "form_title": "Fomu Yesulelo",
+    "step1": "Ulwazi Lwombungazi",
+    "step2": "Imininingwane Yesulelo",
+    "step3": "Ukuqinisekeza",
+    "first_name": "Igama Lokuqala",
+    "last_name": "Isibongo",
+    "email": "Iselifoni Leposini",
+    "phone": "Inombolo Yesiluman",
+    "id_type": "Uhlobo Lweetshi",
+    "id_number": "Inombolo Yeetshi/Iphasiphothi",
+    "date_of_birth": "Usuku Lokuzalwa",
+    "country": "Izwe",
+    "exclusion_duration": "Isikhathi Sesulelo",
+    "duration_6months": "Izinyanga Eziyisithupha",
+    "duration_1year": "Umnyaka Owodwa",
+    "duration_2years": "Iminyaka Emibili",
+    "duration_5years": "Iminyaka Emihlanu",
+    "duration_lifetime": "Okwakhe Bonke Insuku",
+    "reason": "Isizathu Sesulelo (Okukhethi)",
+    "terms_agree": "Niyavuma izindlela nokusebenzisana",
+    "terms_link": "Funda izindlela zethu",
+    "privacy_agree": "Ngikhumbula ukuthi imininingwane yami izosetshenziswa ukulungiselela lesisulelo",
+    "submit_exclusion": "Thumela Isulelo",
+    "success_message": "Isulelo sakho sezimu sangena umsebenzi ngempumelelo",
+    "error_message": "Kunivalela ukufundisa. Ngiyaloba zama futhi.",
+    "confirmation_text": "Unqoba ukuthatha izinga lokufundisa lesulelo. Lolu mzamo ubophezela emthethweni."
+  },
+  "faq": {
+    "title": "Imibuzo Evamile",
+    "search_placeholder": "Sesha imibuzo evamile...",
+    "no_results": "Ayikho imibuzo elihambisana nokusesha kwakho",
+    "questions": [
+      {
+        "id": "what_is_nser",
+        "question": "I-NSER ingubani?",
+        "answer": "I-NSER iyiredista eyenziwe ngokuzithandela yokupilanisa ekhaya yasizekeliso abantu abangazisulela emisebenzi yomdlalo yabamcintiswano."
+      },
+      {
+        "id": "how_does_it_work",
+        "question": "Isulelo siyasebenza kanjani?",
+        "answer": "Uma ufundisa nge-NSER, sizotshela onke abamcintiswano abahubeni abenza incazo yokuzikela ngokusifakla emathaphu ekusulwa."
+      },
+      {
+        "id": "is_it_binding",
+        "question": "Isulelo siyabophezela emthethweni?",
+        "answer": "Yebo, isulelo esifundiswe nge-NSER siyabophezela emthethweni. Abamcintiswano kufanele bathathe isulelo."
+      },
+      {
+        "id": "can_i_lift",
+        "question": "Ngingakwazi ukulingisa isulelo sami ngesikhatshi?",
+        "answer": "Ukulingisa isulelo ngesikhatshi kuthengeka kuya nakwizindlela ozibonele. Xhumana nencazelo ye-NSER."
+      },
+      {
+        "id": "is_it_private",
+        "question": "Ingabe imininingwane yami iyimfihlelo?",
+        "answer": "Yebo, imininingwane yakho iyokungcwalelwa futhi iyohlanganyela nje nabamcintiswano abahubeni abadinga ukwenzela isulelo."
+      },
+      {
+        "id": "who_is_it_for",
+        "question": "NSER ingubani?",
+        "answer": "I-NSER iyomuntu onomuntu owezwa ekufanele ukubalulelela izinhlelo zayo zokudlala futhi ayifun zisulele."
+      },
+      {
+        "id": "what_operators",
+        "question": "Abamcintiswano bani abahubeni e-NSER?",
+        "answer": "Abamcintiswano amaningi amakulu kule Aferika bahubeni e-NSER. Jwayeleza uhlu lwethu labamcintiswano ukuze kuthwale imininingwane."
+      },
+      {
+        "id": "how_long",
+        "question": "Isulelo sinqobela isikhathi esingakanani?",
+        "answer": "Ungakhetha amathaphu esulelo okuqalisa izinyanga eziyisithupha kuya ekusuleleni umuntu wonke insuku."
+      }
+    ]
+  },
+  "contact": {
+    "title": "Xhumana Nathi",
+    "subtitle": "Silapha okunizaneni",
+    "description": "Imibuzo emaxezeni ne-NSER? Xhumana nomusizo wethu.",
+    "form_title": "Fomu Yokuxhumana",
+    "name": "Igama Eliphelele",
+    "email": "Iselifoni Leposini",
+    "subject": "Iisihloko",
+    "message": "Umyalezo",
+    "send": "Thumela Umyalezo",
+    "success": "Siyabonga ekuxhumaneni nathi. Sizobuza ngsikhatshi.",
+    "error": "Kunivalela kuthumela umyalezo. Ngiyaloba zama futhi.",
+    "support_email": "okwakela@nser.example.com",
+    "support_phone": "+256 123 456 789",
+    "office_address": "123 Umgwaqo Wezimboni, Nairobi, Kenya",
+    "office_hours": "UMvulo - UMsombuluko, 9 AM - 5 PM (Isikhathi Seafrika Empumalanga)"
+  },
+  "resources": {
+    "title": "Izinsizakusebenza",
+    "subtitle": "Izinsizakusebenza zesikole nokunizaneni",
+    "guides": "Izinhlahla",
+    "statistics": "Izibalo",
+    "toolkits": "Amakhasimende",
+    "support_services": "Umsebenzi Wokunizaneni",
+    "responsible_gambling": "Imodeli Yomdlalo Owanele",
+    "help_lines": "Imigqa Yokunizaneni",
+    "download": "Yikhokhele",
+    "view_more": "Buka Kabanzi"
+  },
+  "footer": {
+    "about": "Mayelana Ne-NSER",
+    "privacy": "Umgwedlule Wobunkulu",
+    "terms": "Izindlela Nokusebenzisana",
+    "contact": "Xhumana Nathi",
+    "support": "Okwakela",
+    "copyright": "© 2025 Rejista Yomazwi Ezempi Yezisulelo. Konke amalungelo igcinwe."
+  }
+}

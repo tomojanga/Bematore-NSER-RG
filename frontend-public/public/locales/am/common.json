@@ -1,0 +1,170 @@
+{
+  "nav": {
+    "home": "መነሻ ገጽ",
+    "about": "ስለ",
+    "self_exclude": "ራስን ለማስወገድ",
+    "faq": "ተደጋግሞ የሚጠየቁ ጥያቄዎች",
+    "contact": "ዋ communicationገጠር",
+    "resources": "ሃብቶች"
+  },
+  "common": {
+    "language": "ቋንቋ",
+    "select_language": "ቋንቋ ይምረጡ",
+    "loading": "በመጫን ላይ...",
+    "error": "ስህተት",
+    "success": "ስኖ",
+    "back": "ወደ ኋላ",
+    "next": "ቀጣይ",
+    "submit": "ያስገቡ",
+    "cancel": "ይሰርዙ",
+    "close": "ዝጋ",
+    "search": "ፈልግ",
+    "no_results": "ፈልገው ያገኙት ውጤት የለም",
+    "something_went_wrong": "አንዳንድ ነገር አሳሳች ነው. እንደገና ይሞክሩ.",
+    "confirm": "አረጋግጥ",
+    "yes": "አዎ",
+    "no": "አይ"
+  },
+  "home": {
+    "title": "ብሔራዊ ራስን ለማስወገድ መዝገብ",
+    "subtitle": "በአፍሪካ ዙሪያ ላይ ጠፍ ያለ ሰዎችን መከላከል",
+    "description": "NSER በስ voluntary ፍቅር ወደ አገር ውስጥ ራስን ለማስወገድ መዝገብ ሲሆን ግለሰቦች ወደ ጨዋታ አገልግሎቶች ዘላቸው ሊወሰኑ ይችላሉ.",
+    "cta_primary": "አሁን ራስን ለማስወገድ",
+    "cta_secondary": "ተወስኖ",
+    "hero_image_alt": "ራስን ለማስወገድ ጽንሰ-ሀሳብ ምስል"
+  },
+  "about": {
+    "title": "ስለ NSER",
+    "description": "ብሔራዊ ራስን ለማስወገድ መዝገብ (NSER) ግለሰቦች ወደ ጨዋታ ልምዳቸው ሊደመወዙ ተገቢ ድምጽ ከፍተኛ ስር።",
+    "mission_title": "ተልዕኩ",
+    "mission_text": "ግለሰቦች በስ voluntary ፍቅር የሚሳትፉ ከዚህ ወደ ጨዋታ አገልግሎቶች ላይ ራስን ለማስወገድ ፓተርን ለመስጠት።",
+    "vision_title": "ራዕይ",
+    "vision_text": "አንድ ብሔራት የት ችግር ጨዋታ በደግ ራስ-ደንብ እና ተገቢ ጨዋታ ልምዶች ሊከላከል አለበት።",
+    "how_it_works_title": "ምን ዋጋ አለበት",
+    "how_it_works_text": "ራስን ለማስወገድ NSER ተመዝገብ, እና እኛ ሁሉ ተሳታፊ ኦፕሬተሮች ይታወቅ. ራስን ለማስወገድ ህጋዊ የሚታሰር ነው.",
+    "benefits_title": "ጠቀሜታ",
+    "benefits": [
+      "ወሰን ላይ ያለ ጥበቃ",
+      "ህጋዊ ተግባራዊነት",
+      "ሚስጥር ጥበቃ",
+      "24/7 ተደራሽነት",
+      "ብዙ ቋንቋ ድጋፍ",
+      "ህብረተሰብ ድጋፍ ሃብቶች"
+    ]
+  },
+  "self_exclude": {
+    "title": "ራስን ለማስወገድ ይመዝገቡ",
+    "subtitle": "ወደ ጨዋታ ባላችሁ ሙሌት ይመልከቱ",
+    "description": "ራስን ለማስወገድ ወደ ጨዋታ ልምዳችሁን ሊወያይ ብዙ ራስ ሳሊካ ንድ ነው. NSER ጋር ሊመዝገቡ ፣ ተሳታፊ ኦፕሬተሮች ወደ አገልግሎቱ ይቀጥቅሱናል.",
+    "form_title": "ራስን ለማስወገድ ቅጥ",
+    "step1": "ግላዊ መረጃ",
+    "step2": "ራስን ለማስወገድ ዝርዝር",
+    "step3": "ተረጋገጠ",
+    "first_name": "የመጀመሪያ ስም",
+    "last_name": "የመጨረሻ ስም",
+    "email": "ኢሜይል አድራሻ",
+    "phone": "ስልክ ቁጥር",
+    "id_type": "ታውቂ ዓይነት",
+    "id_number": "ታውቂ/ፓስፖርት ቁጥር",
+    "date_of_birth": "የትውልድ ቀን",
+    "country": "ሀገር",
+    "exclusion_duration": "ራስን ለማስወገድ ጊዜ",
+    "duration_6months": "6 ወር",
+    "duration_1year": "1 አመት",
+    "duration_2years": "2 ዓመት",
+    "duration_5years": "5 ዓመት",
+    "duration_lifetime": "በሕይወታቸው ጊዜ",
+    "reason": "ራስን ለማስወገድ ምክንያት (ተራ)",
+    "terms_agree": "ከ ተግባራዊ ውጤት ሁኔታዎች ተስማሚ ነኝ",
+    "terms_link": "ሁሉ ሁኔታዎች ያንብቡ",
+    "privacy_agree": "የእኔ ደንብ ይህን ራስን ለማስወገድ ለመተግበር ይሆናል ንባብ",
+    "submit_exclusion": "ራስን ለማስወገድ ያስገቡ",
+    "success_message": "ራስን ለማስወገድ በተሳካ ሁኔታ ተመዝግቦ ነበር",
+    "error_message": "መዝገበ ያስተካክለ. እንደገና ይሞክሩ.",
+    "confirmation_text": "ራስን ለማስወገድ ለመመዝገብ ዝግጅት ላይ ነዎት. ይህ እርምጃ ህጋዊ የሚታሰር ነው."
+  },
+  "faq": {
+    "title": "ተደጋግሞ የሚጠየቁ ጥያቄዎች",
+    "search_placeholder": "ተደጋግሞ የሚጠየቁ ጥያቄዎች ይፈልጉ...",
+    "no_results": "ፈልገው ሊያገኙ በሚችሉት ጥያቄዎች ተዛማጅ የለም",
+    "questions": [
+      {
+        "id": "what_is_nser",
+        "question": "ብሔራዊ ራስን ለማስወገድ መዝገብ ምንድነው?",
+        "answer": "NSER በስ voluntary ፍቅር ወደ አገር ውስጥ ራስን ለማስወገድ መዝገብ ሲሆን ግለሰቦች ወደ ጨዋታ አገልግሎቶች ዘላቸው ሊወሰኑ ይችላሉ."
+      },
+      {
+        "id": "how_does_it_work",
+        "question": "ራስን ለማስወገድ እንዴት ይሰራል?",
+        "answer": "NSER ጋር ሊመዝገቡ ፣ ተሳታፊ ኦፕሬተሮች ወደ አገልግሎቱ ይቀጥቅሱናል በእንግድ ጊዜ."
+      },
+      {
+        "id": "is_it_binding",
+        "question": "ራስን ለማስወገድ ህጋዊ የሚታሰር ነው?",
+        "answer": "አዎ, ራስን ለማስወገድ NSER ገብ ህጋዊ የሚታሰር ነው. ኦፕሬተሮች ራስን ለማስወገድ ማክበር አለበት."
+      },
+      {
+        "id": "can_i_lift",
+        "question": "ራስን ለማስወገድ ቅደም ተከተል ሊያደርግ ይችላ?",
+        "answer": "ራስን ለማስወገድ አሪት መወገድ በተስማሚ ስምምነት ላይ የተመሰረተ ነው. NSER ድጋፍ ሙሌት."
+      },
+      {
+        "id": "is_it_private",
+        "question": "መረጃ ግላዊ ናቸው?",
+        "answer": "አዎ, ግላዊ መረጃ ተከላክለ እና ጋር ተሳታፊ ኦፍራተሮች ብቻ ሃላፊ ራስን ለማስወገድ."
+      },
+      {
+        "id": "who_is_it_for",
+        "question": "ብሔራዊ ራስን ለማስወገድ መዝገብ ለማን ነው?",
+        "answer": "ብሔራዊ ራስን ለማስወገድ መዝገብ ለማንኛውም ሰው ወደ ጨዋታ ልምድ ለማስተዳደር እና ራስን ለማስወገድ ይፈልግ."
+      },
+      {
+        "id": "what_operators",
+        "question": "የትኞቹ ኦፔሬተሮች ብሔራዊ ራስን ለማስወገድ መዝገብ ውስጥ ተሳትፎ?",
+        "answer": "ብዙ ዋና ኦፔሬተሮች በአፍሪካ ጻ ውስጥ ተሳትፎ. ለሌሎች ዝርዝር ኦፔሬተሮች ዝርዝር."
+      },
+      {
+        "id": "how_long",
+        "question": "ራስን ለማስወገድ ምን ያህል ጊዜ ይቆያል?",
+        "answer": "ከ 6 ወር ወደ ሕይወት ራስን ለማስወገድ ሊምረጥ ይችላል."
+      }
+    ]
+  },
+  "contact": {
+    "title": "ዋ communicationገጠር",
+    "subtitle": "ወደ ዝምድና ሙሌት",
+    "description": "ወደ ብሔራዊ ራስን ለማስወገድ መዝገብ ጥያቄ? ወደ ድጋፍ ቡድን ዋ communicationገጠር.",
+    "form_title": "ዋ communicationገጠር ቅጥ",
+    "name": "ሙሉ ስም",
+    "email": "ኢሜይል አድራሻ",
+    "subject": "ርእስ",
+    "message": "መልእክት",
+    "send": "መልእክት ላክ",
+    "success": "ወደ አሁን ዋ communicationገጠር ምስጋና. ቅርብ ውስጥ ሪት.",
+    "error": "መልእክት ላክ አልተሳካም. እንደገና ይሞክሩ.",
+    "support_email": "ድጋፍ@nser.example.com",
+    "support_phone": "+256 123 456 789",
+    "office_address": "123 ንግድ 街, ናይሮቢ, ኬንያ",
+    "office_hours": "ሰኞ - ዓርብ, 9 AM - 5 PM (የምስራቅ አፍሪካ ሰዓት)"
+  },
+  "resources": {
+    "title": "ሃብቶች",
+    "subtitle": "ትምህርትና ድጋፍ ሞዴል",
+    "guides": "አመልካች",
+    "statistics": "ሺህቪቦቫ",
+    "toolkits": "ምሳሌ",
+    "support_services": "ድጋፍ አገልግሎቶች",
+    "responsible_gambling": "ተገቢ ጨዋታ ምክር",
+    "help_lines": "ምክር ሙሌቶች",
+    "download": "ዳውንሎድ",
+    "view_more": "ተመልከት ተጨማሪ"
+  },
+  "footer": {
+    "about": "ስለ ብሔራዊ ራስን ለማስወገድ መዝገብ",
+    "privacy": "ግላዊ መረጃ ፖሊሲ",
+    "terms": "ሁኔታ ከ ውስጥ",
+    "contact": "ዋ communicationገጠር",
+    "support": "ድጋፍ",
+    "copyright": "© 2025 ብሔራዊ ራስን ለማስወገድ መዝገብ. ሁሉ መብቶች ተጠብቀዋል."
+  }
+}

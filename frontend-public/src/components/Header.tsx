@@ -3,18 +3,22 @@
 import Link from 'next/link'
 import { Shield, Menu, X } from 'lucide-react'
 import { useState } from 'react'
+import { useTranslations, useLocale } from 'next-intl'
+import LanguageSwitcher from './LanguageSwitcher'
 import { portalLinks } from '@/data/content'
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const t = useTranslations()
+  const locale = useLocale()
 
   const navigation = [
-    { name: 'Home', href: '/' },
-    { name: 'About', href: '/about' },
-    { name: 'Self-Exclude', href: '/self-exclude' },
-    { name: 'Resources', href: '/resources' },
-    { name: 'FAQ', href: '/faq' },
-    { name: 'Contact', href: '/contact' },
+    { name: t('nav.home'), href: `/${locale}/` },
+    { name: t('nav.about'), href: `/${locale}/about` },
+    { name: t('nav.self_exclude'), href: `/${locale}/self-exclude` },
+    { name: t('nav.resources'), href: `/${locale}/resources` },
+    { name: t('nav.faq'), href: `/${locale}/faq` },
+    { name: t('nav.contact'), href: `/${locale}/contact` },
   ]
 
   return (
@@ -31,16 +35,21 @@ export default function Header() {
             </div>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-6">
+          <nav className="hidden md:flex items-center gap-4">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-gray-700 hover:text-blue-900 font-medium transition"
+                className="text-gray-700 hover:text-blue-900 font-medium transition text-sm"
               >
                 {item.name}
               </Link>
             ))}
+            
+            <div className="h-6 border-l border-gray-300"></div>
+            
+            <LanguageSwitcher />
+            
             <Link
               href={portalLinks.citizen}
               className="bg-blue-900 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-800 transition text-sm"
@@ -75,6 +84,10 @@ export default function Header() {
                 {item.name}
               </Link>
             ))}
+            <div className="py-2 border-t">
+              <div className="text-xs text-gray-600 font-semibold px-2 py-2">{t('common.language')}</div>
+              <LanguageSwitcher />
+            </div>
             <Link
               href={portalLinks.citizen}
               className="block bg-blue-900 text-white px-6 py-2 rounded-lg font-semibold text-center"
