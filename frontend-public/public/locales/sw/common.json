@@ -1,0 +1,170 @@
+{
+  "nav": {
+    "home": "Nyumbani",
+    "about": "Kuhusu",
+    "self_exclude": "Jizuie",
+    "faq": "Maswali Yanayoulizwa Mara Kwa Mara",
+    "contact": "Wasiliana",
+    "resources": "Rasilimali"
+  },
+  "common": {
+    "language": "Lugha",
+    "select_language": "Chagua Lugha",
+    "loading": "Inapakia...",
+    "error": "Hitilafu",
+    "success": "Imefanikiwa",
+    "back": "Rudi Nyuma",
+    "next": "Inayofuata",
+    "submit": "Tuma",
+    "cancel": "Ghairi",
+    "close": "Funga",
+    "search": "Tafuta",
+    "no_results": "Hakuna matokeo yaliyopatikana",
+    "something_went_wrong": "Kitu kimekosea. Tafadhali jaribu tena.",
+    "confirm": "Thibitisha",
+    "yes": "Ndiyo",
+    "no": "Hapana"
+  },
+  "home": {
+    "title": "Hazina ya Kujizuia Kwa Jina",
+    "subtitle": "Kumlinda mcheza katika Afrika",
+    "description": "NSER ni hazina ya kujizuia ya kujitolea, ya kuvuka sehemu mbalimbali, inayoruhusu watu kuzuia upatikanaji wa huduma za mcheza.",
+    "cta_primary": "Jizuie Sasa",
+    "cta_secondary": "Jifunze Zaidi",
+    "hero_image_alt": "Kielelezo cha wazo la kujizuia"
+  },
+  "about": {
+    "title": "Kuhusu NSER",
+    "description": "Hazina ya Kujizuia Kwa Jina (NSER) ni mpango wa kumfanya kazi unaodhamiria kusaidia watu kudhibiti tabia zao za mcheza.",
+    "mission_title": "Lengo Letu",
+    "mission_text": "Kutoa jukwaa salama, linalotakikana, na linaloweza kupatikana kwa watu kujizuia mwenyewe kutokana na huduma za mcheza kwa waendeshaji wanaoshiriki.",
+    "vision_title": "Maamuzi Yetu",
+    "vision_text": "Bara ambalo tatizo la mcheza limekataliwa kwa njia proactive ya kujizuia na mazoea ya mcheza wenye uwajibikaji.",
+    "how_it_works_title": "Jinsi Inavyofanya kazi",
+    "how_it_works_text": "Jiandikishe kuzuia mwenyewe kwa NSER, na tutajulisha waendeshaji wote wanaoshiriki. Kuzuia mwenyewe kunawajibikaji kisheria.",
+    "benefits_title": "Faida",
+    "benefits": [
+      "Ulinzi wenye kuvuka sehemu mbalimbali",
+      "Uwajibikaji kisheria",
+      "Ulinzi wa faragha",
+      "Kupatikana kwa saa 24/7",
+      "Msaada wa lugha nyingi",
+      "Rasilimali za msaada wa jamii"
+    ]
+  },
+  "self_exclude": {
+    "title": "Jiandikishe Kuzuia Mwenyewe",
+    "subtitle": "Chukua udhibiti wa mcheza wako",
+    "description": "Kuzuia mwenyewe ni chombo cha kujitolea kusaidia kuzuia mcheza. Ukijiandikisha kwa NSER, waendeshaji wanaoshiriki watazuiwwa kuzuia upatikanaji wa huduma zao.",
+    "form_title": "Fomu ya Kuzuia Mwenyewe",
+    "step1": "Taarifa za Kibinafsi",
+    "step2": "Maelezo ya Kuzuia",
+    "step3": "Uthibitisho",
+    "first_name": "Jina la Kwanza",
+    "last_name": "Jina la Ukoo",
+    "email": "Anwani ya Barua Pepe",
+    "phone": "Namba ya Simu",
+    "id_type": "Aina ya Kitambulisho",
+    "id_number": "Namba ya Kitambulisho/Pasipoti",
+    "date_of_birth": "Tarehe ya Kuzaliwa",
+    "country": "Nchi",
+    "exclusion_duration": "Muda wa Kuzuia",
+    "duration_6months": "Miezi 6",
+    "duration_1year": "Mwaka 1",
+    "duration_2years": "Miaka 2",
+    "duration_5years": "Miaka 5",
+    "duration_lifetime": "Maisha Yote",
+    "reason": "Sababu ya Kuzuia Mwenyewe (Kwa Kawaida)",
+    "terms_agree": "Nakubali masharti na matatizo",
+    "terms_link": "Soma masharti yetu",
+    "privacy_agree": "Naelewa data yangu itatumika kutekeleza kuzuia hii",
+    "submit_exclusion": "Tuma Kuzuia Mwenyewe",
+    "success_message": "Kuzuia mwenyewe kumeandikiswa kwa ufanisi",
+    "error_message": "Imefeli kujiandikisha. Tafadhali jaribu tena.",
+    "confirmation_text": "Unakaribia kujiandikisha kwa kuzuia mwenyewe. Hatua hii ina uhitaji kisheria."
+  },
+  "faq": {
+    "title": "Maswali Yanayoulizwa Mara Kwa Mara",
+    "search_placeholder": "Tafuta maswali...",
+    "no_results": "Hakuna maswali yanayolingana na tafuta yako",
+    "questions": [
+      {
+        "id": "what_is_nser",
+        "question": "NSER ni nini?",
+        "answer": "NSER ni hazina ya kujizuia ya kujitolea, ya kuvuka sehemu mbalimbali, inayosaidia watu kujizuia kutokana na huduma za mcheza kwa waendeshaji wanaoshiriki."
+      },
+      {
+        "id": "how_does_it_work",
+        "question": "Kuzuia mwenyewe kunafanya kazi vipi?",
+        "answer": "Ukijiandikisha kwa NSER, tunajulisha waendeshaji wanaoshiriki ambao wanastahimili kuzuia upatikanaji wa huduma zao wakati wa kuzuia."
+      },
+      {
+        "id": "is_it_binding",
+        "question": "Je, kuzuia mwenyewe kunawajibikaji kisheria?",
+        "answer": "Ndiyo, kuzuia mwenyewe kinachojandikisha kwa NSER kunawajibikaji kisheria. Waendeshaji lazima zitii kuzuia."
+      },
+      {
+        "id": "can_i_lift",
+        "question": "Je, niweza kuinua kuzuia mwenyewe mapema?",
+        "answer": "Kuinua kuzuia mwenyewe mapema kunategemea masharti uliyokubali. Wasiliana na msaada wa NSER kwa msaada."
+      },
+      {
+        "id": "is_it_private",
+        "question": "Je, taarifa yangu ni ya faragha?",
+        "answer": "Ndiyo, taarifa yako ya kibinafsi imelimlindwa na kusambazwa kwa waendeshaji wanaoshiriki tu wanaohitaji kutekeleza kuzuia mwenyewe."
+      },
+      {
+        "id": "who_is_it_for",
+        "question": "Nani anapaswa kutumia NSER?",
+        "answer": "NSER ni kwa mtu yeyote anayohisi anahitaji kuzuia tabia zao za mcheza na anataka kujizuia kutokana na huduma za mcheza."
+      },
+      {
+        "id": "what_operators",
+        "question": "Waendeshaji gani wanaoshiriki katika NSER?",
+        "answer": "Waendeshaji wengi makubwa katika Afrika wanashiriki katika NSER. Angalia orodha yetu ya waendeshaji kwa maelezo."
+      },
+      {
+        "id": "how_long",
+        "question": "Kuzuia kunakuwa kwa muda gani?",
+        "answer": "Unaweza kuchagua miuda ya kuzuia kuanzia miezi 6 hadi kuzuia maisha yote."
+      }
+    ]
+  },
+  "contact": {
+    "title": "Wasiliana Nasi",
+    "subtitle": "Tupo hapa kusaidia",
+    "description": "Je, una maswali kuhusu NSER? Wasiliana na timu yetu ya msaada.",
+    "form_title": "Fomu ya Mawasiliano",
+    "name": "Jina Kamili",
+    "email": "Anwani ya Barua Pepe",
+    "subject": "Mada",
+    "message": "Ujumbe",
+    "send": "Tuma Ujumbe",
+    "success": "Asante kwa kuwasiliana nasi. Tutajibu haraka.",
+    "error": "Imefeli kutuma ujumbe. Tafadhali jaribu tena.",
+    "support_email": "msaada@nser.mfano.com",
+    "support_phone": "+256 123 456 789",
+    "office_address": "123 Mtaa wa Biashara, Nairobi, Kenya",
+    "office_hours": "Jumatatu - Ijumaa, 9 AM - 5 PM (Saa za Afrika Mashariki)"
+  },
+  "resources": {
+    "title": "Rasilimali",
+    "subtitle": "Vifaa vya kielimu na msaada",
+    "guides": "Mwongozo",
+    "statistics": "Takwimu",
+    "toolkits": "Malighafi",
+    "support_services": "Huduma za Msaada",
+    "responsible_gambling": "Kidogo cha Mcheza wenye Uwajibikaji",
+    "help_lines": "Mistari ya Msaada",
+    "download": "Pakua",
+    "view_more": "Tazama Zaidi"
+  },
+  "footer": {
+    "about": "Kuhusu NSER",
+    "privacy": "Sera ya Faragha",
+    "terms": "Masharti na Matatizo",
+    "contact": "Wasiliana",
+    "support": "Msaada",
+    "copyright": "© 2025 Hazina ya Kujizuia Kwa Jina. Haki zote zimehifadhiwa."
+  }
+}

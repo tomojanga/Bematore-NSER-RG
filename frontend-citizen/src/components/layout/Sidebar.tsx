@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
+import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 import {
     LayoutDashboard,
@@ -103,12 +104,12 @@ const navigationConfig = {
 
     // Citizen (End User) Navigation
     citizen: [
-        { name: 'My Portal', href: '/dashboard', icon: Home },
-        { name: 'Self-Exclude', href: '/dashboard/self-exclude', icon: Shield },
-        { name: 'Take Assessment', href: '/dashboard/assessment', icon: ClipboardList },
-        { name: 'My Status', href: '/dashboard/status', icon: UserCheck },
-        { name: 'Help & Support', href: '/dashboard/support', icon: Phone },
-        { name: 'Settings', href: '/dashboard/settings', icon: Settings },
+        { name: 'sidebar.my_portal', href: '/dashboard', icon: Home },
+        { name: 'sidebar.self_exclude', href: '/dashboard/self-exclude', icon: Shield },
+        { name: 'sidebar.take_assessment', href: '/dashboard/assessment', icon: ClipboardList },
+        { name: 'sidebar.my_status', href: '/dashboard/status', icon: UserCheck },
+        { name: 'sidebar.help_support', href: '/dashboard/support', icon: Phone },
+        { name: 'sidebar.settings', href: '/dashboard/settings', icon: Settings },
     ],
 
     // Super Admin Navigation (All Access)
@@ -138,6 +139,7 @@ const navigationConfig = {
 export default function Sidebar() {
     const pathname = usePathname()
     const { user } = useAuth()
+    const t = useTranslations('sidebar')
 
     // Get navigation items based on user role
     const navigation = navigationConfig[user?.role as keyof typeof navigationConfig] || navigationConfig.citizen
@@ -164,8 +166,8 @@ export default function Sidebar() {
             }
         } else if (role === 'citizen') {
             return {
-                title: 'Self-Exclusion',
-                subtitle: 'Responsible Gaming',
+                title: t('self_exclusion'),
+                subtitle: t('responsible_gaming'),
                 color: 'text-purple-600'
             }
         } else {
@@ -196,6 +198,7 @@ export default function Sidebar() {
                     {navigation.map((item) => {
                         const isActive = pathname === item.href ||
                             (pathname.startsWith(item.href + '/') && item.href !== '/dashboard')
+                        const itemName = item.name.includes('.') ? t(item.name as any) : item.name
                         return (
                             <li key={item.name}>
                                 <Link
@@ -208,7 +211,7 @@ export default function Sidebar() {
                                     )}
                                 >
                                     <item.icon className="h-5 w-5 flex-shrink-0" />
-                                    <span className="truncate">{item.name}</span>
+                                    <span className="truncate">{itemName}</span>
                                 </Link>
                             </li>
                         )

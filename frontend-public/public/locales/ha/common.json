@@ -1,0 +1,171 @@
+{
+  "nav": {
+    "home": "Gida",
+    "about": "Maganin",
+    "self_exclude": "Kai Jima",
+    "faq": "Tambaye da ake Bugi",
+    "contact": "Tuntubayi",
+    "resources": "Albarkatun"
+  },
+  "common": {
+    "language": "Harshe",
+    "select_language": "Zaɓi Harshe",
+    "loading": "Yana Bowa...",
+    "error": "Kuskure",
+    "success": "Nasara",
+    "back": "Baya",
+    "next": "Na Gida",
+    "submit": "Gabatar",
+    "cancel": "Bata",
+    "close": "Rufe",
+    "search": "Nemi",
+    "no_results": "Babu Sakamakon Da Aka Samu",
+    "something_went_wrong": "Wani Abu Ya Faru. Domin Ka Saba Yadda.",
+    "confirm": "Tabbatar",
+    "yes": "Eh",
+    "no": "A'a"
+  },
+  "home": {
+    "title": "Cibiyar Jita-jita Ta Kasuwar Ciki",
+    "subtitle": "Karewa Masu Wasan Azarta A Cikin Afrika",
+    "description": "NSER wata cibiya ta cikakke ce da aka gida don ba da damar mutane su cire kansu daga abubuwan wasan azarta.",
+    "cta_primary": "Cire Kai Yanzu",
+    "cta_secondary": "Sannu",
+    "hero_image_alt": "Lik na raba jita-jita"
+  },
+  "about": {
+    "title": "Maganin NSER",
+    "description": "Cibiyar Jita-jita Ta Kasuwar Ciki (NSER) wata jẹ-kere ce da aka ƙira don taimaki mutane su can ka abubuwan jita.",
+    "mission_title": "Aikin Mu",
+    "mission_text": "Samar da dandali mai tsarki, gaskiya, da sauƙi don mutane su cire kansu daga abubuwan wasan azarta.",
+    "vision_title": "Muni Mu",
+    "vision_text": "Aiki inda a iya rigakafin jita-jitaf wasan azarta ta hanyar ƙarawa matakin asiri da abubuwan jita na hanna.",
+    "how_it_works_title": "Yadda Ya Aiki",
+    "how_it_works_text": "Yi rajista na jita-jitaka tare da NSER, kuma za mu sanar da dukan ɓoye. Jita-jitaka tana da ƙarewa na shari'a.",
+    "benefits_title": "Abubuwan Iko",
+    "benefits": [
+      "Karewa a zaɓin",
+      "Matakin shari'a",
+      "Karewa asiri",
+      "Sayarwa 24/7",
+      "Taimako da yawancin harshe",
+      "Albarkatun taimako gida"
+    ]
+  },
+  "self_exclude": {
+    "title": "Yi Rajista Don Jita-jita",
+    "subtitle": "Mamaye wasan azarta na kai",
+    "description": "Jita-jita wata kyan ne de taimaki ka kai tun wasan azarta. Idan ka yi rajista tare da NSER, dukan masu samun rikodi dole ne su gaje ka.",
+    "form_title": "Fomu na Jita-jita",
+    "step1": "Bayanan Kai",
+    "step2": "Bayanan Jita-jita",
+    "step3": "Tabbatarwa",
+    "first_name": "Suna Na Farko",
+    "last_name": "Suna Na Ango",
+    "email": "Adireshin Jaruwa",
+    "phone": "Lambar Wayar",
+    "id_type": "Nau'in ID",
+    "id_number": "Lambar ID/Pasipoti",
+    "date_of_birth": "Ranar Haifa",
+    "country": "Kasa",
+    "exclusion_duration": "Lokacin Jita-jita",
+    "duration_6months": "Watanni Shida",
+    "duration_1year": "Shekara Ɗaya",
+    "duration_2years": "Shekarun Biyu",
+    "duration_5years": "Shekarun Biyar",
+    "duration_lifetime": "Zaman Yau da jiya",
+    "reason": "Sababun Jita-jita (Zanya)",
+    "terms_agree": "Na yarda da sharuɗɗan aiki",
+    "terms_link": "Karanta sharuɗɗan mu",
+    "privacy_agree": "Na fahimta cewa bayanan na za su tuba wajen yakamaf jita-jita",
+    "submit_exclusion": "Gabar Jita-jita",
+    "success_message": "Jita-jitaka an saka shi sosai",
+    "error_message": "An saba wajen saka. Domin ka saba yadda.",
+    "confirmation_text": "Kana shirin saka don jita-jita. Aiki nan yana da ƙarewa na shari'a."
+  },
+  "faq": {
+    "title": "Tambaye da ake Bugi",
+    "search_placeholder": "Nemi Tambaye da ake Bugi...",
+    "no_results": "Babu tambayi da ya dace da bugi na kai",
+    "questions": [
+      {
+        "id": "what_is_nser",
+        "question": "Me ne Cibiyar Jita-jita Ta Kasuwar Ciki?",
+        "answer": "NSER wata cibiya ta cikakke ce de ba da damar mutane su cire kansu daga abubuwan wasan azarta."
+      },
+      {
+        "id": "how_does_it_work",
+        "question": "Yadda Jita-jita Take Aiki?",
+        "answer": "Idan ka yi rajista tare da NSER, za mu sanar da dukan ɓoye wanda dole ne su gaje ka."
+      },
+      {
+        "id": "is_it_binding",
+        "question": "Jita-jita Tana Da Ƙarewa Na Shari'a?",
+        "answer": "Eh, jita-jita da aka saka tare da NSER tana da ƙarewa na shari'a. Dukan ɓoye dole ne su yi."
+      },
+      {
+        "id": "can_i_lift",
+        "question": "Zai Iya Ɗaukar Jita-jita Ta Kai Kafin Lokaci?",
+        "answer": "Ɗaukar jita-jita kafin lokaci ya dogara ga sharuɗɗan da ka yarda. Tuntubayi wa duk NSER."
+      },
+      {
+        "id": "is_it_private",
+        "question": "Bayanan Ni Naka A Asiri?",
+        "answer": "Eh, bayanan kai ana kare shi kuma ana raba shi ga ɓoye kawai wanda suke buƙata wajen yakamaf jita-jita."
+      },
+      {
+        "id": "who_is_it_for",
+        "question": "NSER Na Watse?",
+        "answer": "NSER na duk wanda ya ji yana buƙatar karewa wasan azarta da kuma yana so ya cire kai."
+      },
+      {
+        "id": "what_operators",
+        "question": "Wane Ɓoye Ke Samu A NSER?",
+        "answer": "Yawancin ɓoye masu girma a Afrika suna samu a NSER. Duba jerin ɓoye namu."
+      },
+      {
+        "id": "how_long",
+        "question": "Jita-jita Tana Zama Nawa Lokaci?",
+        "answer": "Zaka iya zaɓi namanyan jita daga watanni shida har zaman jiya."
+      }
+    ]
+  },
+  "contact": {
+    "title": "Tuntubayi Mu",
+    "subtitle": "Muna Nan Gami Ka",
+    "description": "Kana da tambaye kan NSER? Tuntubayi da gidan duk mu.",
+    "form_title": "Fomu na Tuntubayi",
+    "name": "Cikakken Suna",
+    "email": "Adireshin Jaruwa",
+    "subject": "Batun",
+    "message": "Saƙo",
+    "send": "Aika Saƙo",
+    "success": "Na gode mun tuntubayi. Za mu amsa zao.",
+    "error": "An saba wajen aika saƙo. Domin ka saba yadda.",
+    "support_email": "duk@nser.example.com",
+    "support_phone": "+256 123 456 789",
+    "office_address": "123 Titi Kasua, Nairobi, Kenya",
+    "office_hours": "Litini - Juma, 9 AM - 5 PM (Lokacin Gabashin Afrika)"
+  },
+  "resources": {
+    "title": "Albarkatun",
+    "subtitle": "Abubuwan Ilimi da Duk",
+    "guides": "Jagoran",
+    "statistics": "Lissafi",
+    "toolkits": "Kayyukan Aiki",
+    "support_services": "Abubuwan Duk",
+    "responsible_gambling": "Shawarwarin Wasan Azarta Na Honna",
+    "help_lines": "Layin Jiya",
+    "download": "Saki",
+    "view_more": "Duba",
+    "view_more_label": "Duba"
+  },
+  "footer": {
+    "about": "Maganin NSER",
+    "privacy": "Yarjejeniya na Asiri",
+    "terms": "Sharuɗɗan Aiki",
+    "contact": "Tuntubayi",
+    "support": "Duk",
+    "copyright": "© 2025 Cibiyar Jita-jita Ta Kasuwar Ciki. Dukan haƙƙi an ajiye."
+  }
+}

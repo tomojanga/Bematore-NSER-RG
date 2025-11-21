@@ -1,17 +1,20 @@
 'use client'
 
 import { useAuth } from '@/hooks/useAuth'
+import { useTranslations } from 'next-intl'
 import { Bell, LogOut, User, Settings } from 'lucide-react'
 import { getInitials, getRoleColor } from '@/lib/utils'
+import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
 
 export default function Header() {
   const { user, logout } = useAuth()
+  const t = useTranslations('header')
 
   return (
     <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
       <div>
         <h2 className="text-xl font-semibold text-gray-900">
-          Welcome back, {user?.first_name}!
+          {t('welcome_back', { name: user?.first_name || 'User' })}
         </h2>
         <p className="text-sm text-gray-500">
           {new Date().toLocaleDateString('en-KE', { 
@@ -24,6 +27,8 @@ export default function Header() {
       </div>
 
       <div className="flex items-center gap-4">
+        <LanguageSwitcher />
+
         <button className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
           <Bell className="h-5 w-5" />
           <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
@@ -47,11 +52,11 @@ export default function Header() {
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
               <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
                 <User className="h-4 w-4" />
-                Profile
+                {t('profile')}
               </button>
               <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
                 <Settings className="h-4 w-4" />
-                Settings
+                {t('settings')}
               </button>
               <hr className="my-2 border-gray-200" />
               <button 
@@ -59,7 +64,7 @@ export default function Header() {
                 className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
               >
                 <LogOut className="h-4 w-4" />
-                Logout
+                {t('logout')}
               </button>
             </div>
           </div>
