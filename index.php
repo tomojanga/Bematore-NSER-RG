@@ -43,6 +43,135 @@
     </div>
   </section>
 
+<!-- Functionality Spectrum Section -->
+<section class="spectrum-section py-5">
+  <div class="container">
+    <div class="row text-center mb-5">
+      <div class="col-12">
+        <div class="section-header mb-4">
+          <div class="d-flex align-items-center justify-content-center mb-3">
+            <div class="header-icon me-3">
+              <i class="fa-solid fa-gem"></i>
+            </div>
+            <h6 class="text-uppercase fw-semibold text-primary mb-0">Complete Protection Platform</h6>
+          </div>
+          <h2 class="fw-bold mb-3" style="color: var(--nser-dark);">What Our Platform Offers</h2>
+          <p class="text-muted mx-auto" style="max-width: 700px;">
+            A unified, AI-powered national system designed to protect players, strengthen regulators, and improve fiscal transparency
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <!-- Feature 1 -->
+      <div class="col-md-6 col-lg-3">
+        <div class="d-flex align-items-start">
+          <div class="feature-icon me-3 mt-1">
+            <i class="fa-solid fa-user-lock"></i>
+          </div>
+          <div>
+            <h5 class="fw-semibold mb-2" style="color: var(--nser-dark);">Self-Exclusion Register</h5>
+            <p class="text-muted mb-0 small">Voluntary exclusion with real-time enforcement across all operators</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="col-md-6 col-lg-3">
+        <div class="d-flex align-items-start">
+          <div class="feature-icon me-3 mt-1">
+            <i class="fa-solid fa-brain"></i>
+          </div>
+          <div>
+            <h5 class="fw-semibold mb-2" style="color: var(--nser-dark);">AI Risk Detection</h5>
+            <p class="text-muted mb-0 small">Behavioral analysis and clinical screening tools</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="col-md-6 col-lg-3">
+        <div class="d-flex align-items-start">
+          <div class="feature-icon me-3 mt-1">
+            <i class="fa-solid fa-sliders"></i>
+          </div>
+          <div>
+            <h5 class="fw-semibold mb-2" style="color: var(--nser-dark);">Player Controls</h5>
+            <p class="text-muted mb-0 small">Personalized limits, alerts, and protective tools</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature 4 -->
+      <div class="col-md-6 col-lg-3">
+        <div class="d-flex align-items-start">
+          <div class="feature-icon me-3 mt-1">
+            <i class="fa-solid fa-hand-holding-medical"></i>
+          </div>
+          <div>
+            <h5 class="fw-semibold mb-2" style="color: var(--nser-dark);">Mental Health Support</h5>
+            <p class="text-muted mb-0 small">Instant referral to accredited therapists</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature 5 -->
+      <div class="col-md-6 col-lg-3">
+        <div class="d-flex align-items-start">
+          <div class="feature-icon me-3 mt-1">
+            <i class="fa-solid fa-globe"></i>
+          </div>
+          <div>
+            <h5 class="fw-semibold mb-2" style="color: var(--nser-dark);">Multi-Channel Access</h5>
+            <p class="text-muted mb-0 small">USSD, mobile apps, and web platforms</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature 6 -->
+      <div class="col-md-6 col-lg-3">
+        <div class="d-flex align-items-start">
+          <div class="feature-icon me-3 mt-1">
+            <i class="fa-solid fa-chart-line"></i>
+          </div>
+          <div>
+            <h5 class="fw-semibold mb-2" style="color: var(--nser-dark);">Regulatory Oversight</h5>
+            <p class="text-muted mb-0 small">Real-time compliance and transaction monitoring</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature 7 -->
+      <div class="col-md-6 col-lg-3">
+        <div class="d-flex align-items-start">
+          <div class="feature-icon me-3 mt-1">
+            <i class="fa-solid fa-money-bill-trend-up"></i>
+          </div>
+          <div>
+            <h5 class="fw-semibold mb-2" style="color: var(--nser-dark);">Tax Integration</h5>
+            <p class="text-muted mb-0 small">Automated levy calculation and settlement</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature 8 -->
+      <div class="col-md-6 col-lg-3">
+        <div class="d-flex align-items-start">
+          <div class="feature-icon me-3 mt-1">
+            <i class="fa-solid fa-heart-pulse"></i>
+          </div>
+          <div>
+            <h5 class="fw-semibold mb-2" style="color: var(--nser-dark);">Public Health Analytics</h5>
+            <p class="text-muted mb-0 small">National risk mapping and insights</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
 <!-- Features Section -->
 <section class="features-section py-5">
   <div class="container">
