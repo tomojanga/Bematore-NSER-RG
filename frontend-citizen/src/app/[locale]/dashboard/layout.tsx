@@ -20,15 +20,15 @@ const getNavigation = (t: any) => [
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const { user, logout, isAuthenticated, isLoadingProfile } = useAuth()
-    const { data: activeExclusionData } = useMyActiveExclusion()
+    const { data: activeExclusionResponse } = useMyActiveExclusion()
     const pathname = usePathname()
     const router = useRouter()
     const t = useTranslations()
     const locale = useLocale()
     const navigation = getNavigation(t)
 
-    // Get the active exclusion from the response data
-    const activeExclusion = activeExclusionData?.success ? activeExclusionData.data : null
+    // activeExclusionResponse.data is already the exclusion object or null (after hook transformation)
+    const activeExclusion = activeExclusionResponse?.data || null
 
     useEffect(() => {
         if (!isLoadingProfile && !isAuthenticated) {

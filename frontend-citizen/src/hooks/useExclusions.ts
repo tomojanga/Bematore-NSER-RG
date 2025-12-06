@@ -303,7 +303,13 @@ export function useMyActiveExclusion() {
         queryKey: ['my-active-exclusion'],
         queryFn: async () => {
             const { data } = await api.nser.myActive()
-            return data as SingleApiResponse<SelfExclusion>
+            // Backend returns: { success, data: { has_active_exclusion, exclusion? } }
+            // Transform to: { success, data: SelfExclusion | null }
+            return {
+                success: data.success,
+                data: data.data?.exclusion || null,
+                message: data.message
+            } as SingleApiResponse<SelfExclusion>
         },
         staleTime: 30000,
     })
@@ -363,18 +369,17 @@ export function useExclusionAuditLogs(exclusionId?: string, params?: PaginatedPa
 
 // Hook for checking if user can self-exclude
 export function useCanSelfExclude() {
-    const { data: activeExclusion } = useMyActiveExclusion()
+    const { data: activeExclusionResponse } = useMyActiveExclusion()
 
-    // Only check if there's an active exclusion
-    // The activeExclusion hook returns success=true with data=null/undefined if no active exclusion
-    const hasActiveExclusion = activeExclusion?.success === true && activeExclusion?.data !== null && activeExclusion?.data !== undefined
+    // activeExclusionResponse.data is the actual exclusion object or null
+    const hasActiveExclusion = activeExclusionResponse?.success === true && activeExclusionResponse?.data !== null
     const canExclude = !hasActiveExclusion
     const reason = hasActiveExclusion ? 'Already excluded' : ''
 
     return {
         canSelfExclude: canExclude,
         reason,
-        activeExclusion: activeExclusion?.data || null,
+        activeExclusion: activeExclusionResponse?.data || null,
         status: null,
     }
 }
