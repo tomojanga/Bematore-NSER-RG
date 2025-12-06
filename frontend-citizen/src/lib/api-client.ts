@@ -122,10 +122,8 @@ apiClient.interceptors.response.use(
         const response = error.response
         const status = response?.status
 
-        // Handle 401 errors (token refresh) - only on auth endpoints
-        const isAuthEndpoint = originalRequest?.url?.includes('/auth/') || originalRequest?.url?.includes('/token/')
-        
-        if (status === 401 && !originalRequest._retry && typeof window !== 'undefined' && isAuthEndpoint) {
+        // Handle 401 errors (token refresh) - for all protected endpoints
+        if (status === 401 && !originalRequest._retry && typeof window !== 'undefined') {
             originalRequest._retry = true
 
             try {
@@ -189,10 +187,7 @@ apiClient.interceptors.response.use(
         // Handle specific HTTP status codes
         switch (status) {
             case 401:
-                // Only logout if not already handled above
-                if (!isAuthEndpoint) {
-                    console.warn('⚠️ Unauthorized access on non-auth endpoint')
-                }
+                console.warn('⚠️ Unauthorized access - token may be invalid')
                 break
             case 403:
                 console.error('🚫 Access forbidden - insufficient permissions')
