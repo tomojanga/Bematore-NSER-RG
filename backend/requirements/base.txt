@@ -2,7 +2,6 @@
 Django==5.2.1
 django-environ==0.11.2
 pytz==2025.2
-setuptools==75.3.0  # Required for pkg_resources (used by django-countries)
 
 # Database - PostgreSQL Support
 psycopg[binary]==3.2.12  # Modern PostgreSQL adapter with better Windows support
@@ -56,7 +55,6 @@ bcrypt==4.2.0
 django-phonenumber-field[phonenumbers]==7.1.0
 phonenumbers==8.13.23
 python-magic==0.4.27
-django-countries==7.5.1
 
 # File Storage
 boto3==1.29.7
