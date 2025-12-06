@@ -8,8 +8,7 @@ import { locales, defaultLocale } from '@/i18n.config'
 export default createMiddleware({
   locales,
   defaultLocale,
-  localePrefix: 'always',
-  timeZone: 'Africa/Nairobi'
+  localePrefix: 'always'
 })
 
 export const config = {
