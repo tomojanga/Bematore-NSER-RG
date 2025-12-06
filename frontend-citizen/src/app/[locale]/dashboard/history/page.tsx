@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useMyExclusions } from '@/hooks/useExclusions'
 import { Card, CardContent, CardHeader, CardTitle, StatusBadge } from '@/components/ui/Card'
 import { Shield, Calendar, Clock, Loader2, AlertCircle, Info, CheckCircle } from 'lucide-react'
@@ -7,12 +8,13 @@ import Link from 'next/link'
 import { DashboardHeader } from '@/components/Dashboard/DashboardHeader'
 
 export default function HistoryPage() {
+    const t = useTranslations()
     const { data: exclusions, isLoading } = useMyExclusions()
 
     if (isLoading) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-                <DashboardHeader title="Exclusion History" subtitle="Your self-exclusion records" />
+                <DashboardHeader title={t('history.title')} subtitle={t('history.subtitle')} />
                 <main className="max-w-7xl mx-auto px-6 py-8">
                     <div className="flex items-center justify-center min-h-[400px]">
                         <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
@@ -24,7 +26,7 @@ export default function HistoryPage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-            <DashboardHeader title="Exclusion History" subtitle="Your self-exclusion records" />
+            <DashboardHeader title={t('history.title')} subtitle={t('history.subtitle')} />
 
             <main className="max-w-7xl mx-auto px-6 py-8">
                 <div className="space-y-6">
@@ -55,7 +57,7 @@ export default function HistoryPage() {
                                                     <div className="flex-1">
                                                         <div className="flex items-center gap-2 mb-1">
                                                             <h3 className="font-bold text-lg text-gray-900">
-                                                                Self-Exclusion
+                                                                {t('sidebar.self_exclusion')}
                                                             </h3>
                                                             <span className={`text-xs font-medium px-3 py-1 rounded-full ${exclusion.status === 'active'
                                                                     ? 'bg-red-100 text-red-700'
@@ -68,30 +70,30 @@ export default function HistoryPage() {
                                                         </div>
 
                                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3 text-sm">
-                                                            <div>
-                                                                <p className="text-gray-500 text-xs mb-0.5">Period</p>
-                                                                <p className="font-semibold text-gray-900">{exclusion.exclusion_period?.replace(/_/g, ' ').toUpperCase()}</p>
-                                                            </div>
-                                                            <div>
-                                                            <p className="text-gray-500 text-xs mb-0.5">Start Date</p>
-                                                            <p className="font-semibold text-gray-900">{new Date(exclusion.effective_date || exclusion.start_date || exclusion.created_at).toLocaleDateString()}</p>
-                                                            </div>
-                                                            <div>
-                                                            <p className="text-gray-500 text-xs mb-0.5">End Date</p>
-                                                            <p className="font-semibold text-gray-900">{exclusion.expiry_date || exclusion.end_date ? new Date(exclusion.expiry_date || exclusion.end_date).toLocaleDateString() : 'N/A'}</p>
-                                                            </div>
-                                                            <div>
-                                                                <p className="text-gray-500 text-xs mb-0.5">Duration</p>
-                                                                <p className="font-semibold text-gray-900">{totalDays} days</p>
-                                                            </div>
-                                                        </div>
+                                                             <div>
+                                                                 <p className="text-gray-500 text-xs mb-0.5">{t('assessment.pending')}</p>
+                                                                 <p className="font-semibold text-gray-900">{exclusion.exclusion_period?.replace(/_/g, ' ').toUpperCase()}</p>
+                                                             </div>
+                                                             <div>
+                                                             <p className="text-gray-500 text-xs mb-0.5">{t('dashboard.start_date')}</p>
+                                                             <p className="font-semibold text-gray-900">{new Date(exclusion.effective_date || exclusion.start_date || exclusion.created_at).toLocaleDateString()}</p>
+                                                             </div>
+                                                             <div>
+                                                             <p className="text-gray-500 text-xs mb-0.5">{t('dashboard.end_date')}</p>
+                                                             <p className="font-semibold text-gray-900">{exclusion.expiry_date || exclusion.end_date ? new Date(exclusion.expiry_date || exclusion.end_date).toLocaleDateString() : 'N/A'}</p>
+                                                             </div>
+                                                             <div>
+                                                                 <p className="text-gray-500 text-xs mb-0.5">{t('dashboard.duration')}</p>
+                                                                 <p className="font-semibold text-gray-900">{totalDays} {t('dashboard.duration')}</p>
+                                                             </div>
+                                                         </div>
 
                                                         {exclusion.status === 'active' && (
-                                                            <div className="mt-4 pt-4 border-t border-gray-200">
-                                                                <div className="flex items-center justify-between mb-2">
-                                                                    <p className="text-sm font-medium text-gray-700">Exclusion Progress</p>
-                                                                    <p className="text-sm font-bold text-red-600">{daysRemaining} days remaining</p>
-                                                                </div>
+                                                             <div className="mt-4 pt-4 border-t border-gray-200">
+                                                                 <div className="flex items-center justify-between mb-2">
+                                                                     <p className="text-sm font-medium text-gray-700">{t('dashboard.your_exclusions')}</p>
+                                                                     <p className="text-sm font-bold text-red-600">{daysRemaining} {t('dashboard.days_remaining')}</p>
+                                                                 </div>
                                                                 <div className="w-full bg-gray-200 rounded-full h-2">
                                                                     <div
                                                                         className="bg-red-500 h-2 rounded-full transition-all duration-300"

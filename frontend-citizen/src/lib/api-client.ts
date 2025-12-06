@@ -103,24 +103,29 @@ apiClient.interceptors.response.use(
             ? Math.round(performance.now() - originalRequest.metadata.startTime)
             : 0
 
-        // Enhanced error logging
-        if (process.env.NODE_ENV === 'development') {
-            console.error(`❌ API Error [${requestId}] (${duration}ms):`, {
-                status: error.response?.status,
-                statusText: error.response?.statusText,
-                url: error.config?.url,
-                method: error.config?.method,
-                data: error.response?.data,
-                message: error.message,
-            })
+        // Enhanced error logging - only log meaningful errors
+        if (process.env.NODE_ENV === 'development' && (error.response?.status || error.message)) {
+            const errorData = error.response?.data || error.message || 'Unknown error'
+            if (errorData !== 'Unknown error' || error.response?.status) {
+                console.error(`❌ API Error [${requestId}] (${duration}ms):`, {
+                    status: error.response?.status,
+                    statusText: error.response?.statusText,
+                    url: error.config?.url,
+                    method: error.config?.method,
+                    data: errorData,
+                    message: error.message,
+                })
+            }
         }
 
         // Handle specific error cases
         const response = error.response
         const status = response?.status
 
-        // Handle 401 errors (token refresh)
-        if (status === 401 && !originalRequest._retry && typeof window !== 'undefined') {
+        // Handle 401 errors (token refresh) - only on auth endpoints
+        const isAuthEndpoint = originalRequest?.url?.includes('/auth/') || originalRequest?.url?.includes('/token/')
+        
+        if (status === 401 && !originalRequest._retry && typeof window !== 'undefined' && isAuthEndpoint) {
             originalRequest._retry = true
 
             try {
@@ -154,7 +159,7 @@ apiClient.interceptors.response.use(
                     return apiClient(originalRequest)
                 }
             } catch (refreshError) {
-                // Refresh token is invalid, logout user
+                // Refresh token is invalid, only logout on token endpoint failure
                 console.error('🔒 Token refresh failed, logging out user')
 
                 // Clear all auth data
@@ -183,6 +188,12 @@ apiClient.interceptors.response.use(
 
         // Handle specific HTTP status codes
         switch (status) {
+            case 401:
+                // Only logout if not already handled above
+                if (!isAuthEndpoint) {
+                    console.warn('⚠️ Unauthorized access on non-auth endpoint')
+                }
+                break
             case 403:
                 console.error('🚫 Access forbidden - insufficient permissions')
                 break

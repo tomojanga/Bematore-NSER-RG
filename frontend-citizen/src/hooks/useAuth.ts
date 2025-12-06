@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useCallback, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter } from '@/navigation'
 import { useAuthStore } from '@/store/authStore'
 import { api } from '@/lib/api-client'
 import { useToast } from '@/components/ui/use-toast'
@@ -929,6 +929,7 @@ export function useAuth(): UseAuthReturn {
       try {
         const refreshToken = localStorage.getItem('refresh_token')
         if (!refreshToken) {
+          console.warn('No refresh token available - user needs to login')
           logoutStore()
           router.push('/login')
           return
@@ -946,16 +947,21 @@ export function useAuth(): UseAuthReturn {
         } else {
           throw new Error('Invalid refresh response')
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Failed to refresh session:', error)
         
-        if (retryCount < MAX_RETRIES) {
+        // Only redirect after max retries AND only for auth-related failures
+        const isAuthError = error?.response?.status === 401 || error?.response?.status === 403
+        
+        if (retryCount < MAX_RETRIES && isAuthError) {
           retryCount++
           // Exponential backoff with jitter
           const backoff = Math.min(1000 * Math.pow(2, retryCount) + Math.random() * 1000, 30000)
+          console.log(`Retrying session refresh (${retryCount}/${MAX_RETRIES}) in ${backoff}ms`)
           timeoutId = setTimeout(refreshSession, backoff)
-        } else {
-          // After max retries, log out user
+        } else if (retryCount >= MAX_RETRIES || isAuthError) {
+          // After max retries or on auth error, log out user
+          console.warn('Session refresh failed - redirecting to login')
           toast({
             title: "Session Expired",
             description: "Your session has expired. Please log in again.",
@@ -964,6 +970,12 @@ export function useAuth(): UseAuthReturn {
           })
           logoutStore()
           router.push('/login')
+        } else {
+          // For network errors or other issues, just reschedule
+          console.log('Temporary session refresh error - will retry')
+          retryCount++
+          const backoff = Math.min(1000 * Math.pow(2, retryCount) + Math.random() * 1000, 30000)
+          timeoutId = setTimeout(refreshSession, backoff)
         }
       }
     }

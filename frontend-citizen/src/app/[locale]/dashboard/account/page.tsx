@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { useAuth } from '@/hooks/useAuth'
 import { api } from '@/lib/api-client'
 import { useToast } from '@/components/ui/use-toast'
@@ -38,6 +39,7 @@ interface UserProfile {
 }
 
 export default function AccountPage() {
+  const t = useTranslations()
   const { user, refreshUser } = useAuth()
   const { toast } = useToast()
   const [profile, setProfile] = useState<UserProfile | null>(null)
@@ -69,8 +71,8 @@ export default function AccountPage() {
       } catch (error) {
         console.error('Failed to fetch profile:', error)
         toast({
-          title: 'Error',
-          description: 'Failed to load profile',
+          title: t('common.error'),
+          description: t('errors.something_went_wrong'),
           variant: 'destructive'
         })
       } finally {
@@ -79,7 +81,7 @@ export default function AccountPage() {
     }
 
     fetchProfile()
-  }, [toast])
+  }, [toast, t])
 
   const handleSaveProfile = async () => {
     try {
@@ -92,8 +94,8 @@ export default function AccountPage() {
       })
       
       toast({
-        title: 'Success',
-        description: 'Profile updated successfully'
+        title: t('common.success'),
+        description: t('success.profile_updated')
       })
       
       setIsEditing(false)
@@ -106,8 +108,8 @@ export default function AccountPage() {
       }
     } catch (error: any) {
       toast({
-        title: 'Error',
-        description: error.response?.data?.message || 'Failed to update profile',
+        title: t('common.error'),
+        description: error.response?.data?.message || t('errors.something_went_wrong'),
         variant: 'destructive'
       })
     } finally {
@@ -118,7 +120,7 @@ export default function AccountPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-        <DashboardHeader title="Account" subtitle="Manage your profile" />
+        <DashboardHeader title={t('account.title')} subtitle={t('account.subtitle')} />
         <main className="max-w-4xl mx-auto px-6 py-8">
           <div className="space-y-6">
             {[1, 2, 3].map(i => (
@@ -132,7 +134,7 @@ export default function AccountPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-      <DashboardHeader title="Account" subtitle="Manage your profile and security" />
+      <DashboardHeader title={t('account.title')} subtitle={t('account.subtitle')} />
 
       <main className="max-w-4xl mx-auto px-6 py-8">
         <div className="space-y-6">
@@ -140,8 +142,8 @@ export default function AccountPage() {
           <div className="bg-white rounded-xl shadow-sm border border-gray-100">
             <div className="p-6 border-b border-gray-100 flex items-center justify-between">
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">Profile Information</h2>
-                <p className="text-gray-600 mt-1">View and manage your personal details</p>
+                <h2 className="text-2xl font-bold text-gray-900">{t('account.personal_information')}</h2>
+                <p className="text-gray-600 mt-1">{t('help.subtitle')}</p>
               </div>
               {!isEditing && (
                 <button
@@ -149,7 +151,7 @@ export default function AccountPage() {
                   className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   <Edit2 className="h-4 w-4" />
-                  Edit Profile
+                  {t('common.edit')}
                 </button>
               )}
             </div>
@@ -159,7 +161,7 @@ export default function AccountPage() {
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">{t('auth.first_name')}</label>
                       <input
                         type="text"
                         value={editData.first_name}
@@ -168,7 +170,7 @@ export default function AccountPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">{t('auth.last_name')}</label>
                       <input
                         type="text"
                         value={editData.last_name}
@@ -179,7 +181,7 @@ export default function AccountPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">{t('auth.email')}</label>
                     <input
                       type="email"
                       value={editData.email}
@@ -189,7 +191,7 @@ export default function AccountPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">{t('auth.phone_number')}</label>
                     <input
                       type="tel"
                       value={editData.phone_number}
@@ -205,13 +207,13 @@ export default function AccountPage() {
                       className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                     >
                       {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
-                      Save Changes
+                      {t('account.save_changes')}
                     </button>
                     <button
                       onClick={() => setIsEditing(false)}
                       className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
                     >
-                      Cancel
+                      {t('common.cancel')}
                     </button>
                   </div>
                 </div>
@@ -221,34 +223,34 @@ export default function AccountPage() {
                     <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
                       <User className="h-5 w-5 text-gray-400 mt-1 flex-shrink-0" />
                       <div className="flex-1">
-                        <p className="text-sm text-gray-600 mb-1">First Name</p>
-                        <p className="text-lg font-medium text-gray-900">{profile?.first_name || 'Not provided'}</p>
+                        <p className="text-sm text-gray-600 mb-1">{t('auth.first_name')}</p>
+                        <p className="text-lg font-medium text-gray-900">{profile?.first_name || t('common.no_results')}</p>
                       </div>
                     </div>
 
                     <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
                       <User className="h-5 w-5 text-gray-400 mt-1 flex-shrink-0" />
                       <div className="flex-1">
-                        <p className="text-sm text-gray-600 mb-1">Last Name</p>
-                        <p className="text-lg font-medium text-gray-900">{profile?.last_name || 'Not provided'}</p>
+                        <p className="text-sm text-gray-600 mb-1">{t('auth.last_name')}</p>
+                        <p className="text-lg font-medium text-gray-900">{profile?.last_name || t('common.no_results')}</p>
                       </div>
                     </div>
 
                     <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
                       <Mail className="h-5 w-5 text-gray-400 mt-1 flex-shrink-0" />
                       <div className="flex-1">
-                        <p className="text-sm text-gray-600 mb-1">Email</p>
+                        <p className="text-sm text-gray-600 mb-1">{t('auth.email')}</p>
                         <p className="text-lg font-medium text-gray-900">{profile?.email}</p>
                         <div className="flex items-center gap-2 mt-2">
                           {profile?.is_email_verified ? (
                             <>
                               <Check className="h-4 w-4 text-green-600" />
-                              <span className="text-sm text-green-600">Verified</span>
+                              <span className="text-sm text-green-600">{t('account.verified')}</span>
                             </>
                           ) : (
                             <>
                               <X className="h-4 w-4 text-yellow-600" />
-                              <span className="text-sm text-yellow-600">Not verified</span>
+                              <span className="text-sm text-yellow-600">{t('account.pending')}</span>
                             </>
                           )}
                         </div>
@@ -258,18 +260,18 @@ export default function AccountPage() {
                     <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
                       <Phone className="h-5 w-5 text-gray-400 mt-1 flex-shrink-0" />
                       <div className="flex-1">
-                        <p className="text-sm text-gray-600 mb-1">Phone Number</p>
+                        <p className="text-sm text-gray-600 mb-1">{t('auth.phone_number')}</p>
                         <p className="text-lg font-medium text-gray-900">{profile?.phone_number}</p>
                         <div className="flex items-center gap-2 mt-2">
                           {profile?.is_phone_verified ? (
                             <>
                               <Check className="h-4 w-4 text-green-600" />
-                              <span className="text-sm text-green-600">Verified</span>
+                              <span className="text-sm text-green-600">{t('account.verified')}</span>
                             </>
                           ) : (
                             <>
                               <X className="h-4 w-4 text-yellow-600" />
-                              <span className="text-sm text-yellow-600">Not verified</span>
+                              <span className="text-sm text-yellow-600">{t('account.pending')}</span>
                             </>
                           )}
                         </div>
@@ -281,7 +283,7 @@ export default function AccountPage() {
                     <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
                       <Calendar className="h-5 w-5 text-gray-400 mt-1 flex-shrink-0" />
                       <div className="flex-1">
-                        <p className="text-sm text-gray-600 mb-1">Date of Birth</p>
+                        <p className="text-sm text-gray-600 mb-1">{t('auth.date_of_birth')}</p>
                         <p className="text-lg font-medium text-gray-900">
                           {new Date(profile.date_of_birth).toLocaleDateString()}
                         </p>
@@ -293,7 +295,7 @@ export default function AccountPage() {
                     <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
                       <MapPin className="h-5 w-5 text-gray-400 mt-1 flex-shrink-0" />
                       <div className="flex-1">
-                        <p className="text-sm text-gray-600 mb-1">Country</p>
+                        <p className="text-sm text-gray-600 mb-1">{t('auth.country')}</p>
                         <p className="text-lg font-medium text-gray-900">{profile.country_code}</p>
                       </div>
                     </div>
@@ -305,26 +307,26 @@ export default function AccountPage() {
 
           {/* Verification Status Card */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Verification Status</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('account.verification')}</h2>
             <div className="space-y-4">
               <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                 <div className="flex items-center gap-3">
                   <Mail className="h-5 w-5 text-gray-400" />
                   <div>
-                    <p className="font-medium text-gray-900">Email Verification</p>
-                    <p className="text-sm text-gray-600">Confirm your email address</p>
+                    <p className="font-medium text-gray-900">{t('account.email_verified')}</p>
+                    <p className="text-sm text-gray-600">{t('help.what_is_self_exclusion_answer')}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   {profile?.is_email_verified ? (
                     <>
                       <Check className="h-5 w-5 text-green-600" />
-                      <span className="text-green-600 font-medium">Verified</span>
+                      <span className="text-green-600 font-medium">{t('account.verified')}</span>
                     </>
                   ) : (
                     <>
                       <X className="h-5 w-5 text-yellow-600" />
-                      <span className="text-yellow-600 font-medium">Pending</span>
+                      <span className="text-yellow-600 font-medium">{t('account.pending')}</span>
                     </>
                   )}
                 </div>
@@ -334,20 +336,20 @@ export default function AccountPage() {
                 <div className="flex items-center gap-3">
                   <Phone className="h-5 w-5 text-gray-400" />
                   <div>
-                    <p className="font-medium text-gray-900">Phone Verification</p>
-                    <p className="text-sm text-gray-600">Confirm your phone number</p>
+                    <p className="font-medium text-gray-900">{t('account.phone_verified')}</p>
+                    <p className="text-sm text-gray-600">{t('help.what_is_self_exclusion_answer')}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   {profile?.is_phone_verified ? (
                     <>
                       <Check className="h-5 w-5 text-green-600" />
-                      <span className="text-green-600 font-medium">Verified</span>
+                      <span className="text-green-600 font-medium">{t('account.verified')}</span>
                     </>
                   ) : (
                     <>
                       <X className="h-5 w-5 text-yellow-600" />
-                      <span className="text-yellow-600 font-medium">Pending</span>
+                      <span className="text-yellow-600 font-medium">{t('account.pending')}</span>
                     </>
                   )}
                 </div>
@@ -357,20 +359,20 @@ export default function AccountPage() {
                 <div className="flex items-center gap-3">
                   <Shield className="h-5 w-5 text-gray-400" />
                   <div>
-                    <p className="font-medium text-gray-900">ID Verification</p>
-                    <p className="text-sm text-gray-600">Verify your national ID</p>
+                    <p className="font-medium text-gray-900">{t('account.id_verified')}</p>
+                    <p className="text-sm text-gray-600">{t('help.what_is_self_exclusion_answer')}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   {profile?.is_id_verified ? (
                     <>
                       <Check className="h-5 w-5 text-green-600" />
-                      <span className="text-green-600 font-medium">Verified</span>
+                      <span className="text-green-600 font-medium">{t('account.verified')}</span>
                     </>
                   ) : (
                     <>
                       <X className="h-5 w-5 text-yellow-600" />
-                      <span className="text-yellow-600 font-medium">Pending</span>
+                      <span className="text-yellow-600 font-medium">{t('account.pending')}</span>
                     </>
                   )}
                 </div>
@@ -380,29 +382,29 @@ export default function AccountPage() {
 
           {/* Account Information Card */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Account Information</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('account.title')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm text-gray-600 mb-2">Account Created</p>
+                <p className="text-sm text-gray-600 mb-2">{t('help.what_is_self_exclusion')}</p>
                 <p className="text-lg font-medium text-gray-900">
                   {profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : 'N/A'}
                 </p>
               </div>
 
               <div className="p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm text-gray-600 mb-2">Last Login</p>
+                <p className="text-sm text-gray-600 mb-2">{t('help.what_is_self_exclusion')}</p>
                 <p className="text-lg font-medium text-gray-900">
                   {profile?.last_login ? new Date(profile.last_login).toLocaleDateString() : 'N/A'}
                 </p>
               </div>
 
               <div className="p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm text-gray-600 mb-2">Account Status</p>
-                <p className="text-lg font-medium text-green-600">Active</p>
+                <p className="text-sm text-gray-600 mb-2">{t('dashboard.account_status')}</p>
+                <p className="text-lg font-medium text-green-600">{t('dashboard.active')}</p>
               </div>
 
               <div className="p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm text-gray-600 mb-2">Verification Status</p>
+                <p className="text-sm text-gray-600 mb-2">{t('account.verification')}</p>
                 <p className="text-lg font-medium text-gray-900">
                   {profile?.verification_status ? profile.verification_status.charAt(0).toUpperCase() + profile.verification_status.slice(1) : 'N/A'}
                 </p>

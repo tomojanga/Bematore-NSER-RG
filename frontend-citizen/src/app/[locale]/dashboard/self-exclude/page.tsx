@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { Shield, CheckCircle, AlertCircle, Loader2, ChevronRight, XCircle } from 'lucide-react'
 import { api } from '@/lib/api-client'
@@ -17,22 +18,23 @@ interface ExclusionDuration {
 interface ExclusionOption {
     label: string
     value: string
-    description: string
+    descriptionKey: string
 }
-
-const EXCLUSION_DURATIONS: ExclusionOption[] = [
-    { label: '6 Months', value: '6_months', description: 'Longer-term exclusion' },
-    { label: '1 Year', value: '1_year', description: 'Full year exclusion' },
-    { label: '3 Years', value: '3_years', description: 'Extended 3-year exclusion' },
-    { label: '5 Years', value: '5_years', description: 'Long-term 5-year exclusion' },
-    { label: 'Permanent', value: 'permanent', description: 'Permanent self-exclusion' }
-]
 
 type Step = 'warning' | 'details' | 'confirmation' | 'success' | 'blocked'
 
 export default function SelfExcludePage() {
+    const t = useTranslations()
     const router = useRouter()
     const { toast } = useToast()
+    
+    const EXCLUSION_DURATIONS: ExclusionOption[] = [
+        { label: t('dashboard.6_months'), value: '6_months', descriptionKey: 'self_exclude.duration_6months' },
+        { label: t('dashboard.1_year'), value: '1_year', descriptionKey: 'self_exclude.duration_1year' },
+        { label: t('dashboard.3_years'), value: '3_years', descriptionKey: 'self_exclude.duration_2years' },
+        { label: t('dashboard.5_years'), value: '5_years', descriptionKey: 'help.available_assessments' },
+        { label: t('dashboard.permanent'), value: 'permanent', descriptionKey: 'self_exclude.duration_lifetime' }
+    ]
     const [currentStep, setCurrentStep] = useState<Step>('warning')
     const [isLoading, setIsLoading] = useState(false)
     const [selectedDuration, setSelectedDuration] = useState<string | null>(null)
@@ -55,8 +57,8 @@ export default function SelfExcludePage() {
     const handleStartExclusion = async () => {
         if (!selectedDuration) {
             toast({
-                title: 'Error',
-                description: 'Please select an exclusion duration',
+                title: t('common.error'),
+                description: t('dashboard.please_select_period'),
                 variant: 'destructive'
             })
             return
@@ -64,8 +66,8 @@ export default function SelfExcludePage() {
 
         if (!reason || reason.trim().length < 10) {
             toast({
-                title: 'Error',
-                description: 'Please provide a reason for self-exclusion (at least 10 characters)',
+                title: t('common.error'),
+                description: t('errors.required_field'),
                 variant: 'destructive'
             })
             return
@@ -73,8 +75,8 @@ export default function SelfExcludePage() {
 
         if (!termsAcknowledged || !consequencesUnderstood) {
             toast({
-                title: 'Error',
-                description: 'Please acknowledge both terms and consequences',
+                title: t('common.error'),
+                description: t('errors.required_field'),
                 variant: 'destructive'
             })
             return
@@ -94,13 +96,13 @@ export default function SelfExcludePage() {
                 setExclusionId(data.data.id)
                 setCurrentStep('success')
                 toast({
-                    title: 'Success',
-                    description: 'Self-exclusion has been registered successfully',
+                    title: t('common.success'),
+                    description: t('self_exclude.success_message'),
                     variant: 'default'
                 })
             }
         } catch (error: any) {
-            let errorMsg = 'Failed to register exclusion'
+            let errorMsg = t('errors.something_went_wrong')
 
             const responseData = error.response?.data
 
@@ -134,7 +136,7 @@ export default function SelfExcludePage() {
             }
 
             toast({
-                title: 'Error',
+                title: t('common.error'),
                 description: errorMsg,
                 variant: 'destructive'
             })
@@ -152,7 +154,7 @@ export default function SelfExcludePage() {
 
         return (
             <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50">
-                <DashboardHeader title="Self-Exclusion" subtitle="Registration not available" />
+                <DashboardHeader title={t('sidebar.self_exclusion')} subtitle={t('help.contact_us')} />
 
                 <main className="max-w-2xl mx-auto px-6 py-8">
                     <div className="bg-white rounded-xl shadow-lg border-2 border-orange-200 p-8">
@@ -160,43 +162,43 @@ export default function SelfExcludePage() {
                             <div className="p-3 bg-orange-100 rounded-full">
                                 <XCircle className="h-8 w-8 text-orange-600" />
                             </div>
-                            <h1 className="text-2xl font-bold text-gray-900">Cannot Register New Exclusion</h1>
-                        </div>
+                            <h1 className="text-2xl font-bold text-gray-900">{t('dashboard.cannot_register')}</h1>
+                            </div>
 
-                        <div className="bg-orange-50 border-l-4 border-orange-600 p-4 rounded mb-8">
-                            <h3 className="font-bold text-orange-900 mb-2">Active Exclusion Found</h3>
-                            <p className="text-orange-800 text-sm">
-                                You already have an active self-exclusion. You cannot register a new exclusion while one is already active.
-                            </p>
-                        </div>
+                            <div className="bg-orange-50 border-l-4 border-orange-600 p-4 rounded mb-8">
+                             <h3 className="font-bold text-orange-900 mb-2">{t('dashboard.warning_active')}</h3>
+                             <p className="text-orange-800 text-sm">
+                                 {t('dashboard.warning_excluded')}
+                             </p>
+                            </div>
 
-                        {activeExclusion && (
-                            <div className="bg-gray-50 rounded-lg p-6 mb-8 border border-gray-200">
-                                <h3 className="font-bold text-gray-900 mb-4">Your Active Exclusion Details</h3>
-                                <div className="space-y-3">
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-gray-600">Status</span>
-                                        <span className="font-medium text-orange-600">Active</span>
-                                    </div>
-                                    <div className="flex justify-between items-center">
-                                         <span className="text-gray-600">Start Date</span>
+                            {activeExclusion && (
+                             <div className="bg-gray-50 rounded-lg p-6 mb-8 border border-gray-200">
+                                 <h3 className="font-bold text-gray-900 mb-4">{t('dashboard.your_exclusions')}</h3>
+                                 <div className="space-y-3">
+                                     <div className="flex justify-between items-center">
+                                         <span className="text-gray-600">{t('common.status')}</span>
+                                         <span className="font-medium text-orange-600">{t('dashboard.active_exclusions')}</span>
+                                     </div>
+                                     <div className="flex justify-between items-center">
+                                          <span className="text-gray-600">{t('dashboard.start_date')}</span>
                                          <span className="font-medium text-gray-900">
                                              {new Date(activeExclusion.effective_date).toLocaleDateString()}
                                          </span>
                                      </div>
                                      <div className="flex justify-between items-center">
-                                         <span className="text-gray-600">End Date</span>
+                                         <span className="text-gray-600">{t('dashboard.end_date')}</span>
                                          <span className="font-medium text-gray-900">
                                              {new Date(activeExclusion.expiry_date).toLocaleDateString()}
                                          </span>
                                      </div>
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-gray-600">Days Remaining</span>
-                                        <span className="font-medium text-gray-900">{daysRemaining} days</span>
-                                    </div>
-                                    {activeExclusion.reason && (
+                                     <div className="flex justify-between items-center">
+                                        <span className="text-gray-600">{t('dashboard.days_remaining')}</span>
+                                        <span className="font-medium text-gray-900">{daysRemaining} {t('self_exclude.duration_6months')}</span>
+                                     </div>
+                                     {activeExclusion.reason && (
                                         <div className="pt-2 border-t border-gray-200">
-                                            <span className="text-gray-600 text-sm block mb-1">Reason</span>
+                                            <span className="text-gray-600 text-sm block mb-1">{t('dashboard.reason')}</span>
                                             <p className="text-gray-900 text-sm">{activeExclusion.reason}</p>
                                         </div>
                                     )}
@@ -219,13 +221,13 @@ export default function SelfExcludePage() {
                                 onClick={() => router.push('/dashboard')}
                                 className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
                             >
-                                Back to Dashboard
+                                {t('common.back')}
                             </button>
                             <button
                                 onClick={() => router.push('/dashboard/history')}
                                 className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
                             >
-                                View Exclusion History
+                                {t('history.title')}
                             </button>
                         </div>
                     </div>
@@ -237,7 +239,7 @@ export default function SelfExcludePage() {
     if (currentStep === 'warning') {
         return (
             <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-orange-50">
-                <DashboardHeader title="Self-Exclusion" subtitle="Important notice" />
+                <DashboardHeader title={t('sidebar.self_exclusion')} subtitle={t('self_exclude.step2')} />
 
                 <main className="max-w-2xl mx-auto px-6 py-8">
                     <div className="bg-white rounded-xl shadow-lg border-2 border-red-200 p-8">
@@ -328,7 +330,7 @@ export default function SelfExcludePage() {
                                         }`}
                                 >
                                     <h3 className="font-bold text-gray-900 mb-1">{duration.label}</h3>
-                                    <p className="text-sm text-gray-600">{duration.description}</p>
+                                    <p className="text-sm text-gray-600">{t(duration.descriptionKey)}</p>
                                 </button>
                             ))}
                         </div>
