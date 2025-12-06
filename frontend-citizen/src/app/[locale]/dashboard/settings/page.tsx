@@ -1,16 +1,19 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { useAuth } from '@/hooks/useAuth'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { DashboardHeader } from '@/components/Dashboard/DashboardHeader'
+import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 import { Bell, Shield, Lock, Loader2, CheckCircle, AlertCircle, Eye, EyeOff, Monitor, LogOut, Trash2, Clock } from 'lucide-react'
 import { api } from '@/lib/api-client'
 import { useToast } from '@/components/ui/use-toast'
 
 export default function SettingsPage() {
+    const t = useTranslations()
     const { user, refreshUser, devices, sessions, refetchDevices, refetchSessions, revokeDevice } = useAuth()
     const { toast } = useToast()
     const [activeTab, setActiveTab] = useState('notifications')
@@ -58,16 +61,16 @@ export default function SettingsPage() {
     }, [])
 
     const tabs = [
-        { id: 'notifications', label: 'Notifications', icon: Bell },
-        { id: 'security', label: 'Security', icon: Shield },
-        { id: 'devices', label: 'Devices', icon: Monitor },
+        { id: 'notifications', label: t('settings_page.notifications_tab'), icon: Bell },
+        { id: 'security', label: t('settings_page.security_tab'), icon: Shield },
+        { id: 'devices', label: t('settings_page.devices_tab'), icon: Monitor },
     ]
 
     const changePassword = async () => {
         if (!currentPassword || !newPassword || !confirmPassword) {
             toast({
-                title: 'Error',
-                description: 'Please fill in all password fields',
+                title: t('common.error'),
+                description: t('errors.password_required'),
                 variant: 'destructive'
             })
             return
@@ -75,8 +78,8 @@ export default function SettingsPage() {
 
         if (newPassword !== confirmPassword) {
             toast({
-                title: 'Error',
-                description: 'New passwords do not match',
+                title: t('common.error'),
+                description: t('errors.passwords_dont_match'),
                 variant: 'destructive'
             })
             return
@@ -84,8 +87,8 @@ export default function SettingsPage() {
 
         if (newPassword.length < 8) {
             toast({
-                title: 'Error',
-                description: 'Password must be at least 8 characters',
+                title: t('common.error'),
+                description: t('errors.min_password_length'),
                 variant: 'destructive'
             })
             return
@@ -98,8 +101,8 @@ export default function SettingsPage() {
                 new_password: newPassword
             })
             toast({
-                title: 'Success',
-                description: 'Password changed successfully'
+                title: t('common.success'),
+                description: t('success.password_changed')
             })
             setCurrentPassword('')
             setNewPassword('')
@@ -107,8 +110,8 @@ export default function SettingsPage() {
             setShowPasswords(false)
         } catch (error: any) {
             toast({
-                title: 'Error',
-                description: error.response?.data?.message || 'Failed to change password',
+                title: t('common.error'),
+                description: error.response?.data?.message || t('errors.something_went_wrong'),
                 variant: 'destructive'
             })
         } finally {
@@ -117,39 +120,39 @@ export default function SettingsPage() {
     }
 
     const handleRevokeDevice = async (deviceId: string) => {
-        if (!confirm('Are you sure you want to revoke access on this device?')) return
+        if (!confirm(t('settings_page.revoke_device_confirm'))) return
 
         try {
             await revokeDevice(deviceId)
             await refetchDevices()
             await refetchSessions()
             toast({
-                title: 'Success',
-                description: 'Device access revoked'
+                title: t('common.success'),
+                description: t('settings_page.device_revoked')
             })
         } catch (error: any) {
             toast({
-                title: 'Error',
-                description: 'Failed to revoke device',
+                title: t('common.error'),
+                description: t('errors.failed_to_revoke'),
                 variant: 'destructive'
             })
         }
     }
 
     const handleLogoutOtherSessions = async () => {
-        if (!confirm('Are you sure you want to logout from all other devices?')) return
+        if (!confirm(t('settings_page.logout_other_confirm'))) return
 
         try {
             await api.post('/users/sessions/terminate-all/')
             await refetchSessions()
             toast({
-                title: 'Success',
-                description: 'All other sessions terminated'
+                title: t('common.success'),
+                description: t('settings_page.sessions_terminated')
             })
         } catch (error: any) {
             toast({
-                title: 'Error',
-                description: 'Failed to terminate sessions',
+                title: t('common.error'),
+                description: t('errors.failed_to_terminate'),
                 variant: 'destructive'
             })
         }
@@ -164,13 +167,13 @@ export default function SettingsPage() {
             })
             setShowVerifyInput(true)
             toast({
-                title: 'Success',
+                title: t('common.success'),
                 description: 'Verification code sent to your phone!'
             })
         } catch (error: any) {
             toast({
-                title: 'Error',
-                description: error.response?.data?.message || 'Failed to enable 2FA',
+                title: t('common.error'),
+                description: error.response?.data?.message || t('errors.something_went_wrong'),
                 variant: 'destructive'
             })
         } finally {
@@ -181,7 +184,7 @@ export default function SettingsPage() {
     const verify2FA = async () => {
         if (!twoFactorCode || twoFactorCode.length !== 6) {
             toast({
-                title: 'Error',
+                title: t('common.error'),
                 description: 'Please enter a valid 6-digit code',
                 variant: 'destructive'
             })
@@ -192,16 +195,16 @@ export default function SettingsPage() {
         try {
             await api.post('/auth/2fa/verify/', { verification_code: twoFactorCode })
             toast({
-                title: 'Success',
-                description: '2FA enabled successfully!'
+                title: t('common.success'),
+                description: t('success.2fa_enabled')
             })
             setShowVerifyInput(false)
             setTwoFactorCode('')
             await refreshUser()
         } catch (error: any) {
             toast({
-                title: 'Error',
-                description: error.response?.data?.message || 'Invalid verification code',
+                title: t('common.error'),
+                description: error.response?.data?.message || t('security.invalid_code'),
                 variant: 'destructive'
             })
         } finally {
@@ -210,20 +213,20 @@ export default function SettingsPage() {
     }
 
     const disable2FA = async () => {
-        if (!confirm('Are you sure you want to disable two-factor authentication?')) return
+        if (!confirm(t('settings_page.are_you_sure'))) return
 
         setLoading(true)
         try {
             await api.post('/auth/2fa/disable/')
             toast({
-                title: 'Success',
-                description: '2FA disabled successfully'
+                title: t('common.success'),
+                description: t('success.2fa_disabled')
             })
             await refreshUser()
         } catch (error: any) {
             toast({
-                title: 'Error',
-                description: error.response?.data?.message || 'Failed to disable 2FA',
+                title: t('common.error'),
+                description: error.response?.data?.message || t('errors.something_went_wrong'),
                 variant: 'destructive'
             })
         } finally {
@@ -233,9 +236,14 @@ export default function SettingsPage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-            <DashboardHeader title="Settings" subtitle="Manage your account and preferences" />
+            <DashboardHeader title={t('settings_page.title')} subtitle={t('settings_page.subtitle')} />
 
             <main className="max-w-5xl mx-auto px-6 py-8">
+                {/* Language Switcher */}
+                <div className="flex justify-end mb-8">
+                    <LanguageSwitcher />
+                </div>
+
                 {/* Tab Navigation */}
                 <div className="flex gap-4 border-b border-gray-200 mb-8">
                     {tabs.map((tab) => (
@@ -275,8 +283,8 @@ export default function SettingsPage() {
                                         {/* Email Notifications */}
                                         <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
                                             <div>
-                                                <h3 className="font-medium text-gray-900">Email Notifications</h3>
-                                                <p className="text-sm text-gray-600">Receive updates and alerts via email</p>
+                                                <h3 className="font-medium text-gray-900">{t('notifications.email_notifications')}</h3>
+                                                <p className="text-sm text-gray-600">{t('notifications.receive_updates_email')}</p>
                                             </div>
                                             <label className="relative inline-flex items-center cursor-pointer">
                                                 <input
@@ -293,8 +301,8 @@ export default function SettingsPage() {
                                         {/* SMS Notifications */}
                                         <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
                                             <div>
-                                                <h3 className="font-medium text-gray-900">SMS Notifications</h3>
-                                                <p className="text-sm text-gray-600">Receive updates via SMS text message</p>
+                                                <h3 className="font-medium text-gray-900">{t('notifications.sms_notifications')}</h3>
+                                                <p className="text-sm text-gray-600">{t('notifications.receive_updates_sms')}</p>
                                             </div>
                                             <label className="relative inline-flex items-center cursor-pointer">
                                                 <input
@@ -311,8 +319,8 @@ export default function SettingsPage() {
                                         {/* Exclusion Reminders */}
                                         <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
                                             <div>
-                                                <h3 className="font-medium text-gray-900">Exclusion Reminders</h3>
-                                                <p className="text-sm text-gray-600">Get reminders about your exclusion status</p>
+                                                <h3 className="font-medium text-gray-900">{t('notifications.exclusion_reminders')}</h3>
+                                                <p className="text-sm text-gray-600">{t('notifications.get_reminders')}</p>
                                             </div>
                                             <label className="relative inline-flex items-center cursor-pointer">
                                                 <input
@@ -355,12 +363,12 @@ export default function SettingsPage() {
                                         disabled={savingNotifications}
                                     >
                                         {savingNotifications ? (
-                                            <>
-                                                <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                                                Saving...
-                                            </>
+                                        <>
+                                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                                        {t('notifications.saving')}
+                                        </>
                                         ) : (
-                                            'Save Preferences'
+                                        t('notifications.save_preferences')
                                         )}
                                     </Button>
                                 </>
@@ -377,10 +385,10 @@ export default function SettingsPage() {
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <Shield className="h-5 w-5" />
-                                    Two-Factor Authentication
+                                    {t('security.two_factor_auth')}
                                     {user?.is_2fa_enabled && (
                                         <span className="flex items-center gap-1 text-xs text-green-600 bg-green-50 px-2 py-1 rounded ml-auto">
-                                            <CheckCircle className="h-3 w-3" /> Enabled
+                                            <CheckCircle className="h-3 w-3" /> {t('common.enabled')}
                                         </span>
                                     )}
                                 </CardTitle>
@@ -391,8 +399,8 @@ export default function SettingsPage() {
                                         <div className="flex items-center gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
                                             <Shield className="h-5 w-5 text-green-600" />
                                             <div>
-                                                <p className="font-medium text-green-900">2FA is Active</p>
-                                                <p className="text-sm text-green-700">Your account has an extra layer of security</p>
+                                                <p className="font-medium text-green-900">{t('security.2fa_is_active')}</p>
+                                                <p className="text-sm text-green-700">{t('security.2fa_extra_security')}</p>
                                             </div>
                                         </div>
                                         <Button
@@ -404,17 +412,17 @@ export default function SettingsPage() {
                                             {loading ? (
                                                 <>
                                                     <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                                                    Disabling...
+                                                    {t('security.disabling')}
                                                 </>
                                             ) : (
-                                                'Disable 2FA'
+                                                t('security.disable_2fa')
                                             )}
                                         </Button>
                                     </div>
                                 ) : (
                                     <div className="space-y-4">
                                         <p className="text-gray-600">
-                                            Add an extra layer of security by requiring a verification code sent to your phone when logging in.
+                                            {t('security.add_extra_security')}
                                         </p>
 
                                         {!showVerifyInput ? (
@@ -422,23 +430,23 @@ export default function SettingsPage() {
                                                 {loading ? (
                                                     <>
                                                         <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                                                        Sending code...
+                                                        {t('security.sending_code')}
                                                     </>
                                                 ) : (
-                                                    'Enable 2FA via SMS'
+                                                    t('security.enable_2fa_sms')
                                                 )}
                                             </Button>
                                         ) : (
                                             <div className="space-y-3">
                                                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
                                                     <p className="text-sm text-blue-900">
-                                                        A 6-digit verification code has been sent to {user?.phone_number}
+                                                        {t('security.verification_code_sent', { phone: user?.phone_number })}
                                                     </p>
                                                 </div>
                                                 <div className="flex gap-2">
                                                     <Input
                                                         type="text"
-                                                        placeholder="Enter 6-digit code"
+                                                        placeholder={t('security.enter_code')}
                                                         value={twoFactorCode}
                                                         onChange={(e) => setTwoFactorCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                                                         maxLength={6}
@@ -449,7 +457,7 @@ export default function SettingsPage() {
                                                         onClick={verify2FA}
                                                         disabled={loading || twoFactorCode.length !== 6}
                                                     >
-                                                        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Verify'}
+                                                        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : t('security.verify')}
                                                     </Button>
                                                     <Button
                                                         variant="outline"
@@ -459,7 +467,7 @@ export default function SettingsPage() {
                                                         }}
                                                         disabled={loading}
                                                     >
-                                                        Cancel
+                                                        {t('common.cancel')}
                                                     </Button>
                                                 </div>
                                             </div>
@@ -474,17 +482,17 @@ export default function SettingsPage() {
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <Lock className="h-5 w-5" />
-                                    Change Password
+                                    {t('account.change_password')}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="space-y-3">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">{t('account.current_password')}</label>
                                         <div className="relative">
                                             <Input
                                                 type={showPasswords ? 'text' : 'password'}
-                                                placeholder="Enter current password"
+                                                placeholder={t('account.current_password')}
                                                 value={currentPassword}
                                                 onChange={(e) => setCurrentPassword(e.target.value)}
                                                 disabled={isChangingPassword}
@@ -500,10 +508,10 @@ export default function SettingsPage() {
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">New Password</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">{t('account.new_password')}</label>
                                         <Input
                                             type={showPasswords ? 'text' : 'password'}
-                                            placeholder="Enter new password (min. 8 characters)"
+                                            placeholder={t('account.new_password')}
                                             value={newPassword}
                                             onChange={(e) => setNewPassword(e.target.value)}
                                             disabled={isChangingPassword}
@@ -511,10 +519,10 @@ export default function SettingsPage() {
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">{t('account.confirm_new_password')}</label>
                                         <Input
                                             type={showPasswords ? 'text' : 'password'}
-                                            placeholder="Confirm new password"
+                                            placeholder={t('account.confirm_new_password')}
                                             value={confirmPassword}
                                             onChange={(e) => setConfirmPassword(e.target.value)}
                                             disabled={isChangingPassword}
@@ -530,10 +538,10 @@ export default function SettingsPage() {
                                     {isChangingPassword ? (
                                         <>
                                             <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                                            Changing Password...
+                                            {t('security.changing_password')}
                                         </>
                                     ) : (
-                                        'Change Password'
+                                        t('account.change_password')
                                     )}
                                 </Button>
                             </CardContent>
@@ -549,7 +557,7 @@ export default function SettingsPage() {
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <Monitor className="h-5 w-5" />
-                                    Trusted Devices ({devices?.length || 0})
+                                    {t('settings_page.trusted_devices')} ({devices?.length || 0})
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-3">
@@ -562,13 +570,13 @@ export default function SettingsPage() {
                                                     <h4 className="font-medium text-gray-900">{device.name}</h4>
                                                     {device.trusted && (
                                                         <span className="inline-flex items-center gap-1 text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded">
-                                                            <CheckCircle className="h-3 w-3" /> Trusted
+                                                            <CheckCircle className="h-3 w-3" /> {t('settings_page.trusted')}
                                                         </span>
                                                     )}
                                                 </div>
                                                 <p className="text-sm text-gray-600">{device.type} • {device.os}</p>
                                                 <p className="text-xs text-gray-500 mt-1">
-                                                    Last used: {new Date(device.lastUsed).toLocaleDateString()}
+                                                    {t('settings_page.last_used', { date: new Date(device.lastUsed).toLocaleDateString() })}
                                                 </p>
                                             </div>
                                             <Button
@@ -576,6 +584,7 @@ export default function SettingsPage() {
                                                 size="sm"
                                                 onClick={() => handleRevokeDevice(device.id)}
                                                 className="border-red-300 text-red-600 hover:bg-red-50"
+                                                title={t('settings_page.revoke_access')}
                                             >
                                                 <Trash2 className="h-4 w-4" />
                                             </Button>
@@ -584,7 +593,7 @@ export default function SettingsPage() {
                                 ) : (
                                     <div className="text-center py-8 text-gray-500">
                                         <Monitor className="h-12 w-12 mx-auto mb-2 text-gray-400" />
-                                        <p>No devices found</p>
+                                        <p>{t('settings_page.no_devices')}</p>
                                     </div>
                                 )}
                             </CardContent>
@@ -595,7 +604,7 @@ export default function SettingsPage() {
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <Clock className="h-5 w-5" />
-                                    Active Sessions ({sessions?.length || 0})
+                                    {t('settings_page.active_sessions')} ({sessions?.length || 0})
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-3">
@@ -609,7 +618,7 @@ export default function SettingsPage() {
                                                         <h4 className="font-medium text-gray-900">{session.device?.name || 'Unknown Device'}</h4>
                                                         {session.isActive && (
                                                             <span className="inline-flex items-center gap-1 text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded">
-                                                                <CheckCircle className="h-3 w-3" /> Active
+                                                                <CheckCircle className="h-3 w-3" /> {t('dashboard.active')}
                                                             </span>
                                                         )}
                                                     </div>
@@ -617,7 +626,7 @@ export default function SettingsPage() {
                                                         {session.ip_address || 'IP address unknown'}
                                                     </p>
                                                     <p className="text-xs text-gray-500 mt-1">
-                                                        Last active: {new Date(session.lastActive).toLocaleDateString()}
+                                                        {t('settings_page.last_active', { date: new Date(session.lastActive).toLocaleDateString() })}
                                                     </p>
                                                 </div>
                                             </div>
@@ -630,14 +639,14 @@ export default function SettingsPage() {
                                                 onClick={handleLogoutOtherSessions}
                                             >
                                                 <LogOut className="h-4 w-4 mr-2" />
-                                                Logout from All Other Devices
+                                                {t('settings_page.logout_other_devices')}
                                             </Button>
                                         )}
                                     </>
                                 ) : (
                                     <div className="text-center py-8 text-gray-500">
                                         <Clock className="h-12 w-12 mx-auto mb-2 text-gray-400" />
-                                        <p>No active sessions</p>
+                                        <p>{t('settings_page.no_sessions')}</p>
                                     </div>
                                 )}
                             </CardContent>

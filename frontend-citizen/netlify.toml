@@ -5,21 +5,24 @@
   # Build command - clean build to avoid platform-specific issues
   command = "npm ci && npm run build"
   
-  # Publish directory (Next.js .next output for server rendering)
-  publish = ".next"
+  # Netlify plugin auto-detects this
+  # publish = ".next"
   
   # Functions directory for Netlify serverless functions
   functions = ".netlify/functions"
 
 [build.environment]
-  # Node.js version (18+ required for Next.js 14)
-  NODE_VERSION = "18"
+  # Node.js version (18+ required for Next.js 15)
+  NODE_VERSION = "20"
   
   # Next.js specific
   NEXT_TELEMETRY_DISABLED = "1"
   
   # Force npm to skip optional dependencies that might cause issues
   NPM_FLAGS = "--legacy-peer-deps"
+  
+  # Skip the Netlify plugin caching which causes issues
+  SKIP_FUNCTIONS_CACHE = "true"
 
 # Headers for security
 [[headers]]

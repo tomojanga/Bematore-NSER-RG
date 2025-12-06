@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import { useTranslations } from 'next-intl'
 import { Bell, Settings, LogOut, User } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -17,6 +18,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   subtitle = 'Welcome back',
   showNotifications = true 
 }) => {
+  const t = useTranslations()
   const router = useRouter()
   const { user, logout } = useAuth()
 
@@ -42,6 +44,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
             <Link 
               href="/dashboard/notifications"
               className="relative p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+              title={t('header.notifications')}
             >
               <Bell className="h-6 w-6" />
               <span className="absolute top-1 right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
@@ -55,7 +58,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
               <p className="text-sm font-medium text-gray-900">
                 {user?.first_name && user?.last_name 
                   ? `${user.first_name} ${user.last_name}` 
-                  : 'User'}
+                  : t('common.profile')}
               </p>
               <p className="text-xs text-gray-500">{user?.phone_number}</p>
             </div>
@@ -68,14 +71,14 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
               <Link 
                 href="/dashboard/settings"
                 className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-                title="Settings"
+                title={t('common.settings')}
               >
                 <Settings className="h-5 w-5" />
               </Link>
               <button 
                 onClick={handleLogout}
                 className="p-2 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors"
-                title="Logout"
+                title={t('common.logout')}
               >
                 <LogOut className="h-5 w-5" />
               </button>

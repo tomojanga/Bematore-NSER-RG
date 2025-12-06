@@ -4,17 +4,18 @@ import { useAuth } from '@/hooks/useAuth'
 import { useExclusions } from '@/hooks/useExclusions'
 import { Shield, Home, FileText, History, Settings, LogOut, User, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname, useRouter } from '@/navigation'
+import { useTranslations, useLocale } from 'next-intl'
 import { cn } from '@/lib/utils'
 import { useEffect } from 'react'
 
-const navigation = [
-    { name: 'Dashboard', href: '/dashboard', icon: Home },
-    { name: 'Self-Exclude', href: '/dashboard/self-exclude', icon: Shield },
-    { name: 'Assessments', href: '/dashboard/assessments', icon: FileText },
-    { name: 'History', href: '/dashboard/history', icon: History },
-    { name: 'Account', href: '/dashboard/account', icon: User },
-    { name: 'Settings', href: '/dashboard/settings', icon: Settings },
+const getNavigation = (t: any) => [
+    { name: t('sidebar.my_portal'), href: '/dashboard', icon: Home },
+    { name: t('sidebar.self_exclude'), href: '/dashboard/self-exclude', icon: Shield },
+    { name: t('dashboard.risk_assessment'), href: '/dashboard/assessments', icon: FileText },
+    { name: t('history.title'), href: '/dashboard/history', icon: History },
+    { name: t('account.title'), href: '/dashboard/account', icon: User },
+    { name: t('common.settings'), href: '/dashboard/settings', icon: Settings },
 ]
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -22,14 +23,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const { exclusions, isLoading: isLoadingExclusions } = useExclusions()
     const pathname = usePathname()
     const router = useRouter()
+    const t = useTranslations()
+    const locale = useLocale()
+    const navigation = getNavigation(t)
 
     const activeExclusion = exclusions?.find(e => e.status === 'active')
 
     useEffect(() => {
-        if (!isAuthenticated) {
+        if (!isLoadingProfile && !isAuthenticated) {
             router.push('/auth/login')
         }
-    }, [isAuthenticated, router])
+    }, [isAuthenticated, router, isLoadingProfile])
 
     if (!user) {
         return (
@@ -50,8 +54,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                             <Shield className="h-6 w-6" />
                         </div>
                         <div>
-                            <h1 className="text-xl font-bold tracking-tight">NSER Portal</h1>
-                            <p className="text-slate-400 text-xs uppercase tracking-widest font-medium">Self-Exclusion</p>
+                            <h1 className="text-xl font-bold tracking-tight">{t('auth.citizen_portal')}</h1>
+                            <p className="text-slate-400 text-xs uppercase tracking-widest font-medium">{t('sidebar.self_exclusion')}</p>
                         </div>
                     </div>
                 </div>
@@ -103,38 +107,38 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         </div>
 
                         {/* Status Badges */}
-                        <div className="space-y-2">
-                            {activeExclusion ? (
-                                <div className="flex items-center gap-2 text-xs bg-gradient-to-r from-red-500/20 to-red-600/20 text-red-200 px-3 py-2.5 rounded-lg border border-red-500/30 font-medium">
-                                    <AlertCircle className="h-3.5 w-3.5" />
-                                    <span>Self-Excluded</span>
-                                </div>
-                            ) : (
-                                <div className="flex items-center gap-2 text-xs bg-gradient-to-r from-emerald-500/20 to-emerald-600/20 text-emerald-200 px-3 py-2.5 rounded-lg border border-emerald-500/30 font-medium">
-                                    <CheckCircle className="h-3.5 w-3.5" />
-                                    <span>Account Active</span>
-                                </div>
-                            )}
+                         <div className="space-y-2">
+                             {activeExclusion ? (
+                                 <div className="flex items-center gap-2 text-xs bg-gradient-to-r from-red-500/20 to-red-600/20 text-red-200 px-3 py-2.5 rounded-lg border border-red-500/30 font-medium">
+                                     <AlertCircle className="h-3.5 w-3.5" />
+                                     <span>{t('sidebar.self_excluded')}</span>
+                                 </div>
+                             ) : (
+                                 <div className="flex items-center gap-2 text-xs bg-gradient-to-r from-emerald-500/20 to-emerald-600/20 text-emerald-200 px-3 py-2.5 rounded-lg border border-emerald-500/30 font-medium">
+                                     <CheckCircle className="h-3.5 w-3.5" />
+                                     <span>{t('sidebar.account_active')}</span>
+                                 </div>
+                             )}
 
-                            {user.is_phone_verified ? (
-                                <div className="flex items-center gap-2 text-xs bg-gradient-to-r from-emerald-500/20 to-emerald-600/20 text-emerald-200 px-3 py-2.5 rounded-lg border border-emerald-500/30">
-                                    <CheckCircle className="h-3 w-3" />
-                                    <span>Phone Verified</span>
-                                </div>
-                            ) : (
-                                <div className="flex items-center gap-2 text-xs bg-gradient-to-r from-amber-500/20 to-amber-600/20 text-amber-200 px-3 py-2.5 rounded-lg border border-amber-500/30">
-                                    <AlertCircle className="h-3 w-3" />
-                                    <span>Phone Unverified</span>
-                                </div>
-                            )}
+                             {user.is_phone_verified ? (
+                                 <div className="flex items-center gap-2 text-xs bg-gradient-to-r from-emerald-500/20 to-emerald-600/20 text-emerald-200 px-3 py-2.5 rounded-lg border border-emerald-500/30">
+                                     <CheckCircle className="h-3 w-3" />
+                                     <span>{t('sidebar.phone_verified')}</span>
+                                 </div>
+                             ) : (
+                                 <div className="flex items-center gap-2 text-xs bg-gradient-to-r from-amber-500/20 to-amber-600/20 text-amber-200 px-3 py-2.5 rounded-lg border border-amber-500/30">
+                                     <AlertCircle className="h-3 w-3" />
+                                     <span>{t('sidebar.phone_unverified')}</span>
+                                 </div>
+                             )}
 
-                            {user.is_2fa_enabled && (
-                                <div className="flex items-center gap-2 text-xs bg-gradient-to-r from-blue-500/20 to-indigo-600/20 text-blue-200 px-3 py-2.5 rounded-lg border border-blue-500/30">
-                                    <Shield className="h-3 w-3" />
-                                    <span>2FA Enabled</span>
-                                </div>
-                            )}
-                        </div>
+                             {user.is_2fa_enabled && (
+                                 <div className="flex items-center gap-2 text-xs bg-gradient-to-r from-blue-500/20 to-indigo-600/20 text-blue-200 px-3 py-2.5 rounded-lg border border-blue-500/30">
+                                     <Shield className="h-3 w-3" />
+                                     <span>{t('sidebar.2fa_enabled')}</span>
+                                 </div>
+                             )}
+                         </div>
                     </div>
 
                     <button
@@ -142,7 +146,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
                     >
                         <LogOut className="h-4 w-4" />
-                        Sign Out
+                        {t('common.logout')}
                     </button>
                 </div>
             </div>

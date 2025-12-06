@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { DashboardHeader } from '@/components/Dashboard/DashboardHeader'
 import { StatsCard } from '@/components/Dashboard/StatsCard'
 import { api } from '@/lib/api-client'
@@ -36,24 +37,24 @@ interface Question {
     scale?: { min: number; max: number }
 }
 
-const ASSESSMENT_TYPES: { type: AssessmentType; name: string; duration: string; description: string }[] = [
+const getAssessmentTypes = (t: any): { type: AssessmentType; name: string; duration: string; description: string }[] => [
     {
         type: 'LIEBET',
         name: 'LIEBET Assessment',
         duration: '5-10 min',
-        description: 'Brief assessment of gambling behavior and problem severity'
+        description: t('help.available_assessments_answer')
     },
     {
         type: 'PGSI',
         name: 'PGSI Assessment',
         duration: '10-15 min',
-        description: 'Problem Gambling Severity Index - comprehensive screening'
+        description: t('help.available_assessments_answer')
     },
     {
         type: 'DSM5',
         name: 'DSM-5 Criteria',
         duration: '15-20 min',
-        description: 'Clinical diagnostic criteria assessment'
+        description: t('help.available_assessments_answer')
     }
 ]
 
@@ -73,7 +74,9 @@ const RISK_COLORS = {
 const DEFAULT_RISK_COLOR = { bg: 'bg-gray-100', text: 'text-gray-900', badge: 'bg-gray-50' }
 
 export default function AssessmentsPage() {
+    const t = useTranslations()
     const { toast } = useToast()
+    const ASSESSMENT_TYPES = getAssessmentTypes(t)
     const [assessments, setAssessments] = useState<AssessmentResult[]>([])
     const [isLoadingAssessments, setIsLoadingAssessments] = useState(true)
 
@@ -147,8 +150,8 @@ export default function AssessmentsPage() {
         } catch (error: any) {
             console.error('Assessment start error:', error)
             toast({
-                title: 'Error',
-                description: error.response?.data?.error?.details?.message || error.message || 'Failed to load assessment',
+                title: t('common.error'),
+                description: error.response?.data?.error?.details?.message || error.message || t('errors.something_went_wrong'),
                 variant: 'destructive'
             })
         } finally {
@@ -200,8 +203,8 @@ export default function AssessmentsPage() {
             }
         } catch (error: any) {
             toast({
-                title: 'Error',
-                description: error.response?.data?.message || 'Failed to submit assessment',
+                title: t('common.error'),
+                description: error.response?.data?.message || t('errors.something_went_wrong'),
                 variant: 'destructive'
             })
         } finally {
@@ -216,7 +219,7 @@ export default function AssessmentsPage() {
 
         return (
             <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
-                <DashboardHeader title="Risk Assessment" subtitle={`${startedAssessment} Assessment`} />
+                <DashboardHeader title={t('assessment.title')} subtitle={`${startedAssessment} ${t('assessment.title')}`} />
 
                 <main className="max-w-2xl mx-auto px-6 py-8">
                     <div className="bg-white rounded-xl shadow-lg p-8">
@@ -224,7 +227,7 @@ export default function AssessmentsPage() {
                         <div className="mb-8">
                             <div className="flex justify-between items-center mb-2">
                                 <span className="text-sm font-medium text-gray-700">
-                                    Question {currentQuestionIndex + 1} of {questions.length}
+                                    {t('assessment.question_counter', { current: currentQuestionIndex + 1, total: questions.length })}
                                 </span>
                                 <span className="text-sm text-gray-600">{Math.round(progress)}%</span>
                             </div>
@@ -269,8 +272,8 @@ export default function AssessmentsPage() {
                                 {currentQuestion.type === 'scale' && currentQuestion.scale && (
                                     <div className="py-6">
                                         <div className="flex justify-between mb-4">
-                                            <span className="text-sm text-gray-600">{currentQuestion.scale.min} - Not at all</span>
-                                            <span className="text-sm text-gray-600">{currentQuestion.scale.max} - Strongly agree</span>
+                                            <span className="text-sm text-gray-600">{currentQuestion.scale.min} - {t('assessment.scale_min_label')}</span>
+                                            <span className="text-sm text-gray-600">{currentQuestion.scale.max} - {t('assessment.scale_max_label')}</span>
                                         </div>
                                         <input
                                             type="range"
@@ -297,7 +300,7 @@ export default function AssessmentsPage() {
                                 disabled={currentQuestionIndex === 0 || isLoading}
                                 className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors"
                             >
-                                Previous
+                                {t('assessment.previous_button')}
                             </button>
                             <button
                                 onClick={handleNextQuestion}
@@ -307,12 +310,12 @@ export default function AssessmentsPage() {
                                 {isLoading ? (
                                     <>
                                         <Loader2 className="h-4 w-4 animate-spin" />
-                                        Processing...
+                                        {t('assessment.processing')}
                                     </>
                                 ) : currentQuestionIndex === questions.length - 1 ? (
-                                    'Submit & See Results'
+                                    t('assessment.submit_button')
                                 ) : (
-                                    'Next Question'
+                                    t('assessment.next_button')
                                 )}
                             </button>
                         </div>
@@ -328,7 +331,7 @@ export default function AssessmentsPage() {
 
         return (
             <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50">
-                <DashboardHeader title="Assessment Results" subtitle="Your risk profile" />
+                <DashboardHeader title={t('assessment.results_title')} subtitle={t('assessment.results_subtitle')} />
 
                 <main className="max-w-3xl mx-auto px-6 py-8">
                     <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
@@ -344,20 +347,20 @@ export default function AssessmentsPage() {
                                     {results.riskLevel} Risk
                                 </h2>
                                 <p className="text-gray-600 mt-2">
-                                    Assessment Date: {new Date(results.date).toLocaleDateString()}
+                                    {t('assessment.assessment_date')} {new Date(results.date).toLocaleDateString()}
                                 </p>
                             </div>
                         </div>
 
                         {/* Interpretation */}
                         <div className="mb-8">
-                            <h3 className="text-xl font-bold text-gray-900 mb-4">What This Means</h3>
+                            <h3 className="text-xl font-bold text-gray-900 mb-4">{t('assessment.what_means')}</h3>
                             <div className="bg-blue-50 border border-blue-200 p-6 rounded-lg">
                                 <p className="text-gray-700">
-                                    {results.riskLevel === 'low' && 'Your assessment indicates low-risk gambling behavior. Continue healthy habits and monitor your activity.'}
-                                    {results.riskLevel === 'medium' && 'Your assessment suggests moderate gambling behavior. Consider setting limits and reviewing your habits regularly.'}
-                                    {results.riskLevel === 'high' && 'Your assessment indicates higher-risk gambling. Professional support is recommended.'}
-                                    {results.riskLevel === 'severe' && 'Your assessment indicates severe gambling behavior. Immediate professional support is strongly recommended.'}
+                                    {results.riskLevel === 'low' && t('assessment.low_risk_interpretation')}
+                                    {results.riskLevel === 'medium' && t('assessment.medium_risk_interpretation')}
+                                    {results.riskLevel === 'high' && t('assessment.high_risk_interpretation')}
+                                    {results.riskLevel === 'severe' && t('assessment.severe_risk_interpretation')}
                                 </p>
                             </div>
                         </div>
@@ -365,7 +368,7 @@ export default function AssessmentsPage() {
                         {/* Recommendations */}
                         {results.recommendations && results.recommendations.length > 0 && (
                             <div className="mb-8">
-                                <h3 className="text-xl font-bold text-gray-900 mb-4">Recommendations</h3>
+                                <h3 className="text-xl font-bold text-gray-900 mb-4">{t('assessment.recommendations_title')}</h3>
                                 <div className="space-y-3">
                                     {results.recommendations.map((rec, i) => (
                                         <div key={i} className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
@@ -379,19 +382,19 @@ export default function AssessmentsPage() {
 
                         {/* Next Steps */}
                         <div className="bg-amber-50 border border-amber-200 p-6 rounded-lg">
-                            <h3 className="font-bold text-amber-900 mb-3">Next Steps</h3>
+                            <h3 className="font-bold text-amber-900 mb-3">{t('assessment.next_steps_title')}</h3>
                             <ul className="space-y-2 text-sm text-amber-800">
                                 <li className="flex items-start gap-2">
                                     <span>•</span>
-                                    <span>Review your gambling patterns and set spending limits</span>
+                                    <span>{t('assessment.next_step_1')}</span>
                                 </li>
                                 <li className="flex items-start gap-2">
                                     <span>•</span>
-                                    <span>Consider talking to a counselor or therapist</span>
+                                    <span>{t('assessment.next_step_2')}</span>
                                 </li>
                                 <li className="flex items-start gap-2">
                                     <span>•</span>
-                                    <span>Take another assessment in 30 days to track progress</span>
+                                    <span>{t('assessment.next_step_3')}</span>
                                 </li>
                             </ul>
                         </div>
@@ -406,13 +409,13 @@ export default function AssessmentsPage() {
                             }}
                             className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
                         >
-                            Back to Assessments
+                            {t('assessment.back_to_assessments')}
                         </button>
                         <button
                             onClick={() => window.location.href = '/dashboard/help#support'}
                             className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
                         >
-                            Get Professional Help
+                            {t('assessment.get_professional_help')}
                         </button>
                     </div>
                 </main>
@@ -424,8 +427,8 @@ export default function AssessmentsPage() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
             <DashboardHeader
-                title="Risk Assessments"
-                subtitle="Evaluate your gambling behavior"
+                title={t('assessment.page_title')}
+                subtitle={t('assessment.page_subtitle')}
             />
 
             <main className="max-w-6xl mx-auto px-6 py-8">
@@ -433,30 +436,30 @@ export default function AssessmentsPage() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <StatsCard
                         icon={BarChart3}
-                        label="Total Assessments"
+                        label={t('assessment.total_assessments')}
                         value={assessments.length}
                         color="purple"
-                        description="Completed screenings"
+                        description={t('assessment.completed_screenings')}
                     />
                     <StatsCard
                         icon={Brain}
-                        label="Latest Risk Level"
+                        label={t('assessment.latest_risk_level')}
                         value={assessments[0]?.riskLevel?.toUpperCase() || 'N/A'}
                         color={['high', 'severe', 'critical', 'blacklisted'].includes(assessments[0]?.riskLevel) ? 'red' : 'green'}
-                        description="Current risk profile"
+                        description={t('assessment.current_risk_profile')}
                     />
                     <StatsCard
                         icon={Calendar}
-                        label="Last Assessment"
-                        value={assessments[0]?.date ? new Date(assessments[0].date).toLocaleDateString() : 'Never'}
+                        label={t('assessment.last_assessment')}
+                        value={assessments[0]?.date ? new Date(assessments[0].date).toLocaleDateString() : t('assessment.never_assessed')}
                         color="blue"
-                        description="Most recent screening"
+                        description={t('assessment.most_recent_screening')}
                     />
                 </div>
 
                 {/* Available Assessments */}
                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-6">Available Assessments</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('assessment.available_assessments')}</h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {ASSESSMENT_TYPES.map((assessment) => (
                             <div
@@ -473,16 +476,16 @@ export default function AssessmentsPage() {
 
                                 <button
                                     onClick={() => handleStartAssessment(assessment.type)}
-                                    disabled={isLoading}
+                                    disabled={isLoadingAssessments}
                                     className="w-full px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 group-hover:shadow-lg"
                                 >
-                                    {isLoading ? (
+                                    {isLoadingAssessments ? (
                                         <>
                                             <Loader2 className="h-4 w-4 animate-spin" />
-                                            Loading...
+                                            {t('assessment.loading')}
                                         </>
                                     ) : (
-                                        'Start Assessment'
+                                        t('assessment.start_assessment')
                                     )}
                                 </button>
                             </div>
@@ -493,7 +496,7 @@ export default function AssessmentsPage() {
                 {/* Previous Results */}
                 {assessments.length > 0 && (
                     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
-                        <h2 className="text-2xl font-bold text-gray-900 mb-6">Assessment History</h2>
+                        <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('assessment.assessment_history')}</h2>
                         <div className="space-y-4">
                             {assessments.map((assessment) => {
                                 const riskColor = RISK_COLORS[assessment.riskLevel] || DEFAULT_RISK_COLOR
@@ -507,16 +510,16 @@ export default function AssessmentsPage() {
                                                 </span>
                                             </div>
                                             <p className="text-sm text-gray-600 mb-2">
-                                                {new Date(assessment.date).toLocaleDateString()} • Score: {assessment.score}
+                                                {new Date(assessment.date).toLocaleDateString()} • {t('assessment.score')}: {assessment.score}
                                             </p>
                                             {assessment.recommendations && assessment.recommendations.length > 0 && (
                                                 <p className="text-sm text-gray-700">
-                                                    Key recommendations: {assessment.recommendations.slice(0, 2).join(', ')}...
+                                                    {t('assessment.key_recommendations')}: {assessment.recommendations.slice(0, 2).join(', ')}...
                                                 </p>
                                             )}
                                         </div>
                                         <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-white transition-colors">
-                                            View Details
+                                            {t('assessment.view_details')}
                                         </button>
                                     </div>
                                 )

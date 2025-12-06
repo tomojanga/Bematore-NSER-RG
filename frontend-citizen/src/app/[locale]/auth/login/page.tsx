@@ -1,15 +1,18 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter } from '@/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Shield } from 'lucide-react'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
+import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 
 export default function LoginPage() {
   const router = useRouter()
+  const t = useTranslations()
   const { login, isLoggingIn } = useAuth()
   const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('')
@@ -26,17 +29,20 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
+        <div className="flex justify-end mb-4">
+          <LanguageSwitcher />
+        </div>
         <div className="flex flex-col items-center mb-8">
           <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-4 rounded-full mb-4">
             <Shield className="h-12 w-12 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">Citizen Portal</h1>
-          <p className="text-gray-600 mt-2">Self-Exclusion Registration</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('auth.citizen_portal')}</h1>
+          <p className="text-gray-600 mt-2">{t('auth.self_exclusion_registration')}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('auth.phone_number')}</label>
             <Input
               type="tel"
               placeholder="+254712345678"
@@ -47,7 +53,7 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('auth.password')}</label>
             <Input
               type="password"
               value={password}
@@ -57,15 +63,15 @@ export default function LoginPage() {
           </div>
 
           <Button type="submit" className="w-full" disabled={isLoggingIn}>
-            {isLoggingIn ? 'Signing in...' : 'Sign In'}
+            {isLoggingIn ? t('auth.signing_in') : t('auth.sign_in')}
           </Button>
         </form>
 
         <div className="mt-6 text-center text-sm">
           <p className="text-gray-600">
-            Don't have an account?{' '}
+            {t('auth.dont_have_account')}{' '}
             <Link href="/auth/register" className="text-blue-600 hover:underline">
-              Register
+              {t('auth.register')}
             </Link>
           </p>
         </div>
