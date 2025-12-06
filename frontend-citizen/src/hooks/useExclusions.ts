@@ -364,17 +364,18 @@ export function useExclusionAuditLogs(exclusionId?: string, params?: PaginatedPa
 // Hook for checking if user can self-exclude
 export function useCanSelfExclude() {
     const { data: activeExclusion } = useMyActiveExclusion()
-    const { data: status } = useExclusionStatus()
 
-    const canExclude = !activeExclusion?.data && !status?.data?.is_excluded
-    const reason = activeExclusion?.data ? 'Already excluded' :
-        status?.data?.is_excluded ? 'Currently excluded' : ''
+    // Only check if there's an active exclusion
+    // The activeExclusion hook returns success=true with data=null/undefined if no active exclusion
+    const hasActiveExclusion = activeExclusion?.success === true && activeExclusion?.data !== null && activeExclusion?.data !== undefined
+    const canExclude = !hasActiveExclusion
+    const reason = hasActiveExclusion ? 'Already excluded' : ''
 
     return {
         canSelfExclude: canExclude,
         reason,
-        activeExclusion: activeExclusion?.data,
-        status: status?.data,
+        activeExclusion: activeExclusion?.data || null,
+        status: null,
     }
 }
 

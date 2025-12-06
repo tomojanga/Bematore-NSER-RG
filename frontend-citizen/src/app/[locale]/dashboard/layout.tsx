@@ -1,7 +1,7 @@
 'use client'
 
 import { useAuth } from '@/hooks/useAuth'
-import { useExclusions } from '@/hooks/useExclusions'
+import { useMyActiveExclusion } from '@/hooks/useExclusions'
 import { Shield, Home, FileText, History, Settings, LogOut, User, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useRouter } from '@/navigation'
@@ -20,14 +20,15 @@ const getNavigation = (t: any) => [
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const { user, logout, isAuthenticated, isLoadingProfile } = useAuth()
-    const { exclusions, isLoading: isLoadingExclusions } = useExclusions()
+    const { data: activeExclusionData } = useMyActiveExclusion()
     const pathname = usePathname()
     const router = useRouter()
     const t = useTranslations()
     const locale = useLocale()
     const navigation = getNavigation(t)
 
-    const activeExclusion = exclusions?.find(e => e.status === 'active')
+    // Get the active exclusion from the response data
+    const activeExclusion = activeExclusionData?.success ? activeExclusionData.data : null
 
     useEffect(() => {
         if (!isLoadingProfile && !isAuthenticated) {
