@@ -22,7 +22,7 @@ export default function Providers({ children, locale, messages }: ProvidersProps
   }))
 
   return (
-    <NextIntlClientProvider locale={locale} messages={messages}>
+    <NextIntlClientProvider locale={locale} messages={messages} timeZone="Africa/Nairobi">
       <QueryClientProvider client={queryClient}>
         {children}
         <Toaster />

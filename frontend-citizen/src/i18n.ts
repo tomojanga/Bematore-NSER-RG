@@ -14,6 +14,8 @@ export default getRequestConfig(async ({ locale }) => {
     const messages = (await import(`../../public/locales/${validLocale}/common.json`)).default
     return {
       messages,
+      timeZone: 'Africa/Nairobi',
+      now: new Date()
     }
   } catch (error) {
     console.error(`Failed to load messages for locale: ${validLocale}`, error)
@@ -21,6 +23,8 @@ export default getRequestConfig(async ({ locale }) => {
     const fallbackMessages = (await import(`../../public/locales/${defaultLocale}/common.json`)).default
     return {
       messages: fallbackMessages,
+      timeZone: 'Africa/Nairobi',
+      now: new Date()
     }
   }
 })

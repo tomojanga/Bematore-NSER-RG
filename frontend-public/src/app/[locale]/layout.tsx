@@ -24,7 +24,7 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} dir={isRTL ? 'rtl' : 'ltr'} suppressHydrationWarning>
       <body>
-        <NextIntlClientProvider messages={messages}>
+        <NextIntlClientProvider messages={messages} timeZone="Africa/Nairobi">
           <Header />
           <main className={isRTL ? 'direction-rtl' : ''}>{children}</main>
           <Footer />
