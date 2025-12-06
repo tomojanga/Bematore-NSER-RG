@@ -1,10 +1,13 @@
+const withNextIntl = require('next-intl/plugin')('./src/i18n.ts', {
+  timeZone: 'Africa/Nairobi'
+})
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
   
-  // Static export for Netlify (avoids serverless function issues)
-  output: 'export',
+  // Remove static export to allow middleware and next-intl to work
+  // output: 'export', // Commented out - incompatible with middleware and next-intl
   
   // Disable image optimization for static export
   images: {
@@ -15,7 +18,8 @@ const nextConfig = {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
     NEXT_PUBLIC_PORTAL_TYPE: process.env.NEXT_PUBLIC_PORTAL_TYPE || 'operator',
+    _next_intl_trailing_slash: 'never',
   },
 }
 
-module.exports = nextConfig
+module.exports = withNextIntl(nextConfig)

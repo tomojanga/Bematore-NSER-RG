@@ -1,19 +1,30 @@
 # Netlify Configuration for NSER Operator Portal
+# Configured for server-side rendering with next-intl middleware
 
 [build]
-  command = "npm run build"
-  publish = "out"
+  # Build command - clean build to avoid platform-specific issues
+  command = "npm ci && npm run build"
+  
+  # Netlify plugin auto-detects this
+  # publish = ".next"
+  
+  # Functions directory for Netlify serverless functions
+  functions = ".netlify/functions"
 
 [build.environment]
-  NODE_VERSION = "18"
+  # Node.js version (18+ required for Next.js 15)
+  NODE_VERSION = "20"
+  
+  # Next.js specific
   NEXT_TELEMETRY_DISABLED = "1"
+  
+  # Force npm to skip optional dependencies that might cause issues
+  NPM_FLAGS = "--legacy-peer-deps"
+  
+  # Skip the Netlify plugin caching which causes issues
+  SKIP_FUNCTIONS_CACHE = "true"
 
-# SPA fallback
-[[redirects]]
-  from = "/*"
-  to = "/404.html"
-  status = 404
-
+# Headers for security
 [[headers]]
   for = "/*"
   [headers.values]
@@ -21,7 +32,9 @@
     X-Content-Type-Options = "nosniff"
     X-XSS-Protection = "1; mode=block"
     Referrer-Policy = "strict-origin-when-cross-origin"
+    X-UA-Compatible = "IE=Edge"
 
+# Cache static assets - very long TTL since they're hashed
 [[headers]]
   for = "/_next/static/*"
   [headers.values]
@@ -32,4 +45,12 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-# No plugins needed for static export
+# Cache control for pages
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, stale-while-revalidate=86400"
+
+# Next.js on Netlify requires the plugin for server-side rendering with middleware and i18n
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
