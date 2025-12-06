@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Copy, Check, ChevronDown } from 'lucide-react'
 
 export default function ApiReferencePage() {
+  const t = useTranslations()
   const [copied, setCopied] = useState<string | null>(null)
   const [expandedEndpoint, setExpandedEndpoint] = useState<string | null>('lookup')
 
@@ -183,13 +185,13 @@ export default function ApiReferencePage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">API Reference</h1>
-        <p className="text-gray-600 mt-1">Complete documentation for NSER API endpoints</p>
+        <h1 className="text-3xl font-bold text-gray-900">{t('api_reference.title')}</h1>
+        <p className="text-gray-600 mt-1">{t('api_reference.subtitle')}</p>
       </div>
 
       {/* Authentication Section */}
       <div className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Authentication</h2>
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('common.loading')}</h2>
         <div className="space-y-4">
           <div>
             <h3 className="font-semibold text-gray-900 mb-2">API Key Authentication</h3>
@@ -226,7 +228,7 @@ export default function ApiReferencePage() {
 
       {/* Base URL Section */}
       <div className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Base URL</h2>
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('common.loading')}</h2>
         <div className="relative bg-gray-100 p-4 rounded-lg">
           <button
             onClick={() => copyCode('https://api.nser.rg/api/v1', 'base-url')}
@@ -348,7 +350,7 @@ export default function ApiReferencePage() {
 
       {/* Best Practices */}
       <div className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Best Practices</h2>
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('common.loading')}</h2>
         <ul className="space-y-3 text-sm text-gray-600">
           <li className="flex gap-3">
             <span className="text-green-600 font-bold">✓</span>
@@ -383,7 +385,7 @@ export default function ApiReferencePage() {
 
       {/* Rate Limiting */}
       <div className="bg-blue-50 border border-blue-200 p-6 rounded-lg">
-        <h3 className="font-semibold text-blue-900 mb-3">Rate Limiting</h3>
+        <h3 className="font-semibold text-blue-900 mb-3">{t('common.loading')}</h3>
         <ul className="space-y-2 text-sm text-blue-800">
           <li>• <span className="font-semibold">Standard tier:</span> 1,000 requests/minute</li>
           <li>• <span className="font-semibold">Premium tier:</span> 10,000 requests/minute</li>

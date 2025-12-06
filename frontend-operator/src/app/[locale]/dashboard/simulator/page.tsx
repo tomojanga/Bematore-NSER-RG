@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import apiService from '@/lib/api-service'
 import { Play, Copy, CheckCircle, XCircle, Clock, AlertCircle, Loader } from 'lucide-react'
 
@@ -13,7 +14,8 @@ interface TestResponse {
 }
 
 export default function SimulatorPage() {
-    const [loading, setLoading] = useState(false)
+     const t = useTranslations()
+     const [loading, setLoading] = useState(false)
     const [operatorId, setOperatorId] = useState<string>('')
     const [apiKey, setApiKey] = useState<string>('')
     const [apiKeyLoaded, setApiKeyLoaded] = useState(false)
@@ -74,12 +76,12 @@ export default function SimulatorPage() {
 
     const runTest = async () => {
         if (!testData.phone_number && !testData.national_id && !testData.bst_token) {
-            setMessage('Please fill in at least one field')
+            setMessage(t('simulator.fill_at_least_one'))
             return
         }
 
         if (!apiKey) {
-            setMessage('Error: No API key available. Please check your API keys.')
+            setMessage(t('simulator.no_api_key_error'))
             return
         }
 
@@ -157,7 +159,7 @@ export default function SimulatorPage() {
 
     const copyCode = (code: string) => {
         navigator.clipboard.writeText(code)
-        setMessage('Code copied to clipboard!')
+        setMessage(t('simulator.code_copied'))
         setTimeout(() => setMessage(null), 2000)
     }
 
@@ -259,8 +261,8 @@ checkExclusion('${testData.phone_number || '+254712345678'}', '${testData.nation
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-3xl font-bold text-gray-900">API Simulator</h1>
-                <p className="text-gray-600 mt-1">Test exclusion lookup integration before going live</p>
+                <h1 className="text-3xl font-bold text-gray-900">{t('simulator.title')}</h1>
+                <p className="text-gray-600 mt-1">{t('simulator.subtitle')}</p>
             </div>
 
             {message && (
@@ -289,12 +291,12 @@ checkExclusion('${testData.phone_number || '+254712345678'}', '${testData.nation
                         }`}>
                         <div className="flex-1">
                             <p className={`font-semibold ${apiKeyLoaded ? 'text-green-900' : 'text-yellow-900'}`}>
-                                {apiKeyLoaded ? '✓ API Key Loaded' : '⚠ No API Key Loaded'}
+                                {apiKeyLoaded ? `✓ ${t('simulator.api_key_loaded')}` : `⚠ ${t('simulator.no_api_key_loaded')}`}
                             </p>
                             <p className={`text-sm ${apiKeyLoaded ? 'text-green-700' : 'text-yellow-700'}`}>
                                 {apiKeyLoaded
-                                    ? `Using: ${apiKey.substring(0, 10)}...${apiKey.substring(apiKey.length - 5)}`
-                                    : 'No API key found. Enter one manually or check API key settings.'}
+                                    ? `${t('simulator.using')}: ${apiKey.substring(0, 10)}...${apiKey.substring(apiKey.length - 5)}`
+                                    : t('simulator.no_api_key_message')}
                             </p>
                         </div>
                         {!apiKeyLoaded && (
@@ -302,7 +304,7 @@ checkExclusion('${testData.phone_number || '+254712345678'}', '${testData.nation
                                 onClick={() => setShowManualApiKey(!showManualApiKey)}
                                 className="text-sm bg-yellow-100 hover:bg-yellow-200 text-yellow-900 px-3 py-1 rounded font-medium transition"
                             >
-                                {showManualApiKey ? 'Cancel' : 'Add Key'}
+                                {showManualApiKey ? t('simulator.cancel') : t('simulator.add_key')}
                             </button>
                         )}
                     </div>
@@ -310,7 +312,7 @@ checkExclusion('${testData.phone_number || '+254712345678'}', '${testData.nation
                     {/* Manual API Key Entry */}
                     {showManualApiKey && (
                         <div className="bg-white rounded-xl shadow-sm border border-yellow-300 p-6">
-                            <h3 className="text-sm font-bold text-gray-900 mb-3">Enter API Key Manually</h3>
+                            <h3 className="text-sm font-bold text-gray-900 mb-3">{t('simulator.enter_api_key')}</h3>
                             <input
                                 type="password"
                                 value={apiKey}
@@ -321,14 +323,14 @@ checkExclusion('${testData.phone_number || '+254712345678'}', '${testData.nation
                                     }
                                 }}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                                placeholder="Paste your API key here"
+                                placeholder={t('simulator.paste_api_key')}
                             />
-                            <p className="text-xs text-gray-500 mt-2">Your API key is never stored or shared</p>
+                            <p className="text-xs text-gray-500 mt-2">{t('simulator.api_key_not_shared')}</p>
                         </div>
                     )}
 
                     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                        <h2 className="text-lg font-bold text-gray-900 mb-4">Test Parameters</h2>
+                        <h2 className="text-lg font-bold text-gray-900 mb-4">{t('simulator.test_parameters')}</h2>
 
                         <div className="space-y-4">
                             <div>
@@ -380,12 +382,12 @@ checkExclusion('${testData.phone_number || '+254712345678'}', '${testData.nation
                                 {loading ? (
                                     <>
                                         <Loader className="h-5 w-5 animate-spin" />
-                                        Running Test...
+                                        {t('simulator.running')}
                                     </>
                                 ) : (
                                     <>
                                         <Play className="h-5 w-5" />
-                                        Run Test
+                                        {t('simulator.run_test')}
                                     </>
                                 )}
                             </button>
@@ -396,7 +398,7 @@ checkExclusion('${testData.phone_number || '+254712345678'}', '${testData.nation
                     {response && (
                         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                             <div className="flex items-center justify-between mb-4">
-                                <h2 className="text-lg font-bold text-gray-900">Response</h2>
+                                <h2 className="text-lg font-bold text-gray-900">{t('simulator.response')}</h2>
                                 <div className="flex items-center gap-2 text-sm">
                                     <Clock className="h-4 w-4" />
                                     <span className={`font-semibold ${responseTime < 100 ? 'text-green-600' : responseTime < 500 ? 'text-yellow-600' : 'text-red-600'
@@ -416,11 +418,11 @@ checkExclusion('${testData.phone_number || '+254712345678'}', '${testData.nation
                                             <>
                                                 <XCircle className="h-6 w-6 text-red-600 flex-shrink-0" />
                                                 <div>
-                                                    <p className="font-semibold text-red-900">User is Self-Excluded</p>
-                                                    <p className="text-sm text-red-700">Do NOT allow gambling activities</p>
+                                                    <p className="font-semibold text-red-900">{t('simulator.user_excluded')}</p>
+                                                    <p className="text-sm text-red-700">{t('simulator.do_not_allow')}</p>
                                                     {response.expiry_date && (
                                                         <p className="text-xs text-red-600 mt-1">
-                                                            Valid until: {new Date(response.expiry_date).toLocaleDateString()}
+                                                            {t('simulator.valid_until')}: {new Date(response.expiry_date).toLocaleDateString()}
                                                         </p>
                                                     )}
                                                 </div>
@@ -429,8 +431,8 @@ checkExclusion('${testData.phone_number || '+254712345678'}', '${testData.nation
                                             <>
                                                 <CheckCircle className="h-6 w-6 text-green-600 flex-shrink-0" />
                                                 <div>
-                                                    <p className="font-semibold text-green-900">User is NOT Excluded</p>
-                                                    <p className="text-sm text-green-700">May participate in gambling</p>
+                                                    <p className="font-semibold text-green-900">{t('simulator.user_not_excluded')}</p>
+                                                    <p className="text-sm text-green-700">{t('simulator.may_participate')}</p>
                                                 </div>
                                             </>
                                         )}
@@ -439,13 +441,13 @@ checkExclusion('${testData.phone_number || '+254712345678'}', '${testData.nation
 
                                 {response.error && (
                                     <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                                        <p className="text-sm text-red-700 font-medium">Error</p>
+                                        <p className="text-sm text-red-700 font-medium">{t('simulator.error')}</p>
                                         <p className="text-sm text-red-600 mt-1">{response.error}</p>
                                     </div>
                                 )}
 
                                 <div>
-                                    <p className="text-xs font-medium text-gray-600 mb-2">Full Response:</p>
+                                    <p className="text-xs font-medium text-gray-600 mb-2">{t('simulator.full_response')}:</p>
                                     <div className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
                                         <pre className="text-xs font-mono">{JSON.stringify(response, null, 2)}</pre>
                                     </div>
@@ -453,7 +455,7 @@ checkExclusion('${testData.phone_number || '+254712345678'}', '${testData.nation
 
                                 {errorDetails && (
                                     <div>
-                                        <p className="text-xs font-medium text-red-600 mb-2">Error Details:</p>
+                                        <p className="text-xs font-medium text-red-600 mb-2">{t('simulator.error_details')}:</p>
                                         <div className="bg-red-900 text-red-100 p-4 rounded-lg overflow-x-auto">
                                             <pre className="text-xs font-mono">{errorDetails}</pre>
                                         </div>
@@ -467,7 +469,7 @@ checkExclusion('${testData.phone_number || '+254712345678'}', '${testData.nation
                 {/* Code Examples */}
                 <div className="space-y-6">
                     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                        <h2 className="text-lg font-bold text-gray-900 mb-4">Integration Examples</h2>
+                        <h2 className="text-lg font-bold text-gray-900 mb-4">{t('simulator.integration_examples')}</h2>
 
                         {/* Tabs */}
                         <div className="flex gap-2 mb-4 border-b border-gray-200">
@@ -490,15 +492,15 @@ checkExclusion('${testData.phone_number || '+254712345678'}', '${testData.nation
                             <div className="flex items-center justify-between mb-2">
                                 <span className="text-xs text-gray-500">
                                     {apiKeyLoaded
-                                        ? 'Showing your actual operator_id'
-                                        : 'Replace YOUR_API_KEY with your actual key'}
+                                        ? t('simulator.showing_actual')
+                                        : t('simulator.replace_api_key')}
                                 </span>
                                 <button
                                     onClick={() => copyCode(exampleCode[activeTab])}
                                     className="inline-flex items-center gap-1 px-3 py-1 text-sm bg-purple-50 hover:bg-purple-100 text-purple-600 rounded transition"
                                 >
                                     <Copy className="h-4 w-4" />
-                                    Copy
+                                    {t('simulator.copy')}
                                 </button>
                             </div>
                             <div className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
@@ -509,72 +511,72 @@ checkExclusion('${testData.phone_number || '+254712345678'}', '${testData.nation
 
                     {/* Info Box */}
                     <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
-                        <h3 className="font-semibold text-blue-900 mb-3">API Guidelines</h3>
+                        <h3 className="font-semibold text-blue-900 mb-3">{t('simulator.api_guidelines')}</h3>
                         <ul className="text-sm text-blue-800 space-y-2">
                             <li className="flex gap-2">
                                 <span className="flex-shrink-0">•</span>
-                                <span>Endpoint: <code className="bg-white px-1 rounded text-xs">{apiUrl}/nser/lookup/</code></span>
+                                <span>{t('simulator.guideline_1')}: <code className="bg-white px-1 rounded text-xs">{apiUrl}/nser/lookup/</code></span>
                             </li>
                             <li className="flex gap-2">
                                 <span className="flex-shrink-0">•</span>
-                                <span>Authentication: Use <code className="bg-white px-1 rounded text-xs">X-API-Key</code> header</span>
+                                <span>{t('simulator.guideline_2')}: <code className="bg-white px-1 rounded text-xs">X-API-Key</code> {t('simulator.guideline_2_suffix')}</span>
                             </li>
                             <li className="flex gap-2">
                                 <span className="flex-shrink-0">•</span>
-                                <span>Your Operator ID: <code className="bg-white px-1 rounded text-xs font-medium">{operatorId || 'Loading...'}</code></span>
+                                <span>{t('simulator.guideline_3')}: <code className="bg-white px-1 rounded text-xs font-medium">{operatorId || 'Loading...'}</code></span>
                             </li>
                             <li className="flex gap-2">
                                 <span className="flex-shrink-0">•</span>
-                                <span>Required fields: <code className="bg-white px-1 rounded text-xs">operator_id</code>, and at least one of: phone_number, national_id, or bst_token</span>
+                                <span>{t('simulator.guideline_4')}</span>
                             </li>
                             <li className="flex gap-2">
                                 <span className="flex-shrink-0">•</span>
-                                <span>Response time target: <strong>&lt;100ms</strong></span>
+                                <span>{t('simulator.guideline_5')}: <strong>&lt;100ms</strong></span>
                             </li>
                             <li className="flex gap-2">
                                 <span className="flex-shrink-0">•</span>
-                                <span>Rate limits apply based on your plan</span>
+                                <span>{t('simulator.guideline_6')}</span>
                             </li>
                             <li className="flex gap-2">
                                 <span className="flex-shrink-0">•</span>
-                                <span>All requests are logged for audit purposes</span>
+                                <span>{t('simulator.guideline_7')}</span>
                             </li>
                         </ul>
                     </div>
 
                     {/* Security Best Practices */}
                     <div className="bg-amber-50 border border-amber-200 rounded-xl p-6">
-                        <h3 className="font-semibold text-amber-900 mb-3">🔒 Security Best Practices</h3>
+                        <h3 className="font-semibold text-amber-900 mb-3">{t('simulator.security_title')}</h3>
                         <ul className="text-sm text-amber-800 space-y-2">
                             <li className="flex gap-2">
                                 <span className="flex-shrink-0">✓</span>
-                                <span>Store API keys in <strong>environment variables</strong>, never in code</span>
+                                <span>{t('simulator.security_1')}</span>
                             </li>
                             <li className="flex gap-2">
                                 <span className="flex-shrink-0">✓</span>
-                                <span>Use <strong>backend proxy</strong> for browser-based integrations (never expose keys to frontend)</span>
+                                <span>{t('simulator.security_2')}</span>
                             </li>
                             <li className="flex gap-2">
                                 <span className="flex-shrink-0">✓</span>
-                                <span>Rotate API keys regularly via API Keys dashboard</span>
+                                <span>{t('simulator.security_3')}</span>
                             </li>
                             <li className="flex gap-2">
                                 <span className="flex-shrink-0">✓</span>
-                                <span>Use HTTPS only for all API requests</span>
+                                <span>{t('simulator.security_4')}</span>
                             </li>
                             <li className="flex gap-2">
                                 <span className="flex-shrink-0">✓</span>
-                                <span>Implement request timeouts (10-30 seconds recommended)</span>
+                                <span>{t('simulator.security_5')}</span>
                             </li>
                             <li className="flex gap-2">
                                 <span className="flex-shrink-0">✓</span>
-                                <span>Log and monitor API responses for errors</span>
+                                <span>{t('simulator.security_6')}</span>
                             </li>
                         </ul>
-                    </div>
+                        </div>
 
-                    {/* Performance Info */}
-                    {response && (
+                        {/* Performance Info */}
+                        {response && (
                         <div className={`border rounded-xl p-6 ${responseTime < 100
                                 ? 'bg-green-50 border-green-200'
                                 : responseTime < 500
@@ -587,7 +589,7 @@ checkExclusion('${testData.phone_number || '+254712345678'}', '${testData.nation
                                         ? 'text-yellow-900'
                                         : 'text-red-900'
                                 }`}>
-                                Performance Analysis
+                                {t('simulator.performance_analysis')}
                             </h3>
                             <p className={`text-sm ${responseTime < 100
                                     ? 'text-green-800'
@@ -596,13 +598,13 @@ checkExclusion('${testData.phone_number || '+254712345678'}', '${testData.nation
                                         : 'text-red-800'
                                 }`}>
                                 {responseTime < 100
-                                    ? '✓ Excellent response time! Your integration is optimized.'
+                                    ? `✓ ${t('simulator.performance_excellent')}`
                                     : responseTime < 500
-                                        ? '⚠ Good response time, but there may be room for optimization.'
-                                        : '✗ Slower than expected. Check your network and API configuration.'}
+                                        ? `⚠ ${t('simulator.performance_good')}`
+                                        : `✗ ${t('simulator.performance_slow')}`}
                             </p>
                         </div>
-                    )}
+                        )}
                 </div>
             </div>
         </div>

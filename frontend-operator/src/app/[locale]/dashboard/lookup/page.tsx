@@ -70,7 +70,7 @@ export default function LookupPage() {
       if (formData.bst_token) payload.bst_token = formData.bst_token
 
       if (!payload.phone_number && !payload.national_id && !payload.bst_token) {
-        setError('Please enter at least one search criteria')
+        setError(t('lookup.at_least_one_field'))
         setLoading(false)
         return
       }
@@ -104,7 +104,7 @@ export default function LookupPage() {
   }
 
   const clearHistory = () => {
-    if (confirm('Clear all lookup history?')) {
+    if (confirm(t('lookup.clear_history_confirm'))) {
       setHistory([])
       localStorage.removeItem('lookup_history')
     }
@@ -121,8 +121,8 @@ export default function LookupPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Exclusion Lookup</h1>
-          <p className="text-gray-600 mt-1">Real-time exclusion status check</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('lookup.title')}</h1>
+          <p className="text-gray-600 mt-1">{t('lookup.subtitle')}</p>
         </div>
         {history.length > 0 && (
           <button
@@ -130,57 +130,57 @@ export default function LookupPage() {
             className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition"
           >
             <History className="h-5 w-5" />
-            History ({history.length})
+            {t('lookup.lookup_history')} ({history.length})
           </button>
         )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Search Form */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">Search Parameters</h2>
-          <form onSubmit={handleLookup} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Phone Number
-              </label>
+         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+           <h2 className="text-lg font-bold text-gray-900 mb-4">{t('lookup.search_parameters')}</h2>
+           <form onSubmit={handleLookup} className="space-y-4">
+             <div>
+               <label className="block text-sm font-medium text-gray-700 mb-2">
+                 {t('lookup.phone_number')}
+               </label>
               <input
                 type="tel"
                 value={formData.phone_number}
                 onChange={(e) => setFormData({ ...formData, phone_number: e.target.value })}
-                placeholder="+254712345678"
+                placeholder={t('lookup.phone_placeholder')}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-              <p className="text-xs text-gray-500 mt-1">E.164 format (e.g., +254712345678)</p>
-            </div>
+                />
+                <p className="text-xs text-gray-500 mt-1">{t('lookup.phone_format')}</p>
+                </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                National ID
-              </label>
-              <input
-                type="text"
-                value={formData.national_id}
-                onChange={(e) => setFormData({ ...formData, national_id: e.target.value })}
-                placeholder="National identification number"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-              <p className="text-xs text-gray-500 mt-1">ID/Passport number</p>
-            </div>
+                <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('lookup.national_id')}
+                </label>
+                <input
+                  type="text"
+                  value={formData.national_id}
+                  onChange={(e) => setFormData({ ...formData, national_id: e.target.value })}
+                  placeholder={t('lookup.national_id_placeholder')}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+                <p className="text-xs text-gray-500 mt-1">{t('lookup.national_id_format')}</p>
+                </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                BST Token
-              </label>
-              <input
-                type="text"
-                value={formData.bst_token}
-                onChange={(e) => setFormData({ ...formData, bst_token: e.target.value })}
-                placeholder="Blockchain Secure Token"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-              <p className="text-xs text-gray-500 mt-1">Optional blockchain token</p>
-            </div>
+                <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('lookup.bst_token')}
+                </label>
+                <input
+                  type="text"
+                  value={formData.bst_token}
+                  onChange={(e) => setFormData({ ...formData, bst_token: e.target.value })}
+                  placeholder={t('lookup.bst_token_placeholder')}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+                <p className="text-xs text-gray-500 mt-1">{t('lookup.bst_token_format')}</p>
+                </div>
 
             <button
               type="submit"
@@ -190,18 +190,18 @@ export default function LookupPage() {
               {loading ? (
                 <>
                   <Loader className="h-5 w-5 animate-spin" />
-                  Searching...
+                  {t('lookup.searching')}
                 </>
               ) : (
                 <>
                   <Search className="h-5 w-5" />
-                  Check Exclusion Status
+                  {t('lookup.check_exclusion')}
                 </>
               )}
             </button>
 
             <p className="text-xs text-gray-500 text-center">
-              At least one search field is required
+              {t('lookup.at_least_one_field')}
             </p>
           </form>
         </div>
@@ -212,7 +212,7 @@ export default function LookupPage() {
             <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex gap-3">
               <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
               <div>
-                <h3 className="font-semibold text-red-900">Error</h3>
+                <h3 className="font-semibold text-red-900">{t('lookup.error_title')}</h3>
                 <p className="text-sm text-red-700">{error}</p>
               </div>
             </div>
@@ -221,7 +221,7 @@ export default function LookupPage() {
           {result && (
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold text-gray-900">Lookup Result</h2>
+                <h2 className="text-lg font-bold text-gray-900">{t('lookup.result_title')}</h2>
                 <div className="flex items-center gap-2 text-sm">
                   <Clock className="h-4 w-4" />
                   <span className={`font-semibold ${
@@ -241,16 +241,16 @@ export default function LookupPage() {
                   <>
                     <XCircle className="h-12 w-12 text-red-600 flex-shrink-0" />
                     <div className="flex-1">
-                      <p className="text-lg font-bold text-red-900">User is Self-Excluded</p>
-                      <p className="text-sm text-red-700 mt-1">Do NOT allow gambling activities</p>
+                      <p className="text-lg font-bold text-red-900">{t('lookup.user_excluded')}</p>
+                      <p className="text-sm text-red-700 mt-1">{t('lookup.do_not_allow')}</p>
                       {result.expiry_date && (
                         <p className="text-xs text-red-600 mt-2">
-                          Exclusion valid until: {new Date(result.expiry_date).toLocaleDateString()}
+                          {t('lookup.valid_until')}: {new Date(result.expiry_date).toLocaleDateString()}
                         </p>
                       )}
                       {result.reason && (
                         <p className="text-xs text-red-600 mt-1">
-                          Reason: {result.reason}
+                          {t('lookup.reason')}: {result.reason}
                         </p>
                       )}
                     </div>
@@ -259,8 +259,8 @@ export default function LookupPage() {
                   <>
                     <CheckCircle className="h-12 w-12 text-green-600 flex-shrink-0" />
                     <div className="flex-1">
-                      <p className="text-lg font-bold text-green-900">User is NOT Excluded</p>
-                      <p className="text-sm text-green-700 mt-1">May participate in gambling activities</p>
+                      <p className="text-lg font-bold text-green-900">{t('lookup.user_not_excluded')}</p>
+                      <p className="text-sm text-green-700 mt-1">{t('lookup.may_participate')}</p>
                     </div>
                   </>
                 )}
@@ -268,23 +268,23 @@ export default function LookupPage() {
 
               {result.exclusion_id && (
                 <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                  <p className="text-xs text-gray-500 mb-1">Exclusion Record ID</p>
-                  <div className="flex items-center gap-2">
-                    <code className="text-sm font-mono text-gray-900 flex-1 break-all">
-                      {result.exclusion_id}
-                    </code>
-                    <button
-                      onClick={() => {
-                        navigator.clipboard.writeText(result.exclusion_id || '')
-                        alert('Copied to clipboard!')
-                      }}
-                      className="p-2 hover:bg-gray-200 rounded transition"
-                    >
-                      <Copy className="h-4 w-4" />
-                    </button>
+                    <p className="text-xs text-gray-500 mb-1">{t('lookup.exclusion_record_id')}</p>
+                    <div className="flex items-center gap-2">
+                      <code className="text-sm font-mono text-gray-900 flex-1 break-all">
+                        {result.exclusion_id}
+                      </code>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(result.exclusion_id || '')
+                          alert(t('lookup.copied_to_clipboard'))
+                        }}
+                        className="p-2 hover:bg-gray-200 rounded transition"
+                      >
+                        <Copy className="h-4 w-4" />
+                      </button>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
             </div>
           )}
         </div>
@@ -294,13 +294,13 @@ export default function LookupPage() {
       {showHistory && history.length > 0 && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-gray-900">Lookup History</h2>
+            <h2 className="text-lg font-bold text-gray-900">{t('lookup.lookup_history')}</h2>
             <button
               onClick={clearHistory}
               className="flex items-center gap-2 text-sm text-red-600 hover:text-red-700 transition"
             >
               <Trash2 className="h-4 w-4" />
-              Clear History
+              {t('lookup.clear_history')}
             </button>
           </div>
           <div className="space-y-2">
@@ -333,13 +333,13 @@ export default function LookupPage() {
 
       {/* Documentation */}
       <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
-        <h3 className="font-semibold text-blue-900 mb-3">How It Works</h3>
+        <h3 className="font-semibold text-blue-900 mb-3">{t('lookup.how_it_works')}</h3>
         <ul className="text-sm text-blue-800 space-y-2 list-disc list-inside">
-          <li>Enter at least one identifier (phone number, national ID, or BST token)</li>
-          <li>The system instantly checks against the exclusion register</li>
-          <li>Response times are typically under 100ms</li>
-          <li>Results are cached for performance and compliance audit trails</li>
-          <li>Lookup history is stored locally in your browser (not on our servers)</li>
+          <li>{t('lookup.doc_1')}</li>
+          <li>{t('lookup.doc_2')}</li>
+          <li>{t('lookup.doc_3')}</li>
+          <li>{t('lookup.doc_4')}</li>
+          <li>{t('lookup.doc_5')}</li>
         </ul>
       </div>
     </div>

@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Code, Copy, Check } from 'lucide-react'
 
 export default function IntegrationPage() {
+  const t = useTranslations()
   const [copied, setCopied] = useState<string | null>(null)
   const [language, setLanguage] = useState('javascript')
 
@@ -153,12 +155,12 @@ if (checkExclusion('+254712345678')) {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Integration Guide</h1>
-        <p className="text-gray-600 mt-1">Integrate NSER exclusion checks into your platform</p>
+        <h1 className="text-3xl font-bold text-gray-900">{t('integration.title')}</h1>
+        <p className="text-gray-600 mt-1">{t('integration.subtitle')}</p>
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Quick Start</h2>
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('integration.getting_started')}</h2>
         <div className="space-y-4">
           <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-lg">
             <div className="h-6 w-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
@@ -188,7 +190,7 @@ if (checkExclusion('+254712345678')) {
 
       <div className="bg-white p-6 rounded-lg shadow">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-gray-900">Code Examples</h2>
+          <h2 className="text-xl font-semibold text-gray-900">{t('integration.code_examples')}</h2>
           <select
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
@@ -214,7 +216,7 @@ if (checkExclusion('+254712345678')) {
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">API Endpoints</h2>
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('integration.api_documentation')}</h2>
         <div className="space-y-3">
           <div className="border-l-4 border-indigo-600 pl-4">
             <p className="font-mono text-sm text-gray-900">POST /api/v1/nser/lookup/</p>

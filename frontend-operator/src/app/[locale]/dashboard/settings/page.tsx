@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import apiService from '@/lib/api-service'
 import { Save, AlertCircle, CheckCircle, Loader } from 'lucide-react'
 
@@ -18,7 +19,8 @@ interface OperatorSettings {
 }
 
 export default function SettingsPage() {
-  const [settings, setSettings] = useState<OperatorSettings | null>(null)
+   const t = useTranslations()
+   const [settings, setSettings] = useState<OperatorSettings | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
@@ -84,7 +86,7 @@ export default function SettingsPage() {
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
           <Loader className="h-12 w-12 animate-spin text-purple-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading settings...</p>
+          <p className="text-gray-600">{t('settings.loading')}</p>
         </div>
       </div>
     )
@@ -95,8 +97,8 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-        <p className="text-gray-600 mt-1">Manage your account and integration preferences</p>
+        <h1 className="text-3xl font-bold text-gray-900">{t('settings.title')}</h1>
+        <p className="text-gray-600 mt-1">{t('settings.subtitle')}</p>
       </div>
 
       {message && (

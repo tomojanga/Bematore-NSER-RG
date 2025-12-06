@@ -188,7 +188,7 @@ export default function WebhooksPage() {
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
           <Loader className="h-12 w-12 animate-spin text-purple-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading webhooks...</p>
+          <p className="text-gray-600">{t('webhooks.loading')}</p>
         </div>
       </div>
     )
@@ -198,15 +198,15 @@ export default function WebhooksPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Webhooks</h1>
-          <p className="text-gray-600 mt-1">Receive real-time exclusion notifications</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('webhooks.title')}</h1>
+          <p className="text-gray-600 mt-1">{t('webhooks.subtitle')}</p>
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
           className="bg-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-purple-700 flex items-center gap-2 transition"
         >
           <Plus className="h-5 w-5" />
-          Add Webhook
+          {t('webhooks.add_webhook')}
         </button>
       </div>
 
@@ -230,26 +230,26 @@ export default function WebhooksPage() {
       {/* Create Webhook Form */}
       {showForm && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">Create New Webhook</h2>
+          <h2 className="text-lg font-bold text-gray-900 mb-4">{t('webhooks.create_new')}</h2>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Webhook URL
+                {t('webhooks.webhook_url')}
               </label>
               <input
                 type="url"
                 value={formData.url}
                 onChange={(e) => setFormData({ ...formData, url: e.target.value })}
-                placeholder="https://your-domain.com/webhooks/nser"
+                placeholder={t('webhooks.webhook_url_placeholder')}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                 disabled={creating}
               />
-              <p className="text-xs text-gray-500 mt-1">Must be a valid HTTPS URL</p>
+              <p className="text-xs text-gray-500 mt-1">{t('webhooks.https_required')}</p>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Event Types
+                {t('webhooks.event_types')}
               </label>
               <div className="space-y-2">
                 {eventTypes.map((event) => (
@@ -282,12 +282,12 @@ export default function WebhooksPage() {
                 {creating ? (
                   <>
                     <Loader className="h-4 w-4 animate-spin" />
-                    Creating...
+                    {t('webhooks.creating')}
                   </>
                 ) : (
                   <>
                     <Plus className="h-4 w-4" />
-                    Create Webhook
+                    {t('webhooks.create_webhook')}
                   </>
                 )}
               </button>
@@ -299,7 +299,7 @@ export default function WebhooksPage() {
                 disabled={creating}
                 className="flex-1 px-4 py-2 bg-gray-200 text-gray-900 rounded-lg hover:bg-gray-300 font-medium transition disabled:opacity-50"
               >
-                Cancel
+                {t('webhooks.cancel')}
               </button>
             </div>
           </div>
@@ -309,13 +309,13 @@ export default function WebhooksPage() {
       {/* Webhooks List */}
       {webhooks.length === 0 ? (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
-          <p className="text-gray-600 mb-4">No webhooks configured yet</p>
+          <p className="text-gray-600 mb-4">{t('webhooks.no_webhooks')}</p>
           <button
             onClick={() => setShowForm(true)}
             className="bg-purple-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-purple-700 inline-flex items-center gap-2"
           >
             <Plus className="h-5 w-5" />
-            Create Your First Webhook
+            {t('webhooks.create_first')}
           </button>
         </div>
       ) : (
@@ -327,21 +327,21 @@ export default function WebhooksPage() {
                   <div className="flex items-center gap-2 mb-1">
                     <h3 className="font-semibold text-gray-900">{webhook.url}</h3>
                     {webhook.is_active ? (
-                      <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
-                        Active
-                      </span>
-                    ) : (
-                      <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full">
-                        Inactive
-                      </span>
-                    )}
+                        <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
+                          {t('webhooks.active')}
+                        </span>
+                      ) : (
+                        <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full">
+                          {t('webhooks.inactive')}
+                        </span>
+                      )}
                   </div>
                   <p className="text-xs text-gray-500">ID: {webhook.id?.substring(0, 8)}...</p>
                 </div>
               </div>
 
               <div className="mb-4">
-                <p className="text-xs text-gray-500 mb-2">Events subscribed:</p>
+                <p className="text-xs text-gray-500 mb-2">{t('webhooks.events_subscribed')}:</p>
                 <div className="flex flex-wrap gap-2">
                   {webhook.events.map((event) => (
                     <span key={event} className="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded">
@@ -353,13 +353,13 @@ export default function WebhooksPage() {
 
               <div className="grid grid-cols-3 gap-4 mb-4 text-sm">
                 <div>
-                  <p className="text-xs text-gray-500 mb-1">Created</p>
+                  <p className="text-xs text-gray-500 mb-1">{t('webhooks.created')}</p>
                   <p className="font-medium text-gray-900">
                     {new Date(webhook.created_at).toLocaleDateString()}
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 mb-1">Deliveries</p>
+                  <p className="text-xs text-gray-500 mb-1">{t('webhooks.deliveries')}</p>
                   <p className="font-medium">
                     <span className="text-green-600">{webhook.success_count}</span>
                     <span className="text-gray-400"> / </span>
@@ -367,9 +367,9 @@ export default function WebhooksPage() {
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 mb-1">Last Triggered</p>
+                  <p className="text-xs text-gray-500 mb-1">{t('webhooks.last_triggered')}</p>
                   <p className="font-medium text-gray-900">
-                    {webhook.last_triggered_at ? new Date(webhook.last_triggered_at).toLocaleDateString() : 'Never'}
+                    {webhook.last_triggered_at ? new Date(webhook.last_triggered_at).toLocaleDateString() : t('webhooks.never')}
                   </p>
                 </div>
               </div>
@@ -378,27 +378,27 @@ export default function WebhooksPage() {
                 <button
                   onClick={() => viewLogs(webhook.id)}
                   className="flex-1 px-3 py-2 text-sm bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 rounded-lg font-medium transition flex items-center justify-center gap-2"
-                  title="View webhook logs"
+                  title={t('webhooks.view_logs_title')}
                 >
                   <Eye className="h-4 w-4" />
-                  View Logs
+                  {t('webhooks.view_logs')}
                 </button>
                 <button
                   onClick={() => testWebhook(webhook.id)}
                   disabled={testing === webhook.id}
                   className="flex-1 px-3 py-2 text-sm bg-yellow-50 hover:bg-yellow-100 text-yellow-600 border border-yellow-200 rounded-lg font-medium transition disabled:opacity-50 flex items-center justify-center gap-2"
-                  title="Send test event"
+                  title={t('webhooks.test_event_title')}
                 >
                   <RefreshCw className={`h-4 w-4 ${testing === webhook.id ? 'animate-spin' : ''}`} />
-                  Test
+                  {t('webhooks.test')}
                 </button>
                 <button
                   onClick={() => deleteWebhook(webhook.id)}
                   className="flex-1 px-3 py-2 text-sm bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded-lg font-medium transition flex items-center justify-center gap-2"
-                  title="Delete webhook"
+                  title={t('webhooks.delete_webhook_title')}
                 >
                   <Trash2 className="h-4 w-4" />
-                  Delete
+                  {t('webhooks.delete')}
                 </button>
               </div>
             </div>
@@ -411,7 +411,7 @@ export default function WebhooksPage() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-96 overflow-hidden flex flex-col">
             <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-gray-900">Webhook Logs</h2>
+              <h2 className="text-xl font-bold text-gray-900">{t('webhooks.logs_title')}</h2>
               <button
                 onClick={() => setShowDetails(null)}
                 className="text-gray-500 hover:text-gray-700 transition"
@@ -423,7 +423,7 @@ export default function WebhooksPage() {
             <div className="overflow-y-auto flex-1">
               {webhookLogs.length === 0 ? (
                 <div className="p-6 text-center text-gray-600">
-                  <p>No webhook events yet</p>
+                  <p>{t('webhooks.no_events')}</p>
                 </div>
               ) : (
                 <div className="space-y-2 p-6">
@@ -457,27 +457,27 @@ export default function WebhooksPage() {
 
       {/* Info Box */}
       <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
-        <h3 className="font-semibold text-blue-900 mb-3">Webhook Documentation</h3>
+        <h3 className="font-semibold text-blue-900 mb-3">{t('webhooks.documentation_title')}</h3>
         <ul className="text-sm text-blue-800 space-y-2">
           <li className="flex gap-2">
             <span className="flex-shrink-0">•</span>
-            <span>Webhooks are delivered via HTTP POST to your specified URL</span>
+            <span>{t('webhooks.doc_1')}</span>
           </li>
           <li className="flex gap-2">
             <span className="flex-shrink-0">•</span>
-            <span>Failed deliveries are retried up to 5 times with exponential backoff</span>
+            <span>{t('webhooks.doc_2')}</span>
           </li>
           <li className="flex gap-2">
             <span className="flex-shrink-0">•</span>
-            <span>Always respond with HTTP 200 to acknowledge receipt</span>
+            <span>{t('webhooks.doc_3')}</span>
           </li>
           <li className="flex gap-2">
             <span className="flex-shrink-0">•</span>
-            <span>Webhook payloads include a signature for verification</span>
+            <span>{t('webhooks.doc_4')}</span>
           </li>
           <li className="flex gap-2">
             <span className="flex-shrink-0">•</span>
-            <span>Test webhooks to verify your integration works correctly</span>
+            <span>{t('webhooks.doc_5')}</span>
           </li>
         </ul>
       </div>

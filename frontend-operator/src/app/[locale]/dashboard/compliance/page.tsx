@@ -160,7 +160,7 @@ export default function CompliancePage() {
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
           <Loader className="h-12 w-12 animate-spin text-purple-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading compliance data...</p>
+          <p className="text-gray-600">{t('compliance.loading')}</p>
         </div>
       </div>
     )
@@ -170,8 +170,8 @@ export default function CompliancePage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Compliance Tracking</h1>
-          <p className="text-gray-600 mt-1">Monitor your operational compliance score</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('compliance.title')}</h1>
+          <p className="text-gray-600 mt-1">{t('compliance.subtitle')}</p>
         </div>
         <div className="flex gap-2">
           <button
@@ -182,12 +182,12 @@ export default function CompliancePage() {
             {runningCheck ? (
               <>
                 <Loader className="h-4 w-4 animate-spin" />
-                Running...
+                {t('compliance.running')}
               </>
             ) : (
               <>
                 <CheckCircle className="h-4 w-4" />
-                Run Check
+                {t('compliance.run_check')}
               </>
             )}
           </button>
@@ -197,7 +197,7 @@ export default function CompliancePage() {
               className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition flex items-center gap-2"
             >
               <Download className="h-4 w-4" />
-              Download
+              {t('compliance.download')}
             </button>
           )}
         </div>
@@ -225,12 +225,12 @@ export default function CompliancePage() {
           {/* Compliance Score Card */}
           <div className={`rounded-xl shadow-sm border p-8 flex items-center justify-between ${getScoreBgColor(report.compliance_score)}`}>
             <div>
-              <p className="text-sm font-medium text-gray-700 mb-2">Overall Compliance Score</p>
+              <p className="text-sm font-medium text-gray-700 mb-2">{t('compliance.overall_score')}</p>
               <p className={`text-5xl font-bold ${getScoreColor(report.compliance_score)}`}>
                 {report.compliance_score}%
               </p>
               <p className="text-sm text-gray-600 mt-2">
-                Last checked: {new Date(report.last_check_date).toLocaleDateString()}
+                {t('compliance.last_checked')}: {new Date(report.last_check_date).toLocaleDateString()}
               </p>
             </div>
             <Shield className={`h-24 w-24 ${getScoreColor(report.compliance_score)}`} />
@@ -241,7 +241,7 @@ export default function CompliancePage() {
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600 mb-2">Total Checks</p>
+                  <p className="text-sm font-medium text-gray-600 mb-2">{t('compliance.total_checks')}</p>
                   <p className="text-3xl font-bold text-gray-900">{report.total_checks}</p>
                 </div>
                 <div className="p-3 rounded-lg bg-blue-50">
@@ -253,7 +253,7 @@ export default function CompliancePage() {
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600 mb-2">Passed</p>
+                  <p className="text-sm font-medium text-gray-600 mb-2">{t('compliance.passed')}</p>
                   <p className="text-3xl font-bold text-green-600">{report.passed_checks}</p>
                 </div>
                 <div className="p-3 rounded-lg bg-green-50">
@@ -265,7 +265,7 @@ export default function CompliancePage() {
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600 mb-2">Failed</p>
+                  <p className="text-sm font-medium text-gray-600 mb-2">{t('compliance.failed')}</p>
                   <p className="text-3xl font-bold text-red-600">{report.failed_checks}</p>
                 </div>
                 <div className="p-3 rounded-lg bg-red-50">
@@ -277,7 +277,7 @@ export default function CompliancePage() {
 
           {/* Compliance Metrics */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">Compliance Metrics</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-6">{t('compliance.metrics_title')}</h2>
             <div className="space-y-4">
               {report.metrics && Array.isArray(report.metrics) && report.metrics.length > 0 ? (
                 report.metrics.map((metric, idx) => (
@@ -285,7 +285,7 @@ export default function CompliancePage() {
                   <div className="flex items-center justify-between mb-2">
                     <div>
                       <h3 className="font-semibold text-gray-900">{metric.name}</h3>
-                      <p className="text-sm text-gray-600">Target: {metric.target}{metric.unit}</p>
+                      <p className="text-sm text-gray-600">{t('compliance.target')}: {metric.target}{metric.unit}</p>
                     </div>
                     <div className="text-right">
                       <p className={`text-2xl font-bold ${
@@ -296,9 +296,9 @@ export default function CompliancePage() {
                         {metric.value}{metric.unit}
                       </p>
                       <p className="text-xs text-gray-500">
-                        {metric.status === 'good' ? '✓ Good' :
-                         metric.status === 'warning' ? '⚠ Warning' :
-                         '✕ Critical'}
+                        {metric.status === 'good' ? `✓ ${t('compliance.good')}` :
+                         metric.status === 'warning' ? `⚠ ${t('compliance.warning')}` :
+                         `✕ ${t('compliance.critical')}`}
                       </p>
                     </div>
                   </div>
@@ -317,7 +317,7 @@ export default function CompliancePage() {
                   </div>
                   ))
                   ) : (
-                  <p className="text-gray-600">No compliance metrics available.</p>
+                  <p className="text-gray-600">{t('compliance.no_metrics')}</p>
                   )}
                   </div>
                   </div>
@@ -326,27 +326,27 @@ export default function CompliancePage() {
 
       {/* Compliance Guidelines */}
       <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
-        <h3 className="font-semibold text-blue-900 mb-3">Compliance Requirements</h3>
+        <h3 className="font-semibold text-blue-900 mb-3">{t('compliance.requirements_title')}</h3>
         <ul className="text-sm text-blue-800 space-y-2">
           <li className="flex gap-2">
             <span className="flex-shrink-0">•</span>
-            <span>Maintain a compliance score of at least 90% for unrestricted access</span>
+            <span>{t('compliance.requirement_1')}</span>
           </li>
           <li className="flex gap-2">
             <span className="flex-shrink-0">•</span>
-            <span>API response times must be under 200ms (P99)</span>
+            <span>{t('compliance.requirement_2')}</span>
           </li>
           <li className="flex gap-2">
             <span className="flex-shrink-0">•</span>
-            <span>Webhook delivery success rate must be at least 99%</span>
+            <span>{t('compliance.requirement_3')}</span>
           </li>
           <li className="flex gap-2">
             <span className="flex-shrink-0">•</span>
-            <span>Log all API calls and maintain audit trails for 12 months</span>
+            <span>{t('compliance.requirement_4')}</span>
           </li>
           <li className="flex gap-2">
             <span className="flex-shrink-0">•</span>
-            <span>Complete compliance checks are recommended quarterly</span>
+            <span>{t('compliance.requirement_5')}</span>
           </li>
         </ul>
       </div>

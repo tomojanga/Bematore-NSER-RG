@@ -213,13 +213,25 @@
     "how_item_4": "يتم تخزين النتائج مؤقتا لتحسين الأداء ومسارات الامتثال",
     "how_item_5": "يتم تخزين سجل البحث محليا في متصفحك (وليس على خوادمنا)",
     "loading_lookups": "جاري تحميل عمليات البحث...",
-    "clear_history_confirm": "حذف كل سجل البحث؟"
+    "clear_history_confirm": "حذف كل سجل البحث؟",
+    "result_title": "نتيجة البحث",
+    "user_excluded": "المستخدم مستبعد ذاتيا",
+    "do_not_allow": "لا تسمح بأنشطة القمار",
+    "valid_until": "الاستبعاد صحيح حتى",
+    "user_not_excluded": "المستخدم غير مستبعد",
+    "may_participate": "قد يشارك في أنشطة القمار",
+    "copied_to_clipboard": "تم النسخ إلى الحافظة!",
+    "doc_1": "Enter at least one identifier (phone number, national ID, or BST token)",
+    "doc_2": "The system instantly checks against the exclusion register",
+    "doc_3": "Response times are typically under 100ms",
+    "doc_4": "Results are cached for performance and compliance audit trails",
+    "doc_5": "Lookup history is stored locally in your browser (not on our servers)"
   },
   "webhooks": {
     "title": "Webhooks",
     "subtitle": "تلقي إشعارات الاستبعاد في الوقت الفعلي",
     "add_webhook": "إضافة Webhook",
-    "create_webhook": "إنشاء Webhook جديد",
+    "create_webhook": "إنشاء Webhook",
     "webhook_url": "عنوان URL للـ Webhook",
     "webhook_url_placeholder": "https://your-domain.com/webhooks/nser",
     "webhook_url_note": "يجب أن تكون عنوان URL HTTPS صحيح",
@@ -228,7 +240,7 @@
     "webhook_created": "تم إنشاء Webhook بنجاح!",
     "webhook_deleted": "تم حذف Webhook بنجاح!",
     "no_webhooks": "لم يتم تكوين أي webhooks حتى الآن",
-    "created": "تم إنشاؤه",
+    "created": "تم الإنشاء",
     "deliveries": "التسليمات",
     "last_triggered": "آخر تفعيل",
     "never": "أبدا",
@@ -246,7 +258,27 @@
     "webhook_doc_4": "تتضمن حمولات webhook توقيع التحقق",
     "webhook_doc_5": "اختبر webhooks للتحقق من عمل التكامل الخاص بك بشكل صحيح",
     "loading_webhooks": "جاري تحميل Webhooks...",
-    "select_events": "حدد نوع حدث واحد على الأقل"
+    "select_events": "حدد نوع حدث واحد على الأقل",
+    "loading": "جاري تحميل Webhooks...",
+    "create_new": "إنشاء Webhook جديد",
+    "https_required": "يجب أن تكون عنوان URL HTTPS صحيح",
+    "creating": "جاري الإنشاء...",
+    "cancel": "إلغاء",
+    "create_first": "قم بإنشاء Webhook الأول الخاص بك",
+    "active": "نشط",
+    "inactive": "غير نشط",
+    "events_subscribed": "الأحداث المشترك فيها",
+    "view_logs_title": "عرض سجلات webhook",
+    "test_event_title": "إرسال حدث اختبار",
+    "delete_webhook_title": "حذف webhook",
+    "logs_title": "سجلات Webhook",
+    "no_events": "لم تحدث أحداث webhook حتى الآن",
+    "documentation_title": "توثيق Webhook",
+    "doc_1": "يتم تسليم Webhooks عبر HTTP POST إلى عنوان URL المحدد",
+    "doc_2": "يتم إعادة محاولة التسليمات الفاشلة حتى 5 مرات مع تراجع أسي",
+    "doc_3": "قم دائما بالرد برمز HTTP 200 للإقرار بالاستقبال",
+    "doc_4": "تتضمن حمولات webhook توقيع التحقق",
+    "doc_5": "اختبر webhooks للتحقق من عمل التكامل الخاص بك بشكل صحيح"
   },
   "compliance": {
     "title": "تتبع الامتثال",
@@ -255,15 +287,15 @@
     "running": "جاري التنفيذ...",
     "download": "تحميل",
     "compliance_score": "درجة الامتثال الإجمالية",
-    "last_checked": "آخر فحص:",
+    "last_checked": "آخر فحص",
     "total_checks": "إجمالي الفحوصات",
     "passed": "نجح",
     "failed": "فشل",
     "compliance_metrics": "مقاييس الامتثال",
-    "target": "الهدف:",
-    "good": "✓ جيد",
-    "warning": "⚠ تحذير",
-    "critical": "✕ حرج",
+    "target": "الهدف",
+    "good": "جيد",
+    "warning": "تحذير",
+    "critical": "حرج",
     "check_initiated": "تم بدء فحص الامتثال!",
     "compliance_requirements": "متطلبات الامتثال",
     "req_1": "الحفاظ على درجة امتثال بنسبة 90% على الأقل للوصول غير المقيد",
@@ -273,7 +305,17 @@
     "req_5": "يوصى بإجراء فحوصات الامتثال الكاملة كل ربع سنة",
     "loading_compliance": "جاري تحميل بيانات الامتثال...",
     "no_report_data": "لم يتم استقبال بيانات التقرير",
-    "report_downloaded": "تم تحميل التقرير بنجاح!"
+    "report_downloaded": "تم تحميل التقرير بنجاح!",
+    "loading": "جاري تحميل بيانات الامتثال...",
+    "overall_score": "درجة الامتثال الإجمالية",
+    "metrics_title": "مقاييس الامتثال",
+    "requirements_title": "متطلبات الامتثال",
+    "requirement_1": "الحفاظ على درجة امتثال بنسبة 90% على الأقل للوصول غير المقيد",
+    "requirement_2": "يجب أن تكون أوقات استجابة API أقل من 200ms (P99)",
+    "requirement_3": "يجب أن تكون نسبة نجاح تسليم Webhook بنسبة 99% على الأقل",
+    "requirement_4": "تسجيل جميع استدعاءات API والاحتفاظ بمسارات التدقيق لمدة 12 شهرا",
+    "requirement_5": "يوصى بإجراء فحوصات الامتثال الكاملة كل ربع سنة",
+    "no_metrics": "لا توجد مقاييس امتثال متاحة."
   },
   "statistics": {
     "title": "الإحصائيات",
@@ -333,7 +375,9 @@
     "contact_info": "معلومات الاتصال",
     "api_status": "حالة API",
     "edit_profile": "تحرير الملف الشخصي",
-    "update_profile": "تحديث الملف الشخصي"
+    "update_profile": "تحديث الملف الشخصي",
+    "loading": "Loading profile...",
+    "edit": "Edit Profile"
   },
   "settings": {
     "title": "الإعدادات",
@@ -341,7 +385,8 @@
     "notifications": "الإشعارات",
     "security": "الأمان",
     "api_settings": "إعدادات API",
-    "save_settings": "حفظ الإعدادات"
+    "save_settings": "حفظ الإعدادات",
+    "loading": "Loading settings..."
   },
   "simulator": {
     "title": "محاكاة",
@@ -351,7 +396,55 @@
     "test_bst_token": "رمز BST للاختبار",
     "simulate": "محاكاة",
     "result": "النتيجة",
-    "simulating": "جاري المحاكاة..."
+    "simulating": "جاري المحاكاة...",
+    "fill_at_least_one": "Please fill in at least one field",
+    "no_api_key_error": "Error: No API key available. Please check your API keys.",
+    "code_copied": "Code copied to clipboard!",
+    "api_key_loaded": "API Key Loaded",
+    "no_api_key_loaded": "No API Key Loaded",
+    "using": "Using",
+    "no_api_key_message": "No API key found. Enter one manually or check API key settings.",
+    "add_key": "Add Key",
+    "cancel": "Cancel",
+    "enter_api_key": "Enter API Key Manually",
+    "paste_api_key": "Paste your API key here",
+    "api_key_not_shared": "Your API key is never stored or shared",
+    "test_parameters": "Test Parameters",
+    "running": "Running Test...",
+    "run_test": "Run Test",
+    "response": "Response",
+    "user_excluded": "المستخدم مستبعد ذاتيا",
+    "do_not_allow": "لا تسمح بأنشطة القمار",
+    "valid_until": "صالح حتى",
+    "user_not_excluded": "المستخدم غير مستبعد",
+    "may_participate": "قد يشارك في القمار",
+    "error": "خطأ",
+    "full_response": "الرد الكامل",
+    "error_details": "تفاصيل الخطأ",
+    "integration_examples": "أمثلة التكامل",
+    "showing_actual": "عرض معرف المشغل الفعلي الخاص بك",
+    "replace_api_key": "استبدل YOUR_API_KEY بمفتاحك الفعلي",
+    "copy": "نسخ",
+    "api_guidelines": "إرشادات API",
+    "guideline_1": "نقطة النهاية",
+    "guideline_2": "المصادقة: استخدم",
+    "guideline_2_suffix": "الرأس",
+    "guideline_3": "معرف المشغل الخاص بك",
+    "guideline_4": "الحقول المطلوبة: operator_id، وواحد على الأقل من: phone_number أو national_id أو bst_token",
+    "guideline_5": "هدف وقت الاستجابة",
+    "guideline_6": "تنطبق حدود المعدل بناءً على خطتك",
+    "guideline_7": "يتم تسجيل جميع الطلبات لأغراض التدقيق",
+    "security_title": "🔒 Security Best Practices",
+    "security_1": "قم بتخزين مفاتيح API في متغيرات البيئة، وليس في الكود",
+    "security_2": "استخدم وكيل backend للتكاملات المستندة إلى المتصفح (لا تكشف مفاتيح أمامية)",
+    "security_3": "قم بتدوير مفاتيح API بانتظام عبر لوحة تحكم مفاتيح API",
+    "security_4": "استخدم HTTPS فقط لجميع طلبات API",
+    "security_5": "تنفيذ مهلات زمنية للطلبات (10-30 ثانية موصى بها)",
+    "security_6": "تسجيل ومراقبة استجابات API للأخطاء",
+    "performance_analysis": "تحليل الأداء",
+    "performance_excellent": "وقت استجابة ممتاز! تم تحسين التكامل الخاص بك.",
+    "performance_good": "وقت استجابة جيد، لكن قد يكون هناك مجال للتحسين.",
+    "performance_slow": "أبطأ من المتوقع. تحقق من شبكتك وإعدادات API."
   },
   "errors": {
     "required_field": "هذا الحقل مطلوب",

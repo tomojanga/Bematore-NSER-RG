@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import apiService from '@/lib/api-service'
 import { User, Mail, Phone, MapPin, Building2, Calendar, Edit2, Save, X, Loader, AlertCircle, CheckCircle } from 'lucide-react'
 
@@ -30,7 +31,8 @@ interface LoginActivity {
 }
 
 export default function ProfilePage() {
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
+   const t = useTranslations()
+   const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
   const [operatorProfile, setOperatorProfile] = useState<OperatorProfile | null>(null)
   const [loginActivity, setLoginActivity] = useState<LoginActivity[]>([])
   const [loading, setLoading] = useState(true)
@@ -134,7 +136,7 @@ export default function ProfilePage() {
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
           <Loader className="h-12 w-12 animate-spin text-purple-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading profile...</p>
+          <p className="text-gray-600">{t('profile.loading')}</p>
         </div>
       </div>
     )
@@ -144,8 +146,8 @@ export default function ProfilePage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Profile</h1>
-          <p className="text-gray-600 mt-1">View and manage your profile information</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('profile.title')}</h1>
+          <p className="text-gray-600 mt-1">{t('profile.subtitle')}</p>
         </div>
         {!editing && (
           <button
@@ -153,7 +155,7 @@ export default function ProfilePage() {
             className="px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition flex items-center gap-2"
           >
             <Edit2 className="h-4 w-4" />
-            Edit Profile
+            {t('profile.edit')}
           </button>
         )}
       </div>
