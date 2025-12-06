@@ -122,8 +122,12 @@ apiClient.interceptors.response.use(
         const response = error.response
         const status = response?.status
 
-        // Handle 401 errors (token refresh) - for all protected endpoints
-        if (status === 401 && !originalRequest._retry && typeof window !== 'undefined') {
+        // Handle 401 errors (token refresh) - only retry for protected endpoints
+        // Skip token refresh for public endpoints (login, register, password reset, etc)
+        const publicEndpoints = ['/auth/register/', '/auth/login/', '/auth/token/', '/auth/password/reset/']
+        const isPublicEndpoint = publicEndpoints.some(endpoint => originalRequest.url?.includes(endpoint))
+        
+        if (status === 401 && !originalRequest._retry && typeof window !== 'undefined' && !isPublicEndpoint) {
             originalRequest._retry = true
 
             try {
