@@ -1,5 +1,5 @@
 # Core Django
-setuptools>=65.0.0  # MUST BE FIRST: Required for pkg_resources (dependency of django-countries and others)
+setuptools>=80.9.0  # MUST BE FIRST: Required for pkg_resources (dependency of django-countries and others)
 Django==5.2.1
 django-environ==0.11.2
 pytz==2025.2
