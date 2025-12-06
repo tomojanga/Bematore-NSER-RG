@@ -39,7 +39,7 @@ export default function DashboardPage() {
             {t('lookup.title')}
           </button>
           <button className="px-4 py-3 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition font-medium text-sm">
-            {t('api_keys.create_new')}
+            {t('api_keys.create_key')}
           </button>
           <button className="px-4 py-3 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition font-medium text-sm">
             {t('statistics.title')}
