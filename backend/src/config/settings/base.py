@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     'django_celery_beat',
     'django_celery_results',
     'phonenumber_field',
-    # 'django_countries',  # Removed: template tags cause pkg_resources import error in Python 3.13; using CountryField directly
+    'django_countries',
     
     # Local apps
     'apps.core',

@@ -56,6 +56,7 @@ bcrypt==4.2.0
 django-phonenumber-field[phonenumbers]==7.1.0
 phonenumbers==8.13.23
 python-magic==0.4.27
+django-countries==8.2.0  # Latest version with Python 3.13 support
 
 # File Storage
 boto3==1.29.7
