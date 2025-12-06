@@ -18,8 +18,11 @@ class Command(BaseCommand):
             'first_name': 'GRAK',
             'last_name': 'Administrator',
             'role': 'grak_admin',
-            'is_verified': True,
+            'verification_status': 'verified',
+            'is_phone_verified': True,
+            'is_email_verified': True,
             'is_active': True,
+            'is_staff': True,
         }
         
         admin, created = User.objects.get_or_create(
@@ -42,8 +45,11 @@ class Command(BaseCommand):
             'first_name': 'GRAK',
             'last_name': 'Officer',
             'role': 'grak_officer',
-            'is_verified': True,
+            'verification_status': 'verified',
+            'is_phone_verified': True,
+            'is_email_verified': True,
             'is_active': True,
+            'is_staff': True,
         }
         
         officer, created = User.objects.get_or_create(
