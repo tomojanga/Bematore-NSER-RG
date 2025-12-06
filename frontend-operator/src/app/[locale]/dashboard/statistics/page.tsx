@@ -79,18 +79,23 @@ export default function StatisticsPage() {
         })
       }
 
-      // Fetch daily stats
+      // Fetch daily stats / trends
       try {
-        const daysRes = await apiService.nser.getDailyStats()
-        // Filter by period
-        const now = new Date()
-        const pastDate = new Date(now.getTime() - parseInt(periodFilter) * 24 * 60 * 60 * 1000)
-        const filtered = (daysRes.data?.data || []).filter((stat: DailyStats) => {
-          return new Date(stat.date) >= pastDate
-        })
-        setDailyStats(filtered)
+        // Try to get trends data instead
+        const trendsRes = await apiService.nser.getTrends(periodFilter)
+        const trendsData = trendsRes.data?.data || trendsRes.data || []
+        // Map trends to daily stats format
+        const mapped = Array.isArray(trendsData) ? trendsData.map((trend: any) => ({
+          date: trend.date || new Date().toISOString().split('T')[0],
+          lookups: trend.lookups || trend.total_lookups || 0,
+          exclusions_found: trend.exclusions_found || 0,
+          avg_response_time: trend.avg_response_time || trend.average_response_time || 0,
+          success_rate: trend.success_rate || 0
+        })) : []
+        setDailyStats(mapped)
       } catch (daysError) {
         console.error('Failed to fetch daily stats:', daysError)
+        // Set empty array - page will show "no data available"
         setDailyStats([])
       }
     } catch (error) {
@@ -139,8 +144,8 @@ export default function StatisticsPage() {
     return (
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
-          <Loader className="h-12 w-12 animate-spin text-purple-600 mx-auto mb-4" />
-          <p className="text-gray-600">{t('statistics.loading_statistics')}</p>
+          <Loader className="h-12 w-12 animate-spin text-blue-600 mx-auto mb-4" />
+          <p className="text-muted-foreground">Loading statistics...</p>
         </div>
       </div>
     )
@@ -150,14 +155,14 @@ export default function StatisticsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">{t('statistics.title')}</h1>
-          <p className="text-gray-600 mt-1">{t('statistics.subtitle')}</p>
+          <h1 className="text-3xl font-bold text-foreground">Statistics</h1>
+          <p className="text-muted-foreground mt-1">View your API usage and exclusion lookup statistics</p>
         </div>
         <div className="flex gap-2">
           <select
             value={periodFilter}
             onChange={(e) => setPeriodFilter(e.target.value as '7' | '30' | '90')}
-            className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+            className="px-4 py-2 border border-border rounded-lg hover:bg-secondary transition"
           >
             <option value="7">{t('statistics.last_7_days')}</option>
             <option value="30">{t('statistics.last_30_days')}</option>

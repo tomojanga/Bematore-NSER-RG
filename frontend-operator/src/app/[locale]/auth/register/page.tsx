@@ -407,28 +407,28 @@ export default function RegisterPage() {
                   {/* Buttons */}
                   <div className="flex gap-4 mt-8">
                     {currentStep !== 'business' && (
-                      <button
-                        type="button"
-                        onClick={handlePrevious}
-                        className="flex-1 px-6 py-3 bg-secondary hover:bg-secondary/80 border border-border text-foreground rounded-lg font-medium transition"
-                      >
-                        {t('auth.previous')}
-                      </button>
-                    )}
+                       <button
+                         type="button"
+                         onClick={handlePrevious}
+                         className="flex-1 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-foreground rounded-lg font-medium transition"
+                       >
+                         Previous
+                       </button>
+                     )}
                     
                     {currentStep !== 'credentials' ? (
                       <button
                         type="button"
                         onClick={handleNext}
-                        className="flex-1 px-6 py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg font-medium transition"
+                        className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition"
                       >
-                        {t('auth.next')}
+                        Next
                       </button>
                     ) : (
                       <button
                         type="submit"
                         disabled={loading}
-                        className="flex-1 px-6 py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg font-medium transition disabled:opacity-50 flex items-center justify-center gap-2"
+                        className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition disabled:opacity-50 flex items-center justify-center gap-2"
                       >
                         {loading ? (
                           <>

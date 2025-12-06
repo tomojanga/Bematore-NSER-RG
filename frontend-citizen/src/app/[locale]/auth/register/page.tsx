@@ -45,21 +45,21 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-12">
-      <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4 py-6 sm:py-12">
+      <div className="bg-white rounded-2xl shadow-2xl p-6 sm:p-8 w-full max-w-md">
         <div className="flex justify-end mb-4">
           <LanguageSwitcher />
         </div>
-        <div className="flex flex-col items-center mb-8">
-          <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-4 rounded-full mb-4">
-            <Shield className="h-12 w-12 text-white" />
+        <div className="flex flex-col items-center mb-6 sm:mb-8">
+          <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-3 sm:p-4 rounded-full mb-4">
+            <Shield className="h-10 w-10 sm:h-12 sm:w-12 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">{t('auth.sign_up')}</h1>
-          <p className="text-gray-600 mt-2">{t('auth.create_account')}</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center">{t('auth.sign_up')}</h1>
+          <p className="text-gray-600 mt-2 text-sm sm:text-base text-center">{t('auth.create_account')}</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">{t('auth.first_name')}</label>
               <Input
@@ -119,7 +119,7 @@ export default function RegisterPage() {
             />
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2 sm:space-y-3">
             <label className="flex items-start gap-2 cursor-pointer">
               <input
                 type="checkbox"
@@ -128,7 +128,7 @@ export default function RegisterPage() {
                 className="mt-1"
                 required
               />
-              <span className="text-sm text-gray-600">
+              <span className="text-xs sm:text-sm text-gray-600">
                 {t('auth.terms_agree')}
               </span>
             </label>
@@ -141,7 +141,7 @@ export default function RegisterPage() {
                 className="mt-1"
                 required
               />
-              <span className="text-sm text-gray-600">
+              <span className="text-xs sm:text-sm text-gray-600">
                 {t('auth.privacy_agree')}
               </span>
             </label>
