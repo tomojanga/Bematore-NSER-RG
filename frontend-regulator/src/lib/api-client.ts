@@ -34,7 +34,11 @@ apiClient.interceptors.response.use(
     const originalRequest = error.config as EnhancedAxiosRequestConfig
     const status = error.response?.status
 
-    if (status === 401 && !originalRequest._retry && typeof window !== 'undefined') {
+    // Skip token refresh for public endpoints
+    const publicEndpoints = ['/auth/login/', '/auth/token/', '/auth/password/reset/']
+    const isPublicEndpoint = publicEndpoints.some(endpoint => originalRequest.url?.includes(endpoint))
+
+    if (status === 401 && !originalRequest._retry && typeof window !== 'undefined' && !isPublicEndpoint) {
       originalRequest._retry = true
       const refreshToken = localStorage.getItem('grak_refresh')
       

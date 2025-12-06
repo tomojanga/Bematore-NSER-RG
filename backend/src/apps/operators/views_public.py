@@ -22,6 +22,7 @@ class PublicRegisterOperatorView(TimingMixin, SuccessResponseMixin, APIView):
     POST /api/v1/operators/register/
     """
     permission_classes = [AllowAny]
+    authentication_classes = []  # Explicitly disable authentication for public operator registration
     
     @transaction.atomic
     def post(self, request):

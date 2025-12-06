@@ -32,6 +32,7 @@ class TokenObtainPairView(TimingMixin, BaseTokenObtainPairView):
     """
     serializer_class = CustomTokenObtainPairSerializer
     permission_classes = [AllowAny]
+    authentication_classes = []  # Explicitly disable authentication for token obtain
 
 
 class TokenVerifyView(TimingMixin, SuccessResponseMixin, APIView):
@@ -41,6 +42,7 @@ class TokenVerifyView(TimingMixin, SuccessResponseMixin, APIView):
     POST /api/v1/auth/token/verify/
     """
     permission_classes = [AllowAny]
+    authentication_classes = []  # Explicitly disable authentication for token verify
     
     def post(self, request):
         serializer = TokenVerifySerializer(data=request.data)
@@ -93,6 +95,7 @@ class LoginView(TimingMixin, SuccessResponseMixin, APIView):
     POST /api/v1/auth/login/
     """
     permission_classes = [AllowAny]
+    authentication_classes = []  # Explicitly disable authentication for login
     
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
@@ -198,6 +201,7 @@ class RegisterView(TimingMixin, SuccessResponseMixin, APIView):
     POST /api/v1/auth/register/
     """
     permission_classes = [AllowAny]
+    authentication_classes = []  # Explicitly disable authentication for registration
     
     def post(self, request):
         from apps.users.serializers import UserRegistrationSerializer
@@ -266,6 +270,7 @@ class PasswordResetRequestView(TimingMixin, SuccessResponseMixin, APIView):
     POST /api/v1/auth/password/reset/
     """
     permission_classes = [AllowAny]
+    authentication_classes = []  # Explicitly disable authentication for password reset request
     
     def post(self, request):
         serializer = PasswordResetRequestSerializer(data=request.data)
@@ -312,6 +317,7 @@ class PasswordResetConfirmView(TimingMixin, SuccessResponseMixin, APIView):
     POST /api/v1/auth/password/reset/confirm/
     """
     permission_classes = [AllowAny]
+    authentication_classes = []  # Explicitly disable authentication for password reset confirm
     
     def post(self, request):
         serializer = PasswordResetConfirmSerializer(data=request.data)
