@@ -55,11 +55,13 @@ export const useAuthStore = create<AuthState>()(
         user: state.user,
         accessToken: state.accessToken,
         refreshToken: state.refreshToken,
-        isAuthenticated: state.isAuthenticated,
+        // Do NOT persist isAuthenticated - always validate on app load
       }),
       onRehydrateStorage: () => (state) => {
+        // Don't automatically set isAuthenticated from storage
+        // Token validity must be checked via /users/me/ endpoint
         if (state?.accessToken) {
-          useAuthStore.setState({ isAuthenticated: true })
+          state.isAuthenticated = false // Start as false, will be validated
         }
       },
     }
