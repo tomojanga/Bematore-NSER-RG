@@ -2,6 +2,7 @@
 Django==5.2.1
 django-environ==0.11.2
 pytz==2025.2
+setuptools==75.3.0  # Required for pkg_resources (used by django-countries)
 
 # Database - PostgreSQL Support
 psycopg[binary]==3.2.12  # Modern PostgreSQL adapter with better Windows support
