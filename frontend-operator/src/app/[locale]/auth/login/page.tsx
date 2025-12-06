@@ -79,11 +79,11 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center py-12 px-4">
+    <div className="min-h-screen bg-white flex items-center justify-center py-12 px-4">
       {/* Background effects */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary rounded-full mix-blend-multiply filter blur-3xl opacity-5 animate-blob"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-primary rounded-full mix-blend-multiply filter blur-3xl opacity-5 animate-blob animation-delay-2000"></div>
       </div>
 
       {/* Language Switcher */}
@@ -94,50 +94,50 @@ export default function LoginPage() {
       <div className="relative w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">{t('auth.welcome_back')}</h1>
-          <p className="text-gray-300">{t('auth.operator_signin')}</p>
+          <h1 className="text-4xl font-bold text-foreground mb-2">{t('auth.welcome_back')}</h1>
+          <p className="text-muted-foreground">{t('auth.operator_signin')}</p>
         </div>
 
         {/* Card */}
-        <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl p-8">
+        <div className="bg-white border border-border rounded-2xl shadow-lg p-8">
           {/* Error Alert */}
           {error && (
-            <div className="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg flex gap-3">
-              <AlertCircle className="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5" />
-              <p className="text-red-200 text-sm">{error}</p>
+            <div className="mb-6 p-4 bg-destructive/10 border border-destructive/30 rounded-lg flex gap-3">
+              <AlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
+              <p className="text-destructive text-sm">{error}</p>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Phone Number */}
             <div>
-              <label className="block text-sm font-medium text-gray-200 mb-2">{t('auth.phone_number')}</label>
+              <label className="block text-sm font-medium text-foreground mb-2">{t('auth.phone_number')}</label>
               <input
                 type="tel"
                 required
                 placeholder="+254712345678"
                 value={formData.phone_number}
                 onChange={(e) => setFormData({ ...formData, phone_number: e.target.value })}
-                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-primary focus:border-transparent transition"
               />
             </div>
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-200 mb-2">{t('auth.password')}</label>
+              <label className="block text-sm font-medium text-foreground mb-2">{t('auth.password')}</label>
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition pr-10"
+                  className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-primary focus:border-transparent transition pr-10"
                   placeholder="••••••••"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-300"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -148,7 +148,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg font-medium transition disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full px-6 py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg font-medium transition disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
@@ -163,21 +163,21 @@ export default function LoginPage() {
 
           {/* Divider */}
           <div className="my-6 flex items-center gap-4">
-            <div className="flex-1 h-px bg-white/10"></div>
-            <span className="text-sm text-gray-400">{t('auth.or')}</span>
-            <div className="flex-1 h-px bg-white/10"></div>
+            <div className="flex-1 h-px bg-border"></div>
+            <span className="text-sm text-muted-foreground">{t('auth.or')}</span>
+            <div className="flex-1 h-px bg-border"></div>
           </div>
 
           {/* Footer */}
           <div className="space-y-4 text-center">
-            <p className="text-sm text-gray-300">
+            <p className="text-sm text-muted-foreground">
               {t('auth.new_operator')}{' '}
-              <Link href="/auth/register" className="text-purple-400 hover:text-purple-300 font-medium transition">
+              <Link href="/auth/register" className="text-primary hover:text-primary/80 font-medium transition">
                 {t('auth.create_account')}
               </Link>
             </p>
-            <p className="text-xs text-gray-400">
-              <Link href="/forgot-password" className="text-purple-400 hover:text-purple-300 transition">
+            <p className="text-xs text-muted-foreground">
+              <Link href="/forgot-password" className="text-primary hover:text-primary/80 transition">
                 {t('auth.forgot_password')}
               </Link>
             </p>
@@ -193,7 +193,7 @@ export default function LoginPage() {
           ].map((item) => (
             <div key={item.label} className="text-center">
               <div className="text-2xl mb-2">{item.icon}</div>
-              <p className="text-xs text-gray-400">{item.label}</p>
+              <p className="text-xs text-muted-foreground">{item.label}</p>
             </div>
           ))}
         </div>
