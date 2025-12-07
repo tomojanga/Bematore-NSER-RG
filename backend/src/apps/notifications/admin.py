@@ -8,10 +8,12 @@ from django.utils.html import format_html
 from django.utils import timezone
 from django.urls import reverse
 from django.db.models import Count, Q
+from django.conf import settings
 from .models import (
     Notification, NotificationTemplate, EmailLog, SMSLog,
     PushNotificationLog, NotificationPreference, NotificationBatch
 )
+from .tasks import send_email
 
 
 @admin.register(NotificationTemplate)
@@ -155,12 +157,47 @@ class NotificationTemplateAdmin(admin.ModelAdmin):
         updated = queryset.update(is_active=False)
         self.message_user(request, _('%d templates deactivated') % updated)
     
-    @admin.action(description=_('Test selected template'))
+    @admin.action(description=_('Send test email to brandonochieng72@gmail.com'))
     def test_template(self, request, queryset):
         if queryset.count() != 1:
-            self.message_user(request, _('Please select only one template to test'))
+            self.message_user(request, _('Please select only one template to test'), level='error')
             return
-        self.message_user(request, _('Test email sent to admin'))
+        
+        template = queryset.first()
+        test_email = 'brandonochieng72@gmail.com'
+        
+        try:
+            # Generate test content based on template type
+            if template.template_type == 'email':
+                subject = template.subject_en or template.template_name
+                body = template.body_en or 'Test email from template'
+                html_body = template.html_body_en or f'<p>{body}</p>'
+                
+                # Send test email
+                send_email.delay(
+                    test_email,
+                    f'[TEST] {subject}',
+                    body,
+                    html_content=html_body
+                )
+                
+                message = f'✓ Test email sent to {test_email} with template "{template.template_code}"'
+                self.message_user(request, message, level='success')
+                
+            elif template.template_type == 'sms':
+                # For SMS templates, just show info
+                message = f'📱 SMS Template "{template.template_code}": {template.body_en[:100]}... (SMS not sent in test)'
+                self.message_user(request, message, level='info')
+                
+            else:
+                self.message_user(request, _('Unsupported template type for testing'), level='error')
+                
+        except Exception as e:
+            self.message_user(
+                request,
+                f'✗ Error sending test email: {str(e)}',
+                level='error'
+            )
 
 
 @admin.register(EmailLog)
