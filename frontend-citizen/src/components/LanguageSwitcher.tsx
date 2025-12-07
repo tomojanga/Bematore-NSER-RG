@@ -34,20 +34,21 @@ export function LanguageSwitcher() {
     <div ref={dropdownRef} className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors text-sm"
+        className="flex items-center gap-2 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors text-xs sm:text-sm min-h-9 sm:min-h-10"
       >
-        <span className="font-medium">{localeNames[locale as Locale]?.nativeName}</span>
-        <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <span className="font-medium hidden sm:inline">{localeNames[locale as Locale]?.nativeName}</span>
+        <span className="font-medium sm:hidden text-xs">{locale.toUpperCase()}</span>
+        <ChevronDown className={`h-3 w-3 sm:h-4 sm:w-4 transition-transform flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
+        <div className="absolute top-full right-0 mt-2 w-40 sm:w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
           <div className="py-1">
             {locales.map((lang) => (
               <button
                 key={lang}
                 onClick={() => handleLanguageChange(lang)}
-                className={`w-full text-left px-4 py-2 text-sm transition-colors ${
+                className={`w-full text-left px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm transition-colors ${
                   locale === lang
                     ? 'bg-blue-50 text-blue-600 font-medium'
                     : 'hover:bg-gray-50 text-gray-700'

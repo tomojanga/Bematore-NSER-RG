@@ -47,15 +47,15 @@ export const StatsCard: React.FC<StatsCardProps> = ({
   return (
     <div
       className={cn(
-        'bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all duration-300 cursor-pointer group',
+        'bg-white rounded-lg sm:rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 hover:shadow-md transition-all duration-300 cursor-pointer group',
         onClick && 'hover:border-gray-200',
         className
       )}
       onClick={onClick}
     >
       <div className="flex items-start justify-between mb-4">
-        <div className={cn('p-3 rounded-lg', iconBgStyles[color])}>
-          <Icon className={cn('h-6 w-6', colorStyles[color])} />
+        <div className={cn('p-2 sm:p-3 rounded-lg', iconBgStyles[color])}>
+          <Icon className={cn('h-5 w-5 sm:h-6 sm:w-6', colorStyles[color])} />
         </div>
         {trend && (
           <div className={cn(
@@ -67,8 +67,8 @@ export const StatsCard: React.FC<StatsCardProps> = ({
         )}
       </div>
 
-      <p className="text-gray-600 text-sm font-medium mb-1">{label}</p>
-      <h3 className="text-2xl font-bold text-gray-900 mb-2">{value}</h3>
+      <p className="text-gray-600 text-xs sm:text-sm font-medium mb-1">{label}</p>
+      <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{value}</h3>
 
       {description && (
         <p className="text-xs text-gray-500">{description}</p>

@@ -147,8 +147,15 @@ export default function SelfExcludePage() {
 
     // Show blocked state if user already has active exclusion
     if (currentStep === 'blocked') {
-        const exclusionEnd = activeExclusion?.end_date ? new Date(activeExclusion.end_date) : null
-        const daysRemaining = exclusionEnd
+        // Safely parse exclusion dates
+        const exclusionStart = activeExclusion?.effective_date 
+            ? new Date(activeExclusion.effective_date) 
+            : null
+        const exclusionEnd = activeExclusion?.expiry_date 
+            ? new Date(activeExclusion.expiry_date) 
+            : null
+        
+        const daysRemaining = exclusionEnd && exclusionEnd.getTime() > Date.now()
             ? Math.ceil((exclusionEnd.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
             : 0
 
@@ -168,43 +175,43 @@ export default function SelfExcludePage() {
                             <div className="bg-orange-50 border-l-4 border-orange-600 p-4 rounded mb-8">
                              <h3 className="font-bold text-orange-900 mb-2">{t('dashboard.warning_active')}</h3>
                              <p className="text-orange-800 text-sm">
-                                 {t('dashboard.warning_excluded')}
-                             </p>
-                            </div>
+                                  {t('dashboard.warning_excluded')}
+                              </p>
+                             </div>
 
-                            {activeExclusion && (
-                             <div className="bg-gray-50 rounded-lg p-6 mb-8 border border-gray-200">
-                                 <h3 className="font-bold text-gray-900 mb-4">{t('dashboard.your_exclusions')}</h3>
-                                 <div className="space-y-3">
-                                     <div className="flex justify-between items-center">
-                                         <span className="text-gray-600">{t('common.status')}</span>
-                                         <span className="font-medium text-orange-600">{t('dashboard.active_exclusions')}</span>
-                                     </div>
-                                     <div className="flex justify-between items-center">
-                                          <span className="text-gray-600">{t('dashboard.start_date')}</span>
-                                         <span className="font-medium text-gray-900">
-                                             {new Date(activeExclusion.effective_date).toLocaleDateString()}
-                                         </span>
-                                     </div>
-                                     <div className="flex justify-between items-center">
-                                         <span className="text-gray-600">{t('dashboard.end_date')}</span>
-                                         <span className="font-medium text-gray-900">
-                                             {new Date(activeExclusion.expiry_date).toLocaleDateString()}
-                                         </span>
-                                     </div>
-                                     <div className="flex justify-between items-center">
-                                        <span className="text-gray-600">{t('dashboard.days_remaining')}</span>
-                                        <span className="font-medium text-gray-900">{daysRemaining} {t('self_exclude.duration_6months')}</span>
-                                     </div>
-                                     {activeExclusion.reason && (
-                                        <div className="pt-2 border-t border-gray-200">
-                                            <span className="text-gray-600 text-sm block mb-1">{t('dashboard.reason')}</span>
-                                            <p className="text-gray-900 text-sm">{activeExclusion.reason}</p>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        )}
+                             {activeExclusion && exclusionStart && exclusionEnd && (
+                              <div className="bg-gray-50 rounded-lg p-6 mb-8 border border-gray-200">
+                                  <h3 className="font-bold text-gray-900 mb-4">{t('dashboard.your_exclusions')}</h3>
+                                  <div className="space-y-3">
+                                      <div className="flex justify-between items-center">
+                                          <span className="text-gray-600">{t('common.status')}</span>
+                                          <span className="font-medium text-orange-600">{t('dashboard.active_exclusions')}</span>
+                                      </div>
+                                      <div className="flex justify-between items-center">
+                                           <span className="text-gray-600">{t('dashboard.start_date')}</span>
+                                          <span className="font-medium text-gray-900">
+                                              {exclusionStart.toLocaleDateString()}
+                                          </span>
+                                      </div>
+                                      <div className="flex justify-between items-center">
+                                          <span className="text-gray-600">{t('dashboard.end_date')}</span>
+                                          <span className="font-medium text-gray-900">
+                                              {exclusionEnd.toLocaleDateString()}
+                                          </span>
+                                      </div>
+                                      <div className="flex justify-between items-center">
+                                         <span className="text-gray-600">{t('dashboard.days_remaining')}</span>
+                                         <span className="font-medium text-gray-900">{Math.max(0, daysRemaining)} days</span>
+                                      </div>
+                                      {activeExclusion.reason && (
+                                         <div className="pt-2 border-t border-gray-200">
+                                             <span className="text-gray-600 text-sm block mb-1">{t('dashboard.reason')}</span>
+                                             <p className="text-gray-900 text-sm">{activeExclusion.reason}</p>
+                                         </div>
+                                     )}
+                                 </div>
+                             </div>
+                         )}
 
                         <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg mb-8">
                             <h3 className="font-bold text-blue-900 mb-2">What You Can Do</h3>

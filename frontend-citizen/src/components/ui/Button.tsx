@@ -19,7 +19,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     children, 
     ...props 
   }, ref) => {
-    const baseStyles = 'inline-flex items-center justify-center rounded-lg font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2'
+    const baseStyles = 'inline-flex items-center justify-center rounded-lg font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 min-h-10 sm:min-h-12'
     
     const variants = {
       primary: 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 focus:ring-blue-500 shadow-lg hover:shadow-xl',
@@ -30,9 +30,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     }
     
     const sizes = {
-      sm: 'px-3 py-2 text-sm',
-      md: 'px-4 py-2.5 text-sm',
-      lg: 'px-6 py-3 text-base'
+      sm: 'px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm',
+      md: 'px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm',
+      lg: 'px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base'
     }
     
     return (

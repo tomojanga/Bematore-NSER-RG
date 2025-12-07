@@ -303,7 +303,13 @@ export function useMyActiveExclusion() {
         queryKey: ['my-active-exclusion'],
         queryFn: async () => {
             const { data } = await api.nser.myActive()
-            return data as SingleApiResponse<SelfExclusion>
+            // Backend returns: { success, data: { has_active_exclusion, exclusion? } }
+            // Transform to: { success, data: SelfExclusion | null }
+            return {
+                success: data.success,
+                data: data.data?.exclusion || null,
+                message: data.message
+            } as SingleApiResponse<SelfExclusion>
         },
         staleTime: 30000,
     })
@@ -363,18 +369,18 @@ export function useExclusionAuditLogs(exclusionId?: string, params?: PaginatedPa
 
 // Hook for checking if user can self-exclude
 export function useCanSelfExclude() {
-    const { data: activeExclusion } = useMyActiveExclusion()
-    const { data: status } = useExclusionStatus()
+    const { data: activeExclusionResponse } = useMyActiveExclusion()
 
-    const canExclude = !activeExclusion?.data && !status?.data?.is_excluded
-    const reason = activeExclusion?.data ? 'Already excluded' :
-        status?.data?.is_excluded ? 'Currently excluded' : ''
+    // activeExclusionResponse.data is the actual exclusion object or null
+    const hasActiveExclusion = activeExclusionResponse?.success === true && activeExclusionResponse?.data !== null
+    const canExclude = !hasActiveExclusion
+    const reason = hasActiveExclusion ? 'Already excluded' : ''
 
     return {
         canSelfExclude: canExclude,
         reason,
-        activeExclusion: activeExclusion?.data,
-        status: status?.data,
+        activeExclusion: activeExclusionResponse?.data || null,
+        status: null,
     }
 }
 
@@ -459,7 +465,7 @@ export function useRealTimeExclusionLookup() {
                 const responseTime = Math.round(endTime - startTime)
 
                 return {
-                    ...result.data,
+                    ...(result.data && typeof result.data === 'object' ? result.data : {}),
                     client_response_time_ms: responseTime
                 }
             } catch (error: any) {

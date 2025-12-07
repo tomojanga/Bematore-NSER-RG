@@ -27,17 +27,17 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4 py-6">
+      <div className="bg-white rounded-2xl shadow-2xl p-6 sm:p-8 w-full max-w-md">
         <div className="flex justify-end mb-4">
           <LanguageSwitcher />
         </div>
-        <div className="flex flex-col items-center mb-8">
-          <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-4 rounded-full mb-4">
-            <Shield className="h-12 w-12 text-white" />
+        <div className="flex flex-col items-center mb-6 sm:mb-8">
+          <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-3 sm:p-4 rounded-full mb-4">
+            <Shield className="h-10 w-10 sm:h-12 sm:w-12 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">{t('auth.citizen_portal')}</h1>
-          <p className="text-gray-600 mt-2">{t('auth.self_exclusion_registration')}</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center">{t('auth.citizen_portal')}</h1>
+          <p className="text-gray-600 mt-2 text-sm sm:text-base text-center">{t('auth.self_exclusion_registration')}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">

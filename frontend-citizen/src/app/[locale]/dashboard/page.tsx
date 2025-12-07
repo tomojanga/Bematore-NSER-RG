@@ -289,9 +289,9 @@ export default function DashboardPage() {
              />
 
             {/* Main Content */}
-            <main className="max-w-7xl mx-auto px-6 py-8">
+            <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
                 {/* Quick Stats */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
                     <StatsCard
                         icon={Shield}
                         label={t('dashboard.active_exclusions')}
@@ -325,16 +325,16 @@ export default function DashboardPage() {
 
                 {/* Alert Banner */}
                 {activeExclusion && (
-                    <div className="mb-8 bg-red-50 border-l-4 border-red-500 p-6 rounded-lg">
-                        <div className="flex items-start gap-4">
-                            <AlertCircle className="h-6 w-6 text-red-600 flex-shrink-0 mt-0.5" />
-                            <div className="flex-1">
-                                <h3 className="font-bold text-red-900 mb-2">{t('dashboard.warning_active')}</h3>
-                                <p className="text-red-800 mb-3 text-sm">
+                    <div className="mb-6 sm:mb-8 bg-red-50 border-l-4 border-red-500 p-4 sm:p-6 rounded-lg">
+                        <div className="flex items-start gap-3 sm:gap-4">
+                            <AlertCircle className="h-5 w-5 sm:h-6 sm:w-6 text-red-600 flex-shrink-0 mt-0.5" />
+                            <div className="flex-1 min-w-0">
+                                <h3 className="font-bold text-red-900 mb-2 text-sm sm:text-base">{t('dashboard.warning_active')}</h3>
+                                <p className="text-red-800 mb-3 text-xs sm:text-sm">
                                     {t('dashboard.warning_excluded')}
                                 </p>
                                 <div className="bg-white rounded p-3 mb-4 border border-red-200">
-                                    <div className="grid grid-cols-2 gap-4 text-sm">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
                                         <div>
                                             <span className="text-red-700 font-medium">{t('dashboard.start_date')}:</span>
                                             <p className="text-red-900">{new Date(activeExclusion.startDate).toLocaleDateString()}</p>
@@ -360,29 +360,29 @@ export default function DashboardPage() {
                                      )}
                                 </div>
                                 <div className="flex gap-2 flex-wrap">
-                                    <Link
-                                         href="/dashboard/help"
-                                         className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium text-sm"
-                                     >
-                                         {t('dashboard.get_support')}
-                                     </Link>
                                      <Link
-                                         href="/dashboard/history"
-                                         className="px-4 py-2 bg-white text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors font-medium text-sm"
-                                     >
-                                         {t('dashboard.view_details')}
-                                     </Link>
-                                </div>
+                                          href="/dashboard/help"
+                                          className="px-3 sm:px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium text-xs sm:text-sm"
+                                      >
+                                          {t('dashboard.get_support')}
+                                      </Link>
+                                      <Link
+                                          href="/dashboard/history"
+                                          className="px-3 sm:px-4 py-2 bg-white text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors font-medium text-xs sm:text-sm"
+                                      >
+                                          {t('dashboard.view_details')}
+                                      </Link>
+                                 </div>
                             </div>
                         </div>
                     </div>
                 )}
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Main Content */}
-                    <div className="lg:col-span-2">
-                        {/* Exclusion History */}
-                        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
+                     {/* Main Content */}
+                     <div className="lg:col-span-2">
+                         {/* Exclusion History */}
+                         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 mb-6 sm:mb-8">
                             <div className="flex items-center justify-between mb-6">
                                  <h2 className="text-xl font-bold text-gray-900">{t('dashboard.your_exclusions')}</h2>
                                  <Link
@@ -425,9 +425,9 @@ export default function DashboardPage() {
                         </div>
 
                         {/* Quick Actions */}
-                         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                             <h2 className="text-xl font-bold text-gray-900 mb-6">{t('dashboard.quick_actions')}</h2>
-                            <div className="grid grid-cols-2 gap-4">
+                          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
+                              <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">{t('dashboard.quick_actions')}</h2>
+                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                                 {activeExclusion ? (
                                      <div
                                          className="flex items-center gap-4 p-4 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed opacity-50"
@@ -499,9 +499,9 @@ export default function DashboardPage() {
                     </div>
 
                     {/* Sidebar */}
-                    <div className="lg:col-span-1 space-y-6">
-                        {/* Account Info Card */}
-                         <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl p-6 text-white shadow-lg">
+                     <div className="lg:col-span-1 space-y-4 sm:space-y-6">
+                         {/* Account Info Card */}
+                          <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl p-4 sm:p-6 text-white shadow-lg">
                              <p className="text-blue-100 text-sm font-medium mb-2">{t('dashboard.account_status')}</p>
                              <p className="text-2xl font-bold mb-4">{t('dashboard.active')}</p>
 
@@ -567,10 +567,10 @@ export default function DashboardPage() {
             </main>
 
             {/* Extend Modal */}
-             {showExtendModal && (
-                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                     <div className="bg-white rounded-xl shadow-lg max-w-md w-full p-6">
-                         <h2 className="text-xl font-bold text-gray-900 mb-4">{t('dashboard.extend_exclusion_period')}</h2>
+              {showExtendModal && (
+                  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 sm:p-0">
+                      <div className="bg-white rounded-xl shadow-lg max-w-md w-full p-4 sm:p-6">
+                          <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">{t('dashboard.extend_exclusion_period')}</h2>
 
                          <div className="mb-4">
                              <label className="block text-sm font-medium text-gray-700 mb-2">

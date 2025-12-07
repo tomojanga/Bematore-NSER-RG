@@ -148,6 +148,9 @@ export const complianceAPI = {
 // METRICS APIs
 // ============================================
 export const metricsAPI = {
+  getOverview: () =>
+    api.get('/metrics/overview/'),
+  
   getOperatorMetrics: (operatorId: string) =>
     api.get(`/operators/${operatorId}/metrics/`),
   

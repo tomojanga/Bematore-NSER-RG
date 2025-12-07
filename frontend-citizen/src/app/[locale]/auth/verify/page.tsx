@@ -96,14 +96,14 @@ function VerifyAccountPage() {
   if (!user) return null
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4">
-      <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
-        <div className="flex flex-col items-center mb-8">
-          <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-4 rounded-full mb-4">
-            <Shield className="h-12 w-12 text-white" />
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4 py-6 sm:py-12">
+      <div className="bg-white rounded-2xl shadow-2xl p-6 sm:p-8 w-full max-w-md">
+        <div className="flex flex-col items-center mb-6 sm:mb-8">
+          <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-3 sm:p-4 rounded-full mb-4">
+            <Shield className="h-10 w-10 sm:h-12 sm:w-12 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">Verify Your Account</h1>
-          <p className="text-gray-600 mt-2 text-center">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center">Verify Your Account</h1>
+          <p className="text-xs sm:text-sm text-gray-600 mt-2 text-center">
             {step === 'phone' && 'Step 1: Verify your phone number'}
             {step === 'email' && 'Step 2: Verify your email'}
             {step === 'complete' && 'Verification complete!'}
@@ -111,12 +111,12 @@ function VerifyAccountPage() {
         </div>
 
         {step === 'phone' && !user.is_phone_verified && (
-          <div className="space-y-4">
-            <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-lg">
-              <Phone className="h-5 w-5 text-blue-600" />
-              <div>
-                <p className="font-medium text-gray-900">Phone Number</p>
-                <p className="text-sm text-gray-600">{user.phone_number}</p>
+          <div className="space-y-3 sm:space-y-4">
+            <div className="flex items-center gap-3 p-3 sm:p-4 bg-blue-50 rounded-lg">
+              <Phone className="h-5 w-5 text-blue-600 flex-shrink-0" />
+              <div className="min-w-0">
+                <p className="font-medium text-gray-900 text-sm">Phone Number</p>
+                <p className="text-xs sm:text-sm text-gray-600 truncate">{user.phone_number}</p>
               </div>
             </div>
             <Button onClick={handleSendPhoneCode} disabled={isSendingPhone} className="w-full">
@@ -135,12 +135,12 @@ function VerifyAccountPage() {
         )}
 
         {step === 'email' && user.email && !user.is_email_verified && (
-          <div className="space-y-4">
-            <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-lg">
-              <Mail className="h-5 w-5 text-blue-600" />
-              <div>
-                <p className="font-medium text-gray-900">Email Address</p>
-                <p className="text-sm text-gray-600">{user.email}</p>
+          <div className="space-y-3 sm:space-y-4">
+            <div className="flex items-center gap-3 p-3 sm:p-4 bg-blue-50 rounded-lg">
+              <Mail className="h-5 w-5 text-blue-600 flex-shrink-0" />
+              <div className="min-w-0">
+                <p className="font-medium text-gray-900 text-sm">Email Address</p>
+                <p className="text-xs sm:text-sm text-gray-600 truncate">{user.email}</p>
               </div>
             </div>
             
@@ -150,8 +150,8 @@ function VerifyAccountPage() {
               </Button>
             ) : (
               <>
-                <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                  <p className="text-sm text-green-800">Verification code sent to {user.email}</p>
+                <div className="bg-green-50 border border-green-200 rounded-lg p-2 sm:p-3">
+                  <p className="text-xs sm:text-sm text-green-800">Verification code sent to {user.email}</p>
                 </div>
                 <Input
                   placeholder="Enter 6-digit code"
@@ -172,20 +172,20 @@ function VerifyAccountPage() {
         )}
 
         {step === 'complete' && (
-          <div className="text-center space-y-4">
+          <div className="text-center space-y-3 sm:space-y-4">
             <div className="flex justify-center">
-              <div className="h-20 w-20 bg-green-100 rounded-full flex items-center justify-center">
-                <CheckCircle className="h-12 w-12 text-green-600" />
+              <div className="h-16 w-16 sm:h-20 sm:w-20 bg-green-100 rounded-full flex items-center justify-center">
+                <CheckCircle className="h-10 w-10 sm:h-12 sm:w-12 text-green-600" />
               </div>
             </div>
             <div>
-              <h3 className="text-xl font-bold text-gray-900">Verification Complete!</h3>
-              <p className="text-gray-600 mt-2">Redirecting to dashboard...</p>
+              <h3 className="text-lg sm:text-xl font-bold text-gray-900">Verification Complete!</h3>
+              <p className="text-xs sm:text-sm text-gray-600 mt-2">Redirecting to dashboard...</p>
             </div>
           </div>
         )}
 
-        <div className="mt-6 text-center text-sm text-gray-600">
+        <div className="mt-4 sm:mt-6 text-center text-xs sm:text-sm text-gray-600">
           <p>Protected by GRAK © 2025</p>
         </div>
       </div>

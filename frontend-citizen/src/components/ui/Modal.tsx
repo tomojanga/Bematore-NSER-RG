@@ -30,8 +30,8 @@ export function Modal({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
-      <div className="flex min-h-full items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 overflow-y-auto p-4 sm:p-0">
+      <div className="flex min-h-full items-center justify-center p-0 sm:p-4">
         {/* Backdrop */}
         <div 
           className="fixed inset-0 bg-black bg-opacity-25 transition-opacity"
@@ -46,20 +46,20 @@ export function Modal({
         )}>
           {/* Header */}
           {title && (
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+            <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900">{title}</h3>
               <button
                 onClick={onClose}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
+                className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
                 aria-label="Close modal"
               >
-                <X className="h-6 w-6" />
+                <X className="h-5 w-5 sm:h-6 sm:w-6" />
               </button>
             </div>
           )}
           
           {/* Body */}
-          <div className={title ? 'p-6' : 'p-6'}>
+          <div className="p-4 sm:p-6">
             {children}
           </div>
         </div>
@@ -101,14 +101,14 @@ export function ConfirmModal({
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="sm">
       <div className="text-center">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">{title}</h3>
-        <p className="text-gray-600 mb-6">{message}</p>
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">{title}</h3>
+        <p className="text-xs sm:text-sm text-gray-600 mb-4 sm:mb-6">{message}</p>
         
-        <div className="flex gap-3 justify-end">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 sm:justify-end">
           <button
             onClick={onClose}
             disabled={loading}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50 transition-colors"
+            className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50 transition-colors order-2 sm:order-1"
           >
             {cancelText}
           </button>
@@ -116,15 +116,16 @@ export function ConfirmModal({
             onClick={onConfirm}
             disabled={loading}
             className={cn(
-              'px-4 py-2 text-sm font-medium text-white rounded-lg bg-gradient-to-r transition-all disabled:opacity-50',
+              'px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-white rounded-lg bg-gradient-to-r transition-all disabled:opacity-50 min-h-10 sm:min-h-auto',
               typeStyles[type],
-              loading && 'cursor-not-allowed'
+              loading && 'cursor-not-allowed',
+              'order-1 sm:order-2'
             )}
           >
             {loading ? (
-              <span className="flex items-center gap-2">
+              <span className="flex items-center justify-center gap-2">
                 <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-white"></div>
-                Processing...
+                <span className="hidden sm:inline">Processing...</span>
               </span>
             ) : (
               confirmText

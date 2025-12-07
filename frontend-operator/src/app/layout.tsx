@@ -1,17 +1,27 @@
+import type { Metadata, Viewport } from 'next'
 import './globals.css'
-import { Toaster } from 'react-hot-toast'
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'NSER Operator Portal',
   description: 'Real-time exclusion lookup for licensed gambling operators',
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+}
+
+export default function RootLayout({ 
+  children 
+}: { 
+  children: React.ReactNode
+}) {
   return (
-    <html lang="en">
-      <body suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
+      <body>
         {children}
-        <Toaster position="top-right" />
       </body>
     </html>
   )

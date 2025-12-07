@@ -19,7 +19,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="w-full">
         {label && (
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
             {label}
             {props.required && <span className="text-red-500 ml-1">*</span>}
           </label>
@@ -27,7 +27,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         
         <div className="relative">
           {leftIcon && (
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+            <div className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 text-gray-400">
               {leftIcon}
             </div>
           )}
@@ -36,11 +36,11 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             type={inputType}
             className={cn(
-              'w-full border border-gray-300 rounded-lg px-4 py-3 text-sm transition-colors',
+              'w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm transition-colors min-h-10 sm:min-h-12',
               'focus:ring-2 focus:ring-blue-500 focus:border-transparent',
               'disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed',
-              leftIcon && 'pl-10',
-              (rightIcon || isPassword) && 'pr-10',
+              leftIcon && 'pl-8 sm:pl-10',
+              (rightIcon || isPassword) && 'pr-8 sm:pr-10',
               error && 'border-red-500 focus:ring-red-500',
               className
             )}
@@ -51,26 +51,26 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
             >
-              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              {showPassword ? <EyeOff className="h-4 w-4 sm:h-5 sm:w-5" /> : <Eye className="h-4 w-4 sm:h-5 sm:w-5" />}
             </button>
           )}
           
           {rightIcon && !isPassword && (
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+            <div className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 text-gray-400">
               {rightIcon}
             </div>
           )}
-        </div>
-        
-        {error && (
-          <p className="text-sm text-red-600 mt-1">{error}</p>
-        )}
-        
-        {helper && !error && (
-          <p className="text-sm text-gray-500 mt-1">{helper}</p>
-        )}
+          </div>
+          
+          {error && (
+          <p className="text-xs sm:text-sm text-red-600 mt-1">{error}</p>
+          )}
+          
+          {helper && !error && (
+          <p className="text-xs sm:text-sm text-gray-500 mt-1">{helper}</p>
+          )}
       </div>
     )
   }
@@ -98,7 +98,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className="w-full">
         {label && (
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
             {label}
             {props.required && <span className="text-red-500 ml-1">*</span>}
           </label>
@@ -107,7 +107,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         <select
           ref={ref}
           className={cn(
-            'w-full border border-gray-300 rounded-lg px-4 py-3 text-sm transition-colors',
+            'w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm transition-colors min-h-10 sm:min-h-12',
             'focus:ring-2 focus:ring-blue-500 focus:border-transparent',
             'disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed',
             error && 'border-red-500 focus:ring-red-500',
@@ -132,11 +132,11 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         </select>
         
         {error && (
-          <p className="text-sm text-red-600 mt-1">{error}</p>
+          <p className="text-xs sm:text-sm text-red-600 mt-1">{error}</p>
         )}
         
         {helper && !error && (
-          <p className="text-sm text-gray-500 mt-1">{helper}</p>
+          <p className="text-xs sm:text-sm text-gray-500 mt-1">{helper}</p>
         )}
       </div>
     )
@@ -157,7 +157,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <div className="w-full">
         {label && (
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
             {label}
             {props.required && <span className="text-red-500 ml-1">*</span>}
           </label>
@@ -166,7 +166,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         <textarea
           ref={ref}
           className={cn(
-            'w-full border border-gray-300 rounded-lg px-4 py-3 text-sm transition-colors resize-y',
+            'w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm transition-colors resize-y min-h-24',
             'focus:ring-2 focus:ring-blue-500 focus:border-transparent',
             'disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed',
             error && 'border-red-500 focus:ring-red-500',
@@ -176,11 +176,11 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         />
         
         {error && (
-          <p className="text-sm text-red-600 mt-1">{error}</p>
+          <p className="text-xs sm:text-sm text-red-600 mt-1">{error}</p>
         )}
         
         {helper && !error && (
-          <p className="text-sm text-gray-500 mt-1">{helper}</p>
+          <p className="text-xs sm:text-sm text-gray-500 mt-1">{helper}</p>
         )}
       </div>
     )

@@ -3,19 +3,24 @@
 import { useEffect } from 'react'
 import { useRouter } from '@/navigation'
 import { useTranslations } from 'next-intl'
+import { useAuthInitialization } from '@/hooks/useAuthInitialization'
 
 export default function Home() {
   const router = useRouter()
   const t = useTranslations()
+  const { isValidating, isAuthenticated, validationError } = useAuthInitialization()
 
   useEffect(() => {
-    const token = localStorage.getItem('access_token')
-    if (token) {
+    // Wait for validation to complete before routing
+    if (isValidating) return
+
+    // Route based on authentication status
+    if (isAuthenticated) {
       router.push('/dashboard')
     } else {
       router.push('/auth/login')
     }
-  }, [router])
+  }, [isValidating, isAuthenticated, router])
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">

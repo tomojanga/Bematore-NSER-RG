@@ -59,9 +59,9 @@ export function Table<T = any>({
   if (loading) {
     return (
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-        <div className="p-8 text-center">
+        <div className="p-6 sm:p-8 text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600"></div>
-          <p className="mt-4 text-gray-500">Loading...</p>
+          <p className="mt-4 text-xs sm:text-sm text-gray-500">Loading...</p>
         </div>
       </div>
     )
@@ -70,16 +70,16 @@ export function Table<T = any>({
   if (data.length === 0) {
     return (
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-        <div className="p-8 text-center">
-          <p className="text-gray-500">{emptyMessage}</p>
+        <div className="p-6 sm:p-8 text-center">
+          <p className="text-xs sm:text-sm text-gray-500">{emptyMessage}</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className={cn('bg-white rounded-lg border border-gray-200 overflow-hidden', className)}>
-      <div className="overflow-x-auto">
+    <div className={cn('bg-white rounded-lg border border-gray-200 overflow-x-auto', className)}>
+      <div className="inline-block min-w-full">
         <table className="w-full">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
@@ -87,16 +87,16 @@ export function Table<T = any>({
                 <th
                   key={index}
                   className={cn(
-                    'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
+                    'px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
                     column.sortable && 'cursor-pointer hover:bg-gray-100 transition-colors',
                     column.width && `w-${column.width}`
                   )}
                   onClick={() => column.sortable && handleSort(column)}
                 >
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between gap-1">
                     <span>{column.title}</span>
                     {getSortIcon(column) && (
-                      <span className="ml-1 text-gray-400">{getSortIcon(column)}</span>
+                      <span className="ml-1 text-gray-400 text-xs">{getSortIcon(column)}</span>
                     )}
                   </div>
                 </th>
@@ -110,7 +110,7 @@ export function Table<T = any>({
                 {columns.map((column, colIndex) => (
                   <td 
                     key={colIndex}
-                    className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
+                    className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-900"
                   >
                     {column.render 
                       ? column.render(record[column.key as keyof T], record, rowIndex)
@@ -126,9 +126,9 @@ export function Table<T = any>({
 
       {/* Pagination */}
       {pagination && (
-        <div className="bg-white px-6 py-3 border-t border-gray-200 flex items-center justify-between">
-          <div className="flex items-center text-sm text-gray-700">
-            <span>
+        <div className="bg-white px-3 sm:px-6 py-2 sm:py-3 border-t border-gray-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0">
+          <div className="flex items-center text-xs sm:text-sm text-gray-700">
+            <span className="line-clamp-2">
               Showing page {pagination.current} of {Math.ceil(pagination.total / pagination.pageSize)}
               {' '}({pagination.total} total items)
             </span>
@@ -143,7 +143,7 @@ export function Table<T = any>({
               <ChevronLeft className="h-4 w-4" />
             </button>
             
-            <span className="px-3 py-2 text-sm text-gray-700">
+            <span className="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm text-gray-700">
               {pagination.current}
             </span>
             
@@ -179,13 +179,13 @@ export function ActionMenu({ actions }: ActionMenuProps) {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-1 hover:bg-gray-100 rounded transition-colors"
+        className="p-1 hover:bg-gray-100 rounded transition-colors min-h-8 min-w-8"
       >
         <MoreHorizontal className="h-4 w-4" />
       </button>
       
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+        <div className="absolute right-0 mt-2 w-40 sm:w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
           {actions.map((action, index) => (
             <button
               key={index}
@@ -195,13 +195,13 @@ export function ActionMenu({ actions }: ActionMenuProps) {
               }}
               disabled={action.disabled}
               className={cn(
-                'w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 transition-colors',
+                'w-full px-3 sm:px-4 py-1.5 sm:py-2 text-left text-xs sm:text-sm hover:bg-gray-50 flex items-center gap-2 transition-colors',
                 action.destructive && 'text-red-600 hover:bg-red-50',
                 action.disabled && 'opacity-50 cursor-not-allowed'
               )}
             >
-              {action.icon}
-              {action.label}
+              {action.icon && <span className="flex-shrink-0">{action.icon}</span>}
+              <span className="truncate">{action.label}</span>
             </button>
           ))}
         </div>
