@@ -10,8 +10,8 @@ DEBUG = env.bool('DEBUG', default=True)
 # Database - use local PostgreSQL
 # DATABASES['default']['NAME'] = 'nser_rg_dev'  # Commented out to use nser_rg from .env
 
-# Email - console backend for development
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# Email - use settings from .env (SMTP for testing, console falls back)
+EMAIL_BACKEND = env('EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
 
 # CORS settings for development
 CORS_ALLOW_ALL_ORIGINS = True

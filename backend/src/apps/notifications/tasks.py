@@ -96,72 +96,97 @@ def send_sms(self, phone_number, message):
 @shared_task(bind=True, max_retries=3)
 def send_email(self, email, subject, message, html_content=None):
     """
-    Send email via SendGrid
+    Send email via SendGrid or Django SMTP
     """
     try:
         from .models import EmailLog
         from django.conf import settings
-        from sendgrid import SendGridAPIClient
-        from sendgrid.helpers.mail import Mail, Email, To, Content
         
-        # Check if email is configured
-        if not hasattr(settings, 'SENDGRID_API_KEY') or not settings.SENDGRID_API_KEY:
-            logger.warning(f"Email not configured, skipping email to {email}")
-            return {'sent': False, 'reason': 'not_configured'}
+        # Prefer SendGrid if configured, else use Django mail
+        sendgrid_configured = hasattr(settings, 'SENDGRID_API_KEY') and settings.SENDGRID_API_KEY
         
-        # Create SendGrid client
-        sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
+        if sendgrid_configured:
+            # Use SendGrid
+            from sendgrid import SendGridAPIClient
+            from sendgrid.helpers.mail import Mail, Email, To, Content
+            
+            sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
+            from_email = Email(settings.DEFAULT_FROM_EMAIL, "GRAK NSER")
+            to_email = To(email)
+            
+            if html_content:
+                content = Content("text/html", html_content)
+            else:
+                content = Content("text/plain", message)
+            
+            mail = Mail(from_email, to_email, subject, content)
+            response = sg.client.mail.send.post(request_body=mail.get())
+            
+            # Log email
+            EmailLog.objects.create(
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                to_email=email,
+                subject=subject,
+                body_text=message,
+                body_html=html_content or '',
+                provider='sendgrid',
+                status='sent' if response.status_code == 202 else 'failed',
+                message_id=response.headers.get('X-Message-Id'),
+                sent_at=timezone.now()
+            )
+            
+            if response.status_code in [200, 202]:
+                logger.info(f"Email sent to {email} via SendGrid (ID: {response.headers.get('X-Message-Id')})")
+                return {'sent': True, 'email': email, 'provider': 'sendgrid', 'message_id': response.headers.get('X-Message-Id')}
+            else:
+                raise Exception(f"SendGrid returned status {response.status_code}")
         
-        # Create message
-        from_email = Email(settings.DEFAULT_FROM_EMAIL, "GRAK NSER")
-        to_email = To(email)
-        
-        # Use HTML content if provided, otherwise plain text
-        if html_content:
-            content = Content("text/html", html_content)
         else:
-            content = Content("text/plain", message)
-        
-        mail = Mail(from_email, to_email, subject, content)
-        
-        # Send email
-        response = sg.client.mail.send.post(request_body=mail.get())
-        
-        # Log email
-        EmailLog.objects.create(
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            to_email=email,
-            subject=subject,
-            body_text=message,
-            body_html=html_content or '',
-            provider='sendgrid',
-            status='sent' if response.status_code == 202 else 'failed',
-            message_id=response.headers.get('X-Message-Id'),
-            sent_at=timezone.now()
-        )
-        
-        if response.status_code in [200, 202]:
-            return {'sent': True, 'email': email, 'message_id': response.headers.get('X-Message-Id')}
-        else:
-            raise Exception(f"SendGrid returned status {response.status_code}")
+            # Use Django SMTP backend
+            from django.core.mail import send_mail
+            
+            result = send_mail(
+                subject=subject,
+                message=message,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[email],
+                html_message=html_content,
+                fail_silently=False
+            )
+            
+            # Log email
+            EmailLog.objects.create(
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                to_email=email,
+                subject=subject,
+                body_text=message,
+                body_html=html_content or '',
+                provider='django_smtp',
+                status='sent' if result == 1 else 'failed',
+                sent_at=timezone.now()
+            )
+            
+            logger.info(f"Email sent to {email} via Django SMTP")
+            return {'sent': True, 'email': email, 'provider': 'django_smtp'}
         
     except Exception as exc:
         logger.error(f"Failed to send email to {email}: {str(exc)}")
         
         # Log failed email
         try:
+            from django.conf import settings
             EmailLog.objects.create(
                 from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@grak.go.ke'),
                 to_email=email,
                 subject=subject,
                 body_text=message,
-                provider='sendgrid',
+                provider='unknown',
                 status='failed',
                 error_message=str(exc),
                 sent_at=timezone.now()
             )
-        except:
-            pass
+        except Exception as log_exc:
+            logger.error(f"Failed to log email error: {str(log_exc)}")
         
         # Don't retry if it's a configuration error
         if 'SENDGRID' in str(exc) or 'not configured' in str(exc).lower():
@@ -431,37 +456,27 @@ def send_exclusion_confirmation(self, user_id, exclusion_id):
     try:
         from apps.users.models import User
         from apps.nser.models import SelfExclusionRecord
+        from .email_templates import create_exclusion_confirmation_email
         
         user = User.objects.get(id=user_id)
         exclusion = SelfExclusionRecord.objects.get(id=exclusion_id)
         
         # Prepare message
         expiry_date_str = exclusion.expiry_date.strftime('%d %B %Y') if exclusion.expiry_date else 'indefinitely'
+        start_date_str = exclusion.effective_date.strftime('%d %B %Y') if hasattr(exclusion, 'effective_date') and exclusion.effective_date else timezone.now().strftime('%d %B %Y')
         
+        # SMS message
         sms_message = f"Your self-exclusion has been registered (Ref: {exclusion.exclusion_reference}). You are excluded from gambling until {expiry_date_str}. Contact GRAK for support."
         
+        # Email subject and HTML content using template
         email_subject = "Self-Exclusion Confirmation - NSER"
-        email_message = f"""Dear {user.get_full_name()},
-
-Your self-exclusion has been successfully registered with the National Self-Exclusion Register (NSER).
-
-Exclusion Details:
-- Reference Number: {exclusion.exclusion_reference}
-- Period: {exclusion.get_exclusion_period_display()}
-- Start Date: {exclusion.effective_date.strftime('%d %B %Y')}
-- Expiry Date: {expiry_date_str}
-
-During this period, you will not be able to participate in gambling activities with any licensed operator in Kenya.
-
-If you need support or have questions, please contact GRAK:
-- Phone: +254 XXX XXX XXX
-- Email: support@grak.go.ke
-
-Thank you for taking this important step.
-
-Best regards,
-Gambling Regulatory Authority of Kenya (GRAK)
-"""
+        email_html = create_exclusion_confirmation_email(
+            user_name=user.get_full_name() or user.email.split('@')[0],
+            exclusion_ref=exclusion.exclusion_reference,
+            start_date=start_date_str,
+            expiry_date=expiry_date_str,
+            period=exclusion.get_exclusion_period_display() if hasattr(exclusion, 'get_exclusion_period_display') else 'As Registered'
+        )
         
         results = {'sms': False, 'email': False, 'push': False}
         
@@ -473,10 +488,14 @@ Gambling Regulatory Authority of Kenya (GRAK)
             except Exception as e:
                 logger.warning(f"Could not queue SMS: {str(e)}")
         
-        # Send Email (non-blocking)
+        # Send Email with HTML template (non-blocking)
         if user.email:
             try:
-                send_email.apply_async(args=[user.email, email_subject, email_message], countdown=1)
+                send_email.apply_async(
+                    args=[user.email, email_subject],
+                    kwargs={'message': '', 'html_content': email_html},
+                    countdown=1
+                )
                 results['email'] = True
             except Exception as e:
                 logger.warning(f"Could not queue email: {str(e)}")
