@@ -465,7 +465,7 @@ export function useRealTimeExclusionLookup() {
                 const responseTime = Math.round(endTime - startTime)
 
                 return {
-                    ...result.data,
+                    ...(result.data && typeof result.data === 'object' ? result.data : {}),
                     client_response_time_ms: responseTime
                 }
             } catch (error: any) {

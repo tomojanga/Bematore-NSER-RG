@@ -45,7 +45,7 @@ export function useDashboard() {
       
       const { data } = await api.get(endpoint)
       return {
-        ...data,
+        ...(data && typeof data === 'object' ? data : {}),
         dashboardType,
         userRole,
       }

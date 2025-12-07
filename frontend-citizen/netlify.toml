@@ -5,9 +5,6 @@
   # Build command - clean build to avoid platform-specific issues
   command = "npm ci && npm run build"
   
-  # Netlify plugin auto-detects this
-  # publish = ".next"
-  
   # Functions directory for Netlify serverless functions
   functions = ".netlify/functions"
 
