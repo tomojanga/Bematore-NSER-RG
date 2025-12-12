@@ -7,7 +7,7 @@
         <div class="logo-icon">
             <i class="fa-solid fa-shield-alt"></i>
         </div>
-        <span>GRAK</span>
+        <span>REGULATOR</span>
     </div>
 
     <div class="section">
@@ -87,7 +87,7 @@
             <div class="user-profile" data-bs-toggle="dropdown" aria-expanded="false">
                 <img src="../Media/new-logo.jpg" alt="User">
                 <div>
-                    <div class="name">GRAK</div>
+                    <div class="name">REGULATOR</div>
                     <div class="role">Admin</div>
                 </div>
                 <i class="fa-solid fa-angle-down ms-2 text-muted"></i>

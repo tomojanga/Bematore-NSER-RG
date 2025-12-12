@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Exclusions | GRAK Admin Dashboard</title>
+  <title>Exclusions | Regulator RAK Admin Dashboard</title>
 
   <!-- Bootstrap and Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -123,16 +123,7 @@
                 <option>Expired Only</option>
               </select>
             </div>
-            <div class="col-md-3">
-              <label class="form-label small text-muted mb-1">Operator</label>
-              <select class="form-select form-select-sm">
-                <option selected>All Operators</option>
-                <option>BetPawa Kenya</option>
-                <option>SportyBet Kenya</option>
-                <option>Casino Nairobi</option>
-                <option>Kenya Lottery</option>
-              </select>
-            </div>
+          
           </div>
         </div>
       </div>
@@ -149,7 +140,6 @@
               <thead>
                 <tr>
                   <th class="ps-4">BST Token</th>
-                  <th>Operator</th>
                   <th>Start Date</th>
                   <th>End Date</th>
                   <th>Duration</th>
@@ -161,7 +151,6 @@
                   <td class="ps-4">
                     <span class="bst-token">BST-K47A9X2P</span>
                   </td>
-                  <td>BetPawa Kenya</td>
                   <td>15 Sep 2025</td>
                   <td>15 Mar 2026</td>
                   <td><span class="duration-badge">6 months</span></td>
@@ -171,7 +160,6 @@
                   <td class="ps-4">
                     <span class="bst-token">BST-R83M1Y9Q</span>
                   </td>
-                  <td>SportyBet Kenya</td>
                   <td>22 Aug 2025</td>
                   <td>22 Aug 2026</td>
                   <td><span class="duration-badge">1 year</span></td>
@@ -181,7 +169,6 @@
                   <td class="ps-4">
                     <span class="bst-token">BST-N29P5Z7R</span>
                   </td>
-                  <td>Casino Nairobi</td>
                   <td>05 Jun 2025</td>
                   <td>05 Sep 2025</td>
                   <td><span class="duration-badge">3 months</span></td>
@@ -191,7 +178,6 @@
                   <td class="ps-4">
                     <span class="bst-token">BST-L62T3V8S</span>
                   </td>
-                  <td>Kenya Lottery</td>
                   <td>10 Oct 2025</td>
                   <td>10 Oct 2027</td>
                   <td><span class="duration-badge">2 years</span></td>
@@ -201,7 +187,6 @@
                   <td class="ps-4">
                     <span class="bst-token">BST-F94W2X5T</span>
                   </td>
-                  <td>BetPawa Kenya</td>
                   <td>18 Jul 2025</td>
                   <td>18 Jan 2026</td>
                   <td><span class="duration-badge">6 months</span></td>
@@ -211,7 +196,6 @@
                   <td class="ps-4">
                     <span class="bst-token">BST-D58U7Y1V</span>
                   </td>
-                  <td>M-Pesa Bet</td>
                   <td>30 Mar 2025</td>
                   <td>30 Jun 2025</td>
                   <td><span class="duration-badge">3 months</span></td>
@@ -221,7 +205,6 @@
                   <td class="ps-4">
                     <span class="bst-token">BST-H76Z4X9W</span>
                   </td>
-                  <td>Casino Nairobi</td>
                   <td>12 Nov 2025</td>
                   <td>12 Nov 2026</td>
                   <td><span class="duration-badge">1 year</span></td>
@@ -231,7 +214,6 @@
                   <td class="ps-4">
                     <span class="bst-token">BST-J38V2B7C</span>
                   </td>
-                  <td>SportyBet Kenya</td>
                   <td>25 Sep 2025</td>
                   <td>25 Dec 2025</td>
                   <td><span class="duration-badge">3 months</span></td>

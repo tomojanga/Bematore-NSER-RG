@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GRAK Admin Dashboard</title>
+  <title>Regulator Admin Dashboard</title>
 
   <!-- Bootstrap and Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -21,7 +21,7 @@
   
 <!-- Main content placeholder -->
 <div class="main-content p-4 bg-light" id="mainContent">
-  <h4 class="fw-bold mb-4 dashboard-title">GRAK Compliance Dashboard</h4>
+  <h4 class="fw-bold mb-4 dashboard-title">Regulator Compliance Dashboard</h4>
 
   <div class="row g-3">
     <!-- Left Column -->
