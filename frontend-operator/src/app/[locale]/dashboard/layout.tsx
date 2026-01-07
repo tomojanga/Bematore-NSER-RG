@@ -38,6 +38,7 @@ const getNavigation = (t: any) => {
     const toolsNavigation = [
         { name: t('navigation.simulator'), href: '/dashboard/simulator', icon: TestTube2, section: 'tools' },
         { name: t('navigation.integration_guide'), href: '/dashboard/integration', icon: Code, section: 'tools' },
+        { name: 'Operator Demo', href: '/dashboard/demo-integration', icon: Zap, section: 'tools' },
         { name: t('navigation.api_reference'), href: '/dashboard/api-reference', icon: FileText, section: 'tools' },
     ]
 
