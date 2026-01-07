@@ -25,7 +25,7 @@ class Command(BaseCommand):
             }
         )
         if created:
-            admin.set_password('GRAKAdmin@2024')
+            admin.set_password('GRAKAdmin@2026')
             admin.save()
             self.stdout.write(self.style.SUCCESS(f'✓ Created GRAK Admin: {admin.phone_number}'))
         else:
@@ -44,7 +44,7 @@ class Command(BaseCommand):
             }
         )
         if created:
-            officer.set_password('GRAKOfficer@2024')
+            officer.set_password('GRAKOfficer@2026')
             officer.save()
             self.stdout.write(self.style.SUCCESS(f'✓ Created GRAK Officer: {officer.phone_number}'))
         else:
@@ -53,7 +53,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS('\n=== GRAK Credentials ==='))
         self.stdout.write(self.style.SUCCESS('Admin:'))
         self.stdout.write(self.style.SUCCESS('  Phone: +254700000001'))
-        self.stdout.write(self.style.SUCCESS('  Password: GRAKAdmin@2024'))
+        self.stdout.write(self.style.SUCCESS('  Password: GRAKAdmin@2026'))
         self.stdout.write(self.style.SUCCESS('\nOfficer:'))
         self.stdout.write(self.style.SUCCESS('  Phone: +254700000002'))
-        self.stdout.write(self.style.SUCCESS('  Password: GRAKOfficer@2024'))
+        self.stdout.write(self.style.SUCCESS('  Password: GRAKOfficer@2026'))

@@ -31,10 +31,10 @@ class Command(BaseCommand):
         )
         
         if created:
-            admin.set_password('GRAKAdmin@2024')
+            admin.set_password('GRAKAdmin@2026')
             admin.save()
             self.stdout.write(self.style.SUCCESS(f'✓ Created GRAK Admin: {admin.phone_number}'))
-            self.stdout.write(self.style.WARNING(f'  Password: GRAKAdmin@2024'))
+            self.stdout.write(self.style.WARNING(f'  Password: GRAKAdmin@2026'))
         else:
             self.stdout.write(self.style.WARNING(f'✗ GRAK Admin already exists: {admin.phone_number}'))
 
@@ -58,17 +58,17 @@ class Command(BaseCommand):
         )
         
         if created:
-            officer.set_password('GRAKOfficer@2024')
+            officer.set_password('GRAKOfficer@2026')
             officer.save()
             self.stdout.write(self.style.SUCCESS(f'✓ Created GRAK Officer: {officer.phone_number}'))
-            self.stdout.write(self.style.WARNING(f'  Password: GRAKOfficer@2024'))
+            self.stdout.write(self.style.WARNING(f'  Password: GRAKOfficer@2026'))
         else:
             self.stdout.write(self.style.WARNING(f'✗ GRAK Officer already exists: {officer.phone_number}'))
 
         self.stdout.write(self.style.SUCCESS('\n=== GRAK Users Created ==='))
         self.stdout.write(self.style.SUCCESS('Admin Login:'))
         self.stdout.write(f'  Phone: +254700000001')
-        self.stdout.write(f'  Password: GRAKAdmin@2024')
+        self.stdout.write(f'  Password: GRAKAdmin@2026')
         self.stdout.write(self.style.SUCCESS('\nOfficer Login:'))
         self.stdout.write(f'  Phone: +254700000002')
-        self.stdout.write(f'  Password: GRAKOfficer@2024')
+        self.stdout.write(f'  Password: GRAKOfficer@2026')
