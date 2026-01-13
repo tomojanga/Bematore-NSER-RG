@@ -3,9 +3,9 @@
  * Supports 10 languages across Africa
  */
 
-export type Locale = 'en' | 'sw' | 'fr' | 'ar' | 'pt' | 'zu' | 'xh' | 'ig' | 'am' | 'ha'
+export type Locale = 'en' | 'sw' | 'fr' | 'ar' | 'pt' | 'zu' | 'xh' | 'ig' | 'am' | 'ha' | 'yo'
 
-export const locales: Locale[] = ['en', 'sw', 'fr', 'ar', 'pt', 'zu', 'xh', 'ig', 'am', 'ha']
+export const locales: Locale[] = ['en', 'sw', 'fr', 'ar', 'pt', 'zu', 'xh', 'ig', 'am', 'ha', 'yo']
 
 export const localeNames: Record<Locale, { name: string; nativeName: string }> = {
   en: { name: 'English', nativeName: 'English' },
@@ -18,6 +18,7 @@ export const localeNames: Record<Locale, { name: string; nativeName: string }> =
   ig: { name: 'Igbo', nativeName: 'Igbo' },
   am: { name: 'Amharic', nativeName: 'አማርኛ' },
   ha: { name: 'Hausa', nativeName: 'Hausa' },
+  yo: { name: 'Yoruba', nativeName: 'Yorùbá' },
 }
 
 export const defaultLocale: Locale = 'en'

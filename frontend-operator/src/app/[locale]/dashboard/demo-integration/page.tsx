@@ -148,10 +148,13 @@ export default function DemoIntegrationPage() {
             }
 
             setLookupResults([result, ...lookupResults])
-            setMessage({ type: 'success', text: response.data.is_excluded ? '🚫 User is EXCLUDED' : '✅ User is ALLOWED' })
-            setLookupPhoneNumber('')
-        } catch (error: any) {
-            setMessage({ type: 'error', text: error.response?.data?.detail || 'Lookup failed' })
+             setMessage({ 
+                 type: 'success', 
+                 text: response.data.is_excluded ? t('demo_integration.user_excluded') : t('demo_integration.user_allowed') 
+             })
+             setLookupPhoneNumber('')
+            } catch (error: any) {
+             setMessage({ type: 'error', text: error.response?.data?.detail || t('demo_integration.lookup_failed') })
         } finally {
             setLoading(false)
         }
@@ -187,10 +190,14 @@ export default function DemoIntegrationPage() {
 
             setBulkLookupResults(results)
             const excludedCount = results.filter(r => r.is_excluded).length
-            setMessage({ type: 'success', text: `${excludedCount} excluded, ${results.length - excludedCount} allowed` })
+            const allowedCount = results.length - excludedCount
+            setMessage({ 
+                type: 'success', 
+                text: `${excludedCount} ${t('demo_integration.excluded')}, ${allowedCount} ${t('demo_integration.allowed')}` 
+            })
             setBulkLookupPhones('')
-        } catch (error: any) {
-            setMessage({ type: 'error', text: error.response?.data?.detail || 'Bulk lookup failed' })
+            } catch (error: any) {
+            setMessage({ type: 'error', text: error.response?.data?.detail || t('demo_integration.bulk_lookup_failed') })
         } finally {
             setLoading(false)
         }
@@ -215,7 +222,7 @@ export default function DemoIntegrationPage() {
             })
 
             if (lookupResponse.data.is_excluded) {
-                setMessage({ type: 'error', text: '🚫 User is excluded - betting blocked!' })
+                setMessage({ type: 'error', text: t('demo_integration.user_excluded_betting') })
                 setLoading(false)
                 return
             }
@@ -226,7 +233,7 @@ export default function DemoIntegrationPage() {
             })
 
             if (!tokenResponse.data.is_valid) {
-                setMessage({ type: 'error', text: 'Invalid BST token' })
+                setMessage({ type: 'error', text: t('demo_integration.token_invalid') })
                 setLoading(false)
                 return
             }
@@ -251,12 +258,12 @@ export default function DemoIntegrationPage() {
             }
 
             setBettingTransactions([transaction, ...bettingTransactions])
-            setMessage({ type: 'success', text: `✅ Bet recorded: KES ${bettingAmount}` })
+            setMessage({ type: 'success', text: t('demo_integration.bet_recorded') })
             setBettingPhone('')
             setBettingAmount('')
             setBstToken('')
-        } catch (error: any) {
-            setMessage({ type: 'error', text: error.response?.data?.detail || 'Betting transaction failed' })
+            } catch (error: any) {
+            setMessage({ type: 'error', text: error.response?.data?.detail || t('demo_integration.betting_transaction_failed') })
         } finally {
             setLoading(false)
         }
@@ -291,10 +298,10 @@ export default function DemoIntegrationPage() {
 
             setBstTokens([token, ...bstTokens])
             setBstToken(response.data.token)
-            setMessage({ type: 'success', text: '✅ BST token generated' })
+            setMessage({ type: 'success', text: t('demo_integration.token_generated') })
             setGenerateTokenPhone('')
-        } catch (error: any) {
-            setMessage({ type: 'error', text: error.response?.data?.detail || 'Failed to generate BST token' })
+            } catch (error: any) {
+            setMessage({ type: 'error', text: error.response?.data?.detail || t('demo_integration.token_validation_failed') })
         } finally {
             setLoading(false)
         }
@@ -309,10 +316,10 @@ export default function DemoIntegrationPage() {
 
             setMessage({
                 type: response.data.is_valid ? 'success' : 'error',
-                text: response.data.is_valid ? '✅ Token is valid' : '❌ Token is invalid',
+                text: response.data.is_valid ? t('demo_integration.token_valid') : t('demo_integration.token_invalid'),
             })
-        } catch (error: any) {
-            setMessage({ type: 'error', text: error.response?.data?.detail || 'Token validation failed' })
+            } catch (error: any) {
+            setMessage({ type: 'error', text: error.response?.data?.detail || t('demo_integration.token_validation_failed') })
         } finally {
             setLoading(false)
         }
@@ -346,19 +353,19 @@ export default function DemoIntegrationPage() {
             }
 
             setExclusionLocks([lock, ...exclusionLocks])
-            setMessage({ type: 'success', text: `🔒 User locked for ${lockDays} days` })
+            setMessage({ type: 'success', text: `${t('demo_integration.lock_created')} ${lockDays} ${t('demo_integration.days')}` })
             setLockPhone('')
             setLockReason('Problem Gambling')
             setLockDays('30')
-        } catch (error: any) {
-            setMessage({ type: 'error', text: error.response?.data?.detail || 'Failed to create exclusion lock' })
+            } catch (error: any) {
+            setMessage({ type: 'error', text: error.response?.data?.detail || t('demo_integration.failed_to_load_keys') })
         } finally {
             setLoading(false)
         }
     }
 
     const removeLock = async (phone: string) => {
-        if (!confirm(`Remove lock for ${phone}?`)) return
+        if (!confirm(`${t('demo_integration.remove_lock_confirm')} ${phone}?`)) return
 
         setLoading(true)
         try {
@@ -367,9 +374,9 @@ export default function DemoIntegrationPage() {
             })
 
             setExclusionLocks(exclusionLocks.filter(l => l.phone_number !== phone))
-            setMessage({ type: 'success', text: '🔓 Lock removed' })
+            setMessage({ type: 'success', text: t('demo_integration.lock_removed') })
         } catch (error: any) {
-            setMessage({ type: 'error', text: error.response?.data?.detail || 'Failed to remove lock' })
+            setMessage({ type: 'error', text: error.response?.data?.detail || t('demo_integration.failed_to_remove_lock') })
         } finally {
             setLoading(false)
         }
@@ -384,9 +391,9 @@ export default function DemoIntegrationPage() {
         try {
             const response = await api.get('/operators/my-api-keys/')
             setApiKeys(response.data.data || response.data)
-            setMessage({ type: 'success', text: 'API keys loaded' })
+            setMessage({ type: 'success', text: t('demo_integration.keys_loaded') })
         } catch (error: any) {
-            setMessage({ type: 'error', text: error.response?.data?.detail || 'Failed to load API keys' })
+            setMessage({ type: 'error', text: error.response?.data?.detail || t('demo_integration.failed_to_load_keys') })
         } finally {
             setLoading(false)
         }
@@ -399,44 +406,108 @@ export default function DemoIntegrationPage() {
     const fetchMetrics = async () => {
         setLoading(true)
         try {
-            // Fetch multiple metrics endpoints for comprehensive data
-            const [metricsRes, lookupRes, exclusionRes] = await Promise.all([
+            // Fetch metrics from the correct backend endpoints
+            // Using actual endpoints: /api/v1/operators/<id>/metrics/, /api/v1/analytics/dashboard/operator/
+            const [operatorMetricsRes, analyticsRes, exclusionStatsRes] = await Promise.all([
+                // Operator metrics endpoint
                 api.get('/operators/me/metrics/').catch(() => ({ data: {} })),
+                // Analytics dashboard for operator
+                api.get('/analytics/dashboard/operator/').catch(() => ({ data: {} })),
+                // NSER statistics
                 api.get('/nser/statistics/').catch(() => ({ data: {} })),
-                api.get('/nser/exclusions/stats/').catch(() => ({ data: {} })),
             ])
 
-            // Aggregate data from multiple sources
+            // Combine data from all sources with proper fallbacks
             const aggregatedStats = {
-                // Primary metrics from main metrics endpoint
-                total_users: metricsRes.data.total_registered_users || metricsRes.data.total_users || 0,
-                total_screenings: metricsRes.data.total_lookups || metricsRes.data.total_screenings || 0,
-                total_exclusions: metricsRes.data.total_exclusions || exclusionRes.data.total_active_exclusions || 0,
-                total_bets: metricsRes.data.total_bets || metricsRes.data.total_transactions || 0,
-                total_amount_bet: metricsRes.data.total_amount_wagered || metricsRes.data.total_amount_bet || 0,
-
-                // Performance metrics
-                avg_response_time: metricsRes.data.avg_response_time || metricsRes.data.average_response_time_ms || 0,
-                p50_response_time: metricsRes.data.p50_response_time || metricsRes.data.median_response_time_ms || 0,
-                p99_response_time: metricsRes.data.p99_response_time || metricsRes.data.p99_response_time_ms || 0,
-
-                // Success rates
-                success_rate: metricsRes.data.success_rate || metricsRes.data.lookup_success_rate || 0,
-                uptime: metricsRes.data.uptime_percentage || metricsRes.data.availability || 0,
-
+                // User and transaction metrics
+                total_users: 
+                    operatorMetricsRes.data.total_users || 
+                    analyticsRes.data.total_active_users || 
+                    0,
+                
+                total_screenings: 
+                    operatorMetricsRes.data.total_screenings || 
+                    operatorMetricsRes.data.total_lookups ||
+                    analyticsRes.data.total_screenings ||
+                    exclusionStatsRes.data.total_lookups ||
+                    0,
+                
+                total_exclusions: 
+                    operatorMetricsRes.data.total_exclusions ||
+                    analyticsRes.data.active_exclusions ||
+                    exclusionStatsRes.data.total_active_exclusions ||
+                    0,
+                
+                total_bets: 
+                    operatorMetricsRes.data.total_bets ||
+                    operatorMetricsRes.data.total_transactions ||
+                    analyticsRes.data.total_transactions ||
+                    0,
+                
+                total_amount_bet: 
+                    operatorMetricsRes.data.total_amount_wagered ||
+                    operatorMetricsRes.data.total_amount_bet ||
+                    analyticsRes.data.total_wagered ||
+                    0,
+                
+                // Performance metrics (in milliseconds)
+                avg_response_time: 
+                    operatorMetricsRes.data.avg_response_time ||
+                    operatorMetricsRes.data.average_response_time_ms ||
+                    analyticsRes.data.avg_response_time ||
+                    0,
+                
+                p50_response_time: 
+                    operatorMetricsRes.data.p50_response_time ||
+                    operatorMetricsRes.data.median_response_time_ms ||
+                    analyticsRes.data.p50_response_time ||
+                    0,
+                
+                p99_response_time: 
+                    operatorMetricsRes.data.p99_response_time ||
+                    operatorMetricsRes.data.p99_response_time_ms ||
+                    analyticsRes.data.p99_response_time ||
+                    0,
+                
+                // Success rates and availability (as percentages)
+                success_rate: 
+                    operatorMetricsRes.data.success_rate ||
+                    operatorMetricsRes.data.lookup_success_rate ||
+                    analyticsRes.data.success_rate ||
+                    0,
+                
+                uptime: 
+                    operatorMetricsRes.data.uptime_percentage ||
+                    operatorMetricsRes.data.availability ||
+                    analyticsRes.data.uptime ||
+                    0,
+                
                 // Additional metrics
-                api_requests_today: metricsRes.data.api_requests_today || metricsRes.data.requests_24h || 0,
-                webhook_deliveries: metricsRes.data.webhook_deliveries || 0,
-                compliance_score: metricsRes.data.compliance_score || metricsRes.data.operational_compliance || 0,
-
-                // Timestamp
+                api_requests_today: 
+                    operatorMetricsRes.data.api_requests_today ||
+                    operatorMetricsRes.data.requests_24h ||
+                    analyticsRes.data.requests_24h ||
+                    0,
+                
+                webhook_deliveries: 
+                    operatorMetricsRes.data.webhook_deliveries ||
+                    analyticsRes.data.webhook_deliveries ||
+                    0,
+                
+                compliance_score: 
+                    operatorMetricsRes.data.compliance_score ||
+                    operatorMetricsRes.data.operational_compliance ||
+                    analyticsRes.data.compliance_score ||
+                    0,
+                
+                // Timestamp for tracking
                 last_updated: new Date().toISOString(),
             }
 
             setOperatorStats(aggregatedStats)
             setMessage({ type: 'success', text: t('demo_integration.metrics_loaded') })
         } catch (error: any) {
-            const errorMsg = error.response?.data?.detail || error.message || 'Failed to load metrics'
+            const errorMsg = error.response?.data?.detail || error.message || t('demo_integration.failed_to_load_metrics')
             setMessage({ type: 'error', text: errorMsg })
             setOperatorStats(null)
         } finally {
