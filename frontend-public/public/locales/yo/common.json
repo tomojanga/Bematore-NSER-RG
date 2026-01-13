@@ -1,0 +1,170 @@
+{
+  "nav": {
+    "home": "Ilẹ",
+    "about": "Nipa",
+    "self_exclude": "Iyakọ Ara Ẹni",
+    "faq": "Awọn Ibẹ̀rẹ̀ Igbagbọ",
+    "contact": "Ṣokan",
+    "resources": "Awọn Ohun Elo"
+  },
+  "common": {
+    "language": "Ede",
+    "select_language": "Yan Ede",
+    "loading": "Nloading...",
+    "error": "Aṣiṣe",
+    "success": "Aṣeyọri",
+    "back": "Padà",
+    "next": "Apeja",
+    "submit": "Fiwé",
+    "cancel": "Fagile",
+    "close": "Ti Ipari",
+    "search": "Wa",
+    "no_results": "Ko si olusokan ti o wa",
+    "something_went_wrong": "Ohun kan ti sẹ̀ ẹ. Jọwọ da ẹ gbiyanju.",
+    "confirm": "Jẹrìsí",
+    "yes": "Bẹ́ẹ̀ ni",
+    "no": "Rara"
+  },
+  "home": {
+    "title": "Rejista Iyakọ Ara Ẹni Ìbílẹ̀",
+    "subtitle": "Ifigagbọkun awọn taara jade apo ni Afirika",
+    "description": "Nser jẹ́ rejista iyakọ ara ẹni ti o gbalejo pelu agbajumo ti o gba awọn ọkunrin ati awọn obinrin laaye lati fi ẹkun ara wọn sile ninu iṣẹ taara jade apo.",
+    "cta_primary": "Iyakọ Ara Ẹni Ni Bayi",
+    "cta_secondary": "Tẹkọ Ju",
+    "hero_image_alt": "Ibalopọ asọtẹlẹ iyakọ ara ẹni"
+  },
+  "about": {
+    "title": "Nipa Rejista Iyakọ Ara Ẹni",
+    "description": "Rejista Iyakọ Ara Ẹni Ìbílẹ̀ (Nser) jẹ́ iṣẹ ti o dara pupo ti o ṣe pataki lati ṣe iranlọwọ fun awọn ọkunrin ati awọn obinrin laaye lati ṣakoso awọn iṣẹ taara jade apo wọn.",
+    "mission_title": "Iṣẹ Wa",
+    "mission_text": "Lati pese idile ti o ni ilera, ti o ni igboyawo, ati ti o rọrun fun awọn ọkunrin ati awọn obinrin laaye lati iyakọ ara ẹni kuro ninu awọn iṣẹ taara jade apo ti o yẹ.",
+    "vision_title": "Ero Wa",
+    "vision_text": "Ẹkun kan ti o wa ninu agbaye ti o nilo awọn eniyan lati yakọ ara wọn kuro ninu awọn iṣẹ taara jade apo nitori ifigagbọkun.",
+    "how_it_works_title": "Bawo Ni O Se Ṣiṣẹ",
+    "how_it_works_text": "Forukọsilẹ fun iyakọ ara ẹni pelu Rejista Iyakọ Ara Ẹni, ati a yoo royin awọn oniṣẹ taara jade apo ti o yẹ. Iyakọ ara ẹni wa wa ni iku imo.",
+    "benefits_title": "Awọn Anfaani",
+    "benefits": [
+      "Ifigagbọkun ti o kọ agbajumo",
+      "Jẹrìsí ti imo",
+      "Ifigagbọkun awon iṣiro",
+      "Idile 24/7",
+      "Atilẹyin ede pupọ",
+      "Awọn iṣoro atilẹyin ti agbajumo"
+    ]
+  },
+  "self_exclude": {
+    "title": "Forukọsilẹ fun Iyakọ Ara Ẹni",
+    "subtitle": "Ṣakoso taara jade apo ara ẹni",
+    "description": "Iyakọ ara ẹni jẹ́ iṣẹ ti ara ẹni laaye lati ṣe iranlọwọ fun ara ẹni lati yakọ taara jade apo. Nigbati o forukọsilẹ pelu Rejista Iyakọ Ara Ẹni, awọn oniṣẹ ti o yẹ yoo ṣe akiyesi lati ṣe irinwọ lati di aladde nipa awọn iṣẹ wọn.",
+    "form_title": "Fọọmu Iyakọ Ara Ẹni",
+    "step1": "Alaye Ara Ẹni",
+    "step2": "Awọn Ẹsẹ Iyakọ",
+    "step3": "Jẹrìsí",
+    "first_name": "Orukọ Akọkọ",
+    "last_name": "Orukọ Asehin",
+    "email": "Adirẹsi Imeeli",
+    "phone": "Nọmba Foonu",
+    "id_type": "Irisi Akawe",
+    "id_number": "Nọmba Akawe/Pasipu",
+    "date_of_birth": "Ọjọ Ibi",
+    "country": "Ilu",
+    "exclusion_duration": "Akoko Iyakọ",
+    "duration_6months": "Osu Merinidilogọ",
+    "duration_1year": "Ọdun Kan",
+    "duration_2years": "Ọdun Meji",
+    "duration_5years": "Ọdun Marunkunrinmi",
+    "duration_lifetime": "Igbaye",
+    "reason": "Idi Iyakọ Ara Ẹni (Ise Airike)",
+    "terms_agree": "Mo gbe ẹkun ati awọn ibadandun",
+    "terms_link": "Ka awọn ẹkun wa",
+    "privacy_agree": "Mo loye pe a yoo lo alaye mi laaye lati ṣe akiyesi fun iyakọ ara ẹni yi",
+    "submit_exclusion": "Fiwé Iyakọ Ara Ẹni",
+    "success_message": "Iyakọ ara ẹni ra ti gba daradun",
+    "error_message": "Aṣiṣe lati gba iyakọ ara ẹni. Jọwọ da gbiyanju.",
+    "confirmation_text": "O wa ni imọ lati forukọsilẹ fun iyakọ ara ẹni. Iṣẹ yii ni iku imo."
+  },
+  "faq": {
+    "title": "Awọn Ibẹ̀rẹ̀ Igbagbọ",
+    "search_placeholder": "Wa awọn ibẹ̀rẹ̀...",
+    "no_results": "Ko si ibẹ̀rẹ̀ ti o ba awoṣe wa",
+    "questions": [
+      {
+        "id": "what_is_nser",
+        "question": "Kini Rejista Iyakọ Ara Ẹni Ìbílẹ̀?",
+        "answer": "Rejista Iyakọ Ara Ẹni jẹ́ rejista iyakọ ara ẹni ti o gbalejo ti o gba awọn ọkunrin ati awọn obinrin laaye lati yakọ ara wọn kuro ninu awọn iṣẹ taara jade apo ti o yẹ."
+      },
+      {
+        "id": "how_does_it_work",
+        "question": "Bawo ni iyakọ ara ẹni se ṣiṣẹ?",
+        "answer": "Nigbati o forukọsilẹ pelu Rejista Iyakọ Ara Ẹni, a yoo royin awọn oniṣẹ ti o yẹ ti o ni iṣẹ lati yẹda ẹ kuro ninu iyṣẹ wọn lakoko akoko iyakọ."
+      },
+      {
+        "id": "is_it_binding",
+        "question": "Njẹ iyakọ ara ẹni ni iku imo?",
+        "answer": "Bẹ́ẹ̀ ni, iyakọ ara ẹni ti o forukọsilẹ pelu Rejista Iyakọ Ara Ẹni ni iku imo. Awọn oniṣẹ gbọdọ gbigbe ọrọ iyakọ ara ẹni."
+      },
+      {
+        "id": "can_i_lift",
+        "question": "Ṣe o le gbe iyakọ ara ẹni rẹ kọjá rẹ?",
+        "answer": "Gbigbe iyakọ ara ẹni rẹ kọjá rẹ dá pin si awọn alaye ti o jẹrìsí. Ba atolẹyin Rejista Iyakọ Ara Ẹni untuk iranlọwọ."
+      },
+      {
+        "id": "is_it_private",
+        "question": "Njẹ alaye mi ti o jẹ aladun?",
+        "answer": "Bẹ́ẹ̀ ni, alaye ara ẹni rẹ ni ifigagbọkun ati o fara sile ni awọn oniṣẹ ti o yẹ ti o nilo lati ṣe akiyesi fun iyakọ ara ẹni rẹ."
+      },
+      {
+        "id": "who_is_it_for",
+        "question": "Tani o le lo Rejista Iyakọ Ara Ẹni?",
+        "answer": "Rejista Iyakọ Ara Ẹni jẹ́ fun ẹnikan ti o ro pe o nilo lati ṣakoso awọn iṣẹ taara jade apo wọn ati pe o fẹ yakọ ara wọn kuro ninu iṣẹ taara jade apo."
+      },
+      {
+        "id": "what_operators",
+        "question": "Awọn oniṣẹ melo ni o ba pọ fun Rejista Iyakọ Ara Ẹni?",
+        "answer": "Ọpọ oniṣẹ nla ni agbaye ni o ba pọ fun Rejista Iyakọ Ara Ẹni. Tẹkọ atejade oniṣẹ wa untuk alaye."
+      },
+      {
+        "id": "how_long",
+        "question": "Akoko melo ni iyakọ ara ẹni ti o duro?",
+        "answer": "O le yan akoko iyakọ kuro ninu osu merinidilogọ de igbaye iyakọ ara ẹni."
+      }
+    ]
+  },
+  "contact": {
+    "title": "Ṣokan Si Awa",
+    "subtitle": "Awa wa ni ibi lati ṣe iranlọwọ",
+    "description": "Ṣe o ni ibẹ̀rẹ̀ nipa Rejista Iyakọ Ara Ẹni? Sokan pelu iṣoro atilẹyin wa.",
+    "form_title": "Fọọmu Ṣokan",
+    "name": "Orukọ Ti o Ti Tan Tagba",
+    "email": "Adirẹsi Imeeli",
+    "subject": "Koko",
+    "message": "Ifiranṣẹ",
+    "send": "Firanṣẹ Ifiranṣẹ",
+    "success": "O dúpẹ́ fun sokan si awa. A yoo padà si ara ẹ laipe.",
+    "error": "Aṣiṣe fun firanṣẹ ifiranṣẹ. Jọwọ da gbiyanju.",
+    "support_email": "support@nser.example.com",
+    "support_phone": "+256 123 456 789",
+    "office_address": "123 Business Street, Nairobi, Kenya",
+    "office_hours": "Monday - Friday, 9 AM - 5 PM (East Africa Time)"
+  },
+  "resources": {
+    "title": "Awọn Ohun Elo",
+    "subtitle": "Awọn ohun ẹkọ ati atilẹyin",
+    "guides": "Awọn Itọkọ",
+    "statistics": "Awọn Iṣiro",
+    "toolkits": "Awọn Eto Iṣẹ",
+    "support_services": "Awọn Iṣoro Atilẹyin",
+    "responsible_gambling": "Awọn Eto Taara jade apo Iye",
+    "help_lines": "Awọn Ila Iranlọwọ",
+    "download": "Kọ Sile",
+    "view_more": "Wo Diẹ Sii"
+  },
+  "footer": {
+    "about": "Nipa Rejista Iyakọ Ara Ẹni",
+    "privacy": "Ipolisi Iṣiro",
+    "terms": "Awọn Ibadandun & Ilana",
+    "contact": "Ṣokan",
+    "support": "Atilẹyin",
+    "copyright": "© 2025 Rejista Iyakọ Ara Ẹni Ìbílẹ̀. Gbogbo ẹtọ ti a dì tìkọ."
+  }
+}

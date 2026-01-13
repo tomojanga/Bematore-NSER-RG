@@ -5,8 +5,8 @@
   # Build command - clean build to avoid platform-specific issues
   command = "npm ci && npm run build"
   
-  # Netlify plugin auto-detects this
-  # publish = ".next"
+  # Explicitly set publish directory for static export
+  publish = "out"
   
   # Functions directory for Netlify serverless functions
   functions = ".netlify/functions"
@@ -51,6 +51,5 @@
   [headers.values]
     Cache-Control = "public, max-age=3600, stale-while-revalidate=86400"
 
-# Next.js on Netlify requires the plugin for server-side rendering with middleware and i18n
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
+# Removed due to Windows path compatibility issues
+# The app uses next-intl middleware which works without the plugin

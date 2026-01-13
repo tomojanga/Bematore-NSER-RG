@@ -6,8 +6,8 @@ const withNextIntl = require('next-intl/plugin')('./src/i18n.ts', {
 const nextConfig = {
   reactStrictMode: true,
   
-  // Remove static export to allow middleware and next-intl to work
-  // output: 'export', // Commented out - incompatible with middleware and next-intl
+  // Static export for Netlify deployment
+  output: 'export',
   
   // Disable image optimization for static export
   images: {
